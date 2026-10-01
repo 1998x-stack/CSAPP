@@ -1,0 +1,69 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>2.4.1 分数二进制数</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>00_2.4.1_分数二进制数</h1>
+<pre><code>Lecture: 02_程序结构和执行/2.4_浮点数
+Content: 00_2.4.1_分数二进制数
+</code></pre>
+<h3>2.4.1 分数二进制数</h3>
+<h4>概述</h4>
+<p>在理解浮点数之前，首先需要理解二进制分数。分数二进制数是指包含小数部分的二进制数。这些数的表示方式和十进制数的表示方式类似，但它们使用的是二进制系统，即基数为2。</p>
+<h4>二进制分数的表示</h4>
+<p>一个二进制分数可以表示为如下形式：</p>
+<p>$$ b_m b_{m-1} \ldots b_1 b_0 . b_{-1} b_{-2} \ldots b_{-n} $$</p>
+<p>其中，每个二进制位 $ b_i $ 的取值范围是0或1。这个表示法的值定义为：</p>
+<p>$$ b = \sum_{i=-n}^{m} b_i \times 2^i $$</p>
+<h4>二进制分数的权重</h4>
+<p>在这个表示法中，小数点左边的位的权重是2的非负次幂，而小数点右边的位的权重是2的负次幂。例如：</p>
+<ul>
+<li>101.112 表示的数值为：$$ 1 \times 2^2 + 0 \times 2^1 + 1 \times 2^0 + 1 \times 2^{-1} + 1 \times 2^{-2} = 4 + 0 + 1 + 0.5 + 0.25 = 5.75 $$</li>
+</ul>
+<h4>二进制小数的移位操作</h4>
+<p>移位操作可以很方便地对二进制数进行乘法和除法运算：</p>
+<ul>
+<li>将二进制小数点左移一位相当于将该数乘以2。</li>
+<li>将二进制小数点右移一位相当于将该数除以2。</li>
+</ul>
+<p>例如：</p>
+<ul>
+<li>101.112 左移一位变为 1011.12，其值为 11.5。</li>
+<li>101.112 右移一位变为 10.1112，其值为 2.875。</li>
+</ul>
+<h4>表示范围和精度问题</h4>
+<p>有限长度的二进制表示法不能精确表示所有的数值。例如，十进制的1/3不能精确地用有限的二进制位表示。同样，一些十进制数在二进制表示中也只能近似表示。例如：</p>
+<ul>
+<li>十进制数0.1在二进制中表示为一个无限循环小数：0.0001100110011...。</li>
+</ul>
+<h4>二进制分数的应用</h4>
+<p>理解二进制分数对于理解浮点数表示至关重要。浮点数使用一种科学记数法，结合了二进制分数和指数部分，以表示非常大的或非常小的数值。IEEE 754标准定义了这种表示方法，广泛应用于现代计算机系统中。</p>
+<h3>小结</h3>
+<p>二进制分数是浮点数表示的基础，通过理解它们的表示方式和运算规则，我们可以更好地理解计算机系统中数值的处理方法。这种知识对于开发高性能和高精度的计算程序尤为重要。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 00_2.4.1_分数二进制数
+
+"""
+Lecture: 02_程序结构和执行/2.4_浮点数
+Content: 00_2.4.1_分数二进制数
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

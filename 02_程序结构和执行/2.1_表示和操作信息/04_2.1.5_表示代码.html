@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>2.1.5 表示代码</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>04_2.1.5_表示代码</h1>
+<pre><code>Lecture: 02_程序结构和执行/2.1_表示和操作信息
+Content: 04_2.1.5_表示代码
+</code></pre>
+<h3>2.1.5 表示代码详解</h3>
+<h4>代码的基本概念</h4>
+<p>计算机系统中，代码表示程序的指令，这些指令被处理器执行以实现特定的功能。代码的表示形式多种多样，从高级编程语言的源代码到低级机器码，计算机系统在不同的抽象层次上处理代码。</p>
+<h4>从源代码到机器码</h4>
+<p>源代码是人类可读的程序表示，通常使用高级编程语言编写，如C、C++或Java。编译器将源代码翻译成机器码，这是处理器可以直接执行的二进制表示。在这个过程中，代码经过多个中间表示阶段，包括汇编代码和目标代码。</p>
+<p>举例来说，考虑以下C函数：</p>
+<pre><code class="language-c">int sum(int x, int y) {
+    return x + y;
+}
+</code></pre>
+<p>当这个函数在不同的系统上编译时，会生成不同的机器码。例如：</p>
+<ul>
+<li><strong>Linux 32位系统</strong>：<pre><code>55 89 e5 8b 45 0c 03 45 08 c9 c3
+</code></pre>
+</li>
+<li><strong>Windows系统</strong>：<pre><code>55 89 e5 8b 45 0c 03 45 08 5d c3
+</code></pre>
+</li>
+<li><strong>Sun系统</strong>：<pre><code>81 c3 e0 08 90 02 00 09
+</code></pre>
+</li>
+<li><strong>Linux 64位系统</strong>：<pre><code>55 48 89 e5 89 7d fc 89 75 f8 03 45 fc c9 c3
+</code></pre>
+</li>
+</ul>
+<p>每个系统生成的机器码都不同，因为不同的处理器和操作系统有不同的指令集和编码约定。</p>
+<h4>机器码的结构</h4>
+<p>机器码是处理器指令的二进制表示，每条指令由操作码（opcode）和操作数（operand）组成。操作码指定要执行的操作类型，如加法、减法或跳转；操作数指定操作的对象，如寄存器或内存地址。</p>
+<p>例如，在x86架构中，一条简单的加法指令<code>add eax, ebx</code>可以表示为机器码<code>03 C3</code>，其中<code>03</code>是操作码，表示加法操作，<code>C3</code>是操作数，表示<code>eax</code>和<code>ebx</code>寄存器。</p>
+<h4>汇编代码和链接</h4>
+<p>汇编代码是机器码的符号表示，用于简化程序的编写和阅读。汇编器将汇编代码转换为机器码，链接器将多个目标文件链接在一起，生成最终的可执行文件。</p>
+<p>例如，以下是一个简单的汇编代码示例：</p>
+<pre><code class="language-assembly">section .text
+    global _start
+_start:
+    mov eax, 1
+    mov ebx, 0
+    int 0x80
+</code></pre>
+<p>这段代码使用Linux系统调用退出程序。汇编器将其转换为机器码，链接器将其与其他必要的代码和库链接在一起，生成可执行文件。</p>
+<h4>代码的存储和执行</h4>
+<p>在计算机系统中，代码通常存储在存储设备（如硬盘或固态硬盘）上，当需要执行时被加载到内存中。处理器从内存中读取指令，并按照指令序列执行操作。</p>
+<p>代码的存储布局通常包括多个段，如文本段（text segment）、数据段（data segment）和堆栈段（stack segment）。文本段存储可执行代码，数据段存储静态数据，堆栈段用于管理函数调用和局部变量。</p>
+<h4>实际应用</h4>
+<p>理解代码的表示和执行对于编写高效、可靠的程序至关重要。例如，在性能优化过程中，开发者需要理解底层机器码和指令集，以优化关键代码路径。</p>
+<p>此外，理解代码的存储和执行机制有助于调试和排除程序错误。例如，调试器可以显示程序的汇编代码，帮助开发者定位和修复错误。</p>
+<h4>总结</h4>
+<p>表示代码是计算机系统中的一个基本概念。从源代码到机器码的转换过程涉及多个阶段和表示形式，包括汇编代码和目标代码。理解这些表示形式及其在系统中的存储和执行机制，有助于编写高效、可靠的程序，并优化系统性能。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 04_2.1.5_表示代码
+
+"""
+Lecture: 02_程序结构和执行/2.1_表示和操作信息
+Content: 04_2.1.5_表示代码
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

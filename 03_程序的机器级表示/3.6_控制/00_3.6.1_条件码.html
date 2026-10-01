@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.6.1 条件码</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>00_3.6.1_条件码</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.6_控制
+Content: 00_3.6.1_条件码
+</code></pre>
+<h3>3.6.1 条件码</h3>
+<p>在机器级编程中，条件码是处理器用来描述最近一次算术或逻辑操作结果的单比特寄存器。这些条件码被用来进行条件跳转和其他控制流操作。理解条件码的工作原理对于编写和调试底层代码至关重要。以下是对这一章节的详细分析。</p>
+<h4>条件码的基本概念</h4>
+<p>x86-64架构中，常用的条件码包括：</p>
+<ul>
+<li><strong>CF（Carry Flag）进位标志</strong>：在无符号运算中，表示最高有效位的进位。例如，在加法运算中，如果结果超过了寄存器所能表示的最大值，则设置CF。</li>
+<li><strong>ZF（Zero Flag）零标志</strong>：表示结果是否为零。如果最近的运算结果为零，则设置ZF。</li>
+<li><strong>SF（Sign Flag）符号标志</strong>：表示结果是否为负数。如果最近的运算结果为负，则设置SF。</li>
+<li><strong>OF（Overflow Flag）溢出标志</strong>：在有符号运算中，表示运算结果是否超出了表示范围。例如，当加法运算导致正溢出或负溢出时，设置OF。</li>
+</ul>
+<p>这些条件码的设置与具体的操作有关，例如，加法指令会根据运算结果设置这些条件码，而一些指令如 <code>leaq</code>（加载有效地址）则不会改变条件码，因为它们仅用于地址计算。</p>
+<h4>影响条件码的指令</h4>
+<p>大多数算术和逻辑指令都会设置条件码。以下是一些常见指令及其对条件码的影响：</p>
+<ul>
+<li><strong>逻辑操作</strong>：如 <code>xor</code>，会将CF和OF设置为零。</li>
+<li><strong>移位操作</strong>：如 <code>shl</code> 和 <code>shr</code>，会根据移位出的最后一位设置CF，而OF被设置为零。</li>
+<li><strong>递增和递减指令</strong>：如 <code>inc</code> 和 <code>dec</code>，会设置OF和ZF，但不会改变CF。</li>
+</ul>
+<p>此外，还有一些专门的指令用于设置条件码而不改变其他寄存器的值：</p>
+<ul>
+<li><strong>cmp 指令</strong>：用于比较两个操作数，设置条件码但不改变操作数的值。</li>
+<li><strong>test 指令</strong>：用于按位与操作，设置条件码但不改变操作数的值。</li>
+</ul>
+<p>例如，指令 <code>cmpq %rsi, %rdi</code> 会计算 <code>%rdi - %rsi</code> 并设置相应的条件码，<code>testq %rax, %rax</code> 则会设置 <code>%rax</code> 中值的符号和零标志。</p>
+<h4>访问条件码</h4>
+<p>访问条件码主要通过三种方式：</p>
+<ol>
+<li><strong>设置单字节的值为0或1</strong>：使用<code>set</code>指令，根据条件码的状态设置单字节寄存器或内存位置为0或1。例如，<code>sete %al</code> 根据ZF的状态将 <code>%al</code> 设置为0或1。</li>
+<li><strong>条件跳转</strong>：使用<code>j</code>指令，根据条件码的状态进行跳转。例如，<code>je</code> 指令在ZF为1时跳转，<code>jg</code> 指令在SF和OF异或为0且ZF为0时跳转。</li>
+<li><strong>条件传输数据</strong>：使用<code>cmov</code>指令，根据条件码的状态有条件地移动数据。例如，<code>cmove</code> 指令在ZF为1时移动数据，<code>cmovg</code> 指令在SF和OF异或为0且ZF为0时移动数据。</li>
+</ol>
+<h4>实例分析</h4>
+<p>考虑以下C代码：</p>
+<pre><code class="language-c">int comp(data_t a, data_t b) {
+    return a &lt; b;
+}
+</code></pre>
+<p>其汇编代码如下：</p>
+<pre><code class="language-assembly">comp:
+    cmpq %rsi, %rdi    ; 比较a和b
+    setl %al           ; 如果a &lt; b，将%al设置为1
+    movzbl %al, %eax   ; 将%al的值零扩展到%eax
+    ret
+</code></pre>
+<p>在这个例子中，<code>cmpq</code> 指令比较了两个操作数并设置条件码，<code>setl</code> 指令根据条件码将结果存储到 <code>%al</code> 寄存器中，<code>movzbl</code> 指令则将 <code>%al</code> 扩展为32位存储在 <code>%eax</code> 中。</p>
+<h4>条件码在控制流中的应用</h4>
+<p>条件码在控制流中有广泛的应用，例如实现条件语句和循环结构。以下是一些常见的应用场景：</p>
+<ul>
+<li><strong>条件分支</strong>：通过条件跳转实现，例如 <code>if-else</code> 结构。</li>
+<li><strong>循环控制</strong>：通过条件跳转实现循环的开始和结束，例如 <code>for</code> 和 <code>while</code> 结构。</li>
+<li><strong>条件传输</strong>：通过条件传输指令在特定条件下移动数据，提高程序效率。</li>
+</ul>
+<h3>总结</h3>
+<p>条件码是机器级程序中不可或缺的一部分，它们提供了一种高效的方法来处理条件操作和控制流。理解条件码的设置和使用对于编写高效的汇编程序至关重要。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 00_3.6.1_条件码
+
+"""
+Lecture: 03_程序的机器级表示/3.6_控制
+Content: 00_3.6.1_条件码
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

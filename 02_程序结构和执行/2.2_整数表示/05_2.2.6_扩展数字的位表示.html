@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>2.2.6 扩展数字的位表示</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>05_2.2.6_扩展数字的位表示</h1>
+<pre><code>Lecture: 02_程序结构和执行/2.2_整数表示
+Content: 05_2.2.6_扩展数字的位表示
+</code></pre>
+<h3>2.2.6 扩展数字的位表示</h3>
+<h4>简介</h4>
+<p>在计算机系统中，整数表示的位宽可能有所不同。为了在不同位宽之间转换整数，我们通常需要扩展它们的位表示。根据具体情况，可以使用零扩展（zero extension）或符号扩展（sign extension）。这一部分将详细探讨这两种扩展方法及其应用。</p>
+<h4>零扩展</h4>
+<p>零扩展用于无符号整数的扩展，即在高位添加零。例如，将一个8位的无符号整数扩展为16位：
+$$ \text{原始8位数} = 00101101 $$
+$$ \text{扩展16位数} = 00000000 00101101 $$</p>
+<p>零扩展不会改变整数的数值，只是增加了表示的位宽。数学上可以表示为：
+$$ B2U_{w+k}([0, \ldots, 0, u_{w-1}, \ldots, u_0]) = B2U_w([u_{w-1}, \ldots, u_0]) $$</p>
+<h4>符号扩展</h4>
+<p>符号扩展用于有符号整数的扩展，即在高位添加符号位的副本。例如，将一个8位的有符号整数扩展为16位：
+$$ \text{原始8位数} = 11001101 $$
+$$ \text{扩展16位数} = 11111111 11001101 $$</p>
+<p>符号扩展保留了整数的符号和数值。数学上可以表示为：
+$$ B2T_{w+k}([x_{w-1}, \ldots, x_{w-1}, x_{w-1}, \ldots, x_0]) = B2T_w([x_{w-1}, \ldots, x_0]) $$</p>
+<h4>举例说明</h4>
+<ol>
+<li>
+<p><strong>零扩展示例</strong>：
+将8位无符号整数$$00101101$$扩展为16位无符号整数：
+$$ \text{8位} = 00101101 $$
+$$ \text{16位} = 00000000 00101101 $$</p>
+</li>
+<li>
+<p><strong>符号扩展示例</strong>：
+将8位有符号整数$$11001101$$扩展为16位有符号整数：
+$$ \text{8位} = 11001101 $$
+$$ \text{16位} = 11111111 11001101 $$</p>
+</li>
+</ol>
+<h4>理论证明</h4>
+<p>为了证明符号扩展保留了数值，我们可以通过归纳法进行证明。假设原始位宽为$w$，扩展后的位宽为$w+1$，则：
+$$ B2T_{w+1}([x_{w-1}, x_{w-1}, x_{w-2}, \ldots, x_0]) = -x_{w-1} \cdot 2^w + \sum_{i=0}^{w-2} x_i \cdot 2^i + x_{w-1} \cdot 2^{w-1} $$</p>
+<p>展开上述等式并整理，可以得到：
+$$ = -x_{w-1} \cdot 2^{w-1} + \sum_{i=0}^{w-2} x_i \cdot 2^i = B2T_w([x_{w-1}, x_{w-2}, \ldots, x_0]) $$</p>
+<p>由此证明，符号扩展不会改变二进制补码整数的数值。</p>
+<h4>应用</h4>
+<ol>
+<li><strong>处理不同位宽的数据</strong>：在不同位宽的数据之间进行转换时，扩展操作是必需的。例如，从8位系统转换到16位系统。</li>
+<li><strong>算术运算的精度提升</strong>：在算术运算中，通过扩展操作可以避免溢出和精度损失。例如，在乘法运算前先进行扩展以提高精度。</li>
+<li><strong>兼容性处理</strong>：在处理不同数据格式时，扩展操作可以保证数据的兼容性和正确性。</li>
+</ol>
+<h4>总结</h4>
+<p>扩展数字的位表示是计算机系统中常见的操作。零扩展用于无符号整数，符号扩展用于有符号整数。理解这两种扩展方法及其数学原理，对于编写正确和高效的程序至关重要。在实际应用中，通过合理使用扩展操作，可以提高数据处理的精度和兼容性。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 05_2.2.6_扩展数字的位表示
+
+"""
+Lecture: 02_程序结构和执行/2.2_整数表示
+Content: 05_2.2.6_扩展数字的位表示
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

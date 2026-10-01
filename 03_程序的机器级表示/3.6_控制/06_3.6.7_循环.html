@@ -1,0 +1,141 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.6.7 循环</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>06_3.6.7_循环</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.6_控制
+Content: 06_3.6.7_循环
+</code></pre>
+<h3>3.6.7 循环</h3>
+<p>在机器级编程中，循环结构是实现重复执行代码段的关键技术。C 语言提供了几种循环结构，主要包括 <code>do-while</code>、<code>while</code> 和 <code>for</code>。虽然在机器代码中没有直接对应的循环指令，但可以通过条件测试和跳转指令的组合来实现循环的效果。以下是对这一章节的详细分析。</p>
+<h4><code>do-while</code> 循环</h4>
+<p><code>do-while</code> 循环的基本形式如下：</p>
+<pre><code class="language-c">do {
+    body-statement;
+} while (test-expr);
+</code></pre>
+<p>这种循环结构的特点是先执行循环体，然后进行条件测试，如果条件满足则继续循环。对应的汇编代码结构如下：</p>
+<pre><code class="language-assembly">loop:
+    body-statement
+    t = test-expr
+    if (t) goto loop
+</code></pre>
+<p>在每次迭代中，程序先执行循环体，然后测试条件表达式。如果测试成功，程序将返回循环开始位置继续执行。</p>
+<h4><code>while</code> 循环</h4>
+<p><code>while</code> 循环的基本形式如下：</p>
+<pre><code class="language-c">while (test-expr) {
+    body-statement;
+}
+</code></pre>
+<p>这种循环结构在执行循环体之前先测试条件表达式，如果条件满足则执行循环体。可以通过两种策略将其转换为机器代码：跳转到中间（jump to middle）和带守卫的 <code>do</code>（guarded-do）。</p>
+<h5>跳转到中间（Jump to Middle）</h5>
+<p>这种方法通过在循环开始时进行条件测试来实现：</p>
+<pre><code class="language-assembly">goto test;
+loop:
+    body-statement
+test:
+    t = test-expr
+    if (t) goto loop
+</code></pre>
+<p>例如，以下是用这种方法实现的阶乘函数的汇编代码：</p>
+<pre><code class="language-assembly">fact_while:
+    movl $1, %eax       ; Set result = 1
+    jmp .L5             ; Goto test
+.L6:                    ; Loop:
+    imulq %rdi, %rax    ; Compute result *= n
+    subq $1, %rdi       ; Decrement n
+.L5:                    ; Test:
+    cmpq $1, %rdi       ; Compare n:1
+    jg .L6              ; If &gt;, goto loop
+    rep; ret            ; Return
+</code></pre>
+<h5>带守卫的 <code>do</code>（Guarded-Do）</h5>
+<p>这种方法在进入循环体之前进行条件测试，并在测试失败时跳转到循环结束：</p>
+<pre><code class="language-assembly">init-expr
+t = test-expr
+if (!t) goto done
+loop:
+    body-statement
+    update-expr
+    t = test-expr
+    if (t) goto loop
+done:
+</code></pre>
+<p>例如，以下是用这种方法实现的阶乘函数的汇编代码：</p>
+<pre><code class="language-assembly">fact_while:
+    cmpq $1, %rdi       ; Compare n:1
+    jle .L7             ; If &lt;=, goto done
+    movl $1, %eax       ; Set result = 1
+.L6:                    ; Loop:
+    imulq %rdi, %rax    ; Compute result *= n
+    subq $1, %rdi       ; Decrement n
+    cmpq $1, %rdi       ; Compare n:1
+    jne .L6             ; If !=, goto loop
+.L7:                    ; Done:
+    rep; ret            ; Return
+</code></pre>
+<h4><code>for</code> 循环</h4>
+<p><code>for</code> 循环的基本形式如下：</p>
+<pre><code class="language-c">for (init-expr; test-expr; update-expr) {
+    body-statement;
+}
+</code></pre>
+<p>这种循环结构在进入循环体之前进行初始化表达式，然后在每次迭代之前进行条件测试，并在每次迭代之后进行更新表达式。可以将 <code>for</code> 循环转换为 <code>while</code> 循环来实现：</p>
+<pre><code class="language-c">init-expr
+while (test-expr) {
+    body-statement;
+    update-expr;
+}
+</code></pre>
+<p>例如，以下是用 <code>for</code> 循环实现的阶乘函数及其汇编代码：</p>
+<pre><code class="language-c">long fact_for(long n) {
+    long i;
+    long result = 1;
+    for (i = 2; i &lt;= n; i++)
+        result *= i;
+    return result;
+}
+</code></pre>
+<p>对应的汇编代码如下：</p>
+<pre><code class="language-assembly">fact_for:
+    movl $1, %eax       ; Set result = 1
+    movl $2, %edx       ; Set i = 2
+    jmp .L8             ; Goto test
+.L9:                    ; Loop:
+    imulq %rdx, %rax    ; Compute result *= i
+    addq $1, %rdx       ; Increment i
+.L8:                    ; Test:
+    cmpq %rdi, %rdx     ; Compare i:n
+    jle .L9             ; If &lt;=, goto loop
+    rep; ret            ; Return
+</code></pre>
+<h3>总结</h3>
+<p>循环结构是控制程序执行流程的关键技术，通过条件测试和跳转指令的组合，可以实现不同类型的循环。在实际编程中，选择合适的循环结构和转换策略，可以有效提高程序的执行效率和可读性。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 06_3.6.7_循环
+
+"""
+Lecture: 03_程序的机器级表示/3.6_控制
+Content: 06_3.6.7_循环
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

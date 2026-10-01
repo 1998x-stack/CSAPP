@@ -1,0 +1,65 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>2.4.6 C语言中的浮点</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>05_2.4.6_C语言中的浮点</h1>
+<pre><code>Lecture: 02_程序结构和执行/2.4_浮点数
+Content: 05_2.4.6_C语言中的浮点
+</code></pre>
+<h3>05_2.4.6_C语言中的浮点</h3>
+<h4>C语言中的浮点数类型</h4>
+<p>C语言提供了两种主要的浮点数类型：<code>float</code> 和 <code>double</code>。在支持IEEE浮点数的机器上，这些类型分别对应于单精度和双精度浮点数。此外，机器使用的是四舍五入到偶数的舍入模式。然而，由于C标准并不要求机器必须使用IEEE浮点数标准，所以没有统一的方法来更改舍入模式或获取特殊值（例如，-0、+∞、-∞ 或 NaN）。大多数系统通过组合头文件和库函数来提供这些特性，但具体实现因系统而异 。</p>
+<h4>类型转换和数值表示</h4>
+<p>在C语言中，不同类型之间的数值转换会改变数值和位表示，具体如下 ：</p>
+<ul>
+<li>从 <code>int</code> 到 <code>float</code>：数值不会溢出，但可能会被舍入。</li>
+<li>从 <code>int</code> 或 <code>float</code> 到 <code>double</code>：精确数值可以被保留，因为 <code>double</code> 具有更大的范围和更高的精度。</li>
+<li>从 <code>double</code> 到 <code>float</code>：数值可能溢出到+∞ 或 -∞，否则可能会被舍入，因为 <code>float</code> 的精度较低。</li>
+<li>从 <code>float</code> 或 <code>double</code> 到 <code>int</code>：数值将被舍入到零。例如，1.999 将被转换为 1，而 -1.999 将被转换为 -1。此外，数值可能会溢出。</li>
+</ul>
+<h4>C语言中的特殊值</h4>
+<p>尽管C标准不强制要求，但大多数现代系统都支持通过宏定义和库函数来访问特殊值。例如，在使用GNU编译器gcc时，可以通过定义<code>_GNU_SOURCE</code>并包含<code>&lt;math.h&gt;</code>头文件来使用程序常量<code>INFINITY</code>（表示+∞）和<code>NAN</code>（表示NaN） 。</p>
+<h5>特殊值的宏定义示例</h5>
+<pre><code class="language-c">#define _GNU_SOURCE 1
+#include &lt;math.h&gt;
+</code></pre>
+<p>通过这种方式，程序员可以在C代码中处理浮点数的特殊情况，而不必依赖于具体的硬件实现。</p>
+<h4>数值示例和舍入</h4>
+<p>在使用浮点数进行运算时，数值的表示和舍入是一个重要的考虑因素。例如，在IEEE单精度浮点数格式中，通过偏移量和尾数位的调整，可以表示更大的数值范围和精度。然而，浮点数运算并不遵循常见的数学性质，例如结合律和分配律，这可能导致意外的结果。例如：</p>
+<ul>
+<li><code>(1e20 * 1e20) * 1e-20</code> 计算结果为 +∞，而 <code>1e20 * (1e20 * 1e-20)</code> 计算结果为 1e20。</li>
+<li><code>1e20 * (1e20 - 1e20)</code> 计算结果为 0.0，而 <code>1e20 * 1e20 - 1e20 * 1e20</code> 计算结果为 NaN 。</li>
+</ul>
+<h4>IEEE 754 标准</h4>
+<p>IEEE 754 标准自1985年发布以来，几乎所有的计算机都支持这一标准，从而大大提高了科学应用程序在不同机器之间的可移植性。IEEE 754 标准规定了浮点数的表示和运算的详细规则，包括舍入、加法、乘法以及关系运算符的数学性质 。</p>
+<p>IEEE 754 标准的一个优点是其独立于任何特定的硬件或软件实现，这使得我们可以在不考虑具体实现的情况下研究其抽象的数学性质。例如，标准定义了如何处理特殊值（如 -0、∞ 和 NaN）以及如何舍入浮点数运算的结果 。</p>
+<h3>总结</h3>
+<p>在C语言中，浮点数的处理涉及到多个方面，包括数据类型的定义、数值转换、特殊值的处理以及运算中的舍入和数学性质。尽管C标准不强制要求使用IEEE 754标准，但大多数现代系统都通过组合头文件和库函数来提供这些特性，从而保证了程序的可移植性和数值计算的准确性。理解这些概念对于编写可靠和高效的浮点数计算程序至关重要。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 05_2.4.6_C语言中的浮点
+
+"""
+Lecture: 02_程序结构和执行/2.4_浮点数
+Content: 05_2.4.6_C语言中的浮点
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

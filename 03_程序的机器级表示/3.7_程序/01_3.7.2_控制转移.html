@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.7.2 控制转移</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>01_3.7.2_控制转移</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.7_程序
+Content: 01_3.7.2_控制转移
+</code></pre>
+<h3>3.7.2 控制转移</h3>
+<p>在机器级编程中，控制转移是函数调用和返回的核心机制。在 x86-64 架构中，通过 <code>call</code> 和 <code>ret</code> 指令来实现控制从一个函数转移到另一个函数，并在函数执行完毕后返回原调用点。以下是对这一章节的详细分析。</p>
+<h4>控制转移的基本概念</h4>
+<p>控制从函数 P 转移到函数 Q 仅仅涉及设置程序计数器 (PC) 为 Q 的代码起始地址。然而，当需要从 Q 返回时，处理器必须知道应当恢复 P 执行的位置。这个信息通过在调用 Q 时使用 <code>call</code> 指令记录下来。<code>call</code> 指令将一个地址 A 压入栈中，并将 PC 设置为 Q 的起始地址。压入栈的地址 A 称为返回地址，它是 <code>call</code> 指令之后的指令地址。相应地，<code>ret</code> 指令则会从栈中弹出地址 A 并将 PC 设置为 A。</p>
+<h4><code>call</code> 和 <code>ret</code> 指令</h4>
+<p><code>call</code> 和 <code>ret</code> 指令的基本形式如下：</p>
+<ul>
+<li><code>call Label</code>：直接调用</li>
+<li><code>call *Operand</code>：间接调用</li>
+<li><code>ret</code>：返回</li>
+</ul>
+<p>在汇编代码中，<code>call</code> 指令可以是直接调用，也可以是间接调用。直接调用的目标地址由标签指定，而间接调用的目标地址由操作数指定。</p>
+<h4>执行 <code>call</code> 和 <code>ret</code> 的过程</h4>
+<p>执行 <code>call</code> 和 <code>ret</code> 指令的过程可以通过以下步骤来理解：</p>
+<ol>
+<li>
+<p><strong>执行 <code>call</code> 指令</strong>：</p>
+<ul>
+<li>处理器将返回地址（即 <code>call</code> 指令的下一条指令地址）压入栈。</li>
+<li>将 PC 设置为被调用函数的起始地址。</li>
+</ul>
+</li>
+<li>
+<p><strong>执行 <code>ret</code> 指令</strong>：</p>
+<ul>
+<li>处理器从栈中弹出返回地址。</li>
+<li>将 PC 设置为弹出的返回地址。</li>
+</ul>
+</li>
+</ol>
+<p>通过这两个指令，处理器能够在函数调用和返回时正确地管理程序控制流。</p>
+<h4>示例分析</h4>
+<p>以下是 <code>call</code> 和 <code>ret</code> 指令在实际代码中的应用示例：</p>
+<pre><code class="language-assembly">multstore:
+    pushq %rbx          ; 保存 %rbx 寄存器
+    movq %rdx, %rbx     ; 将 %rdx 的值移动到 %rbx
+    ...
+    ret                 ; 返回
+
+main:
+    ...
+    call multstore      ; 调用 multstore 函数
+    ...
+</code></pre>
+<p>在这个示例中，<code>main</code> 函数调用 <code>multstore</code> 函数。<code>call</code> 指令将返回地址压入栈，并跳转到 <code>multstore</code> 的起始地址。<code>multstore</code> 完成执行后，通过 <code>ret</code> 指令返回 <code>main</code> 函数。</p>
+<h4>图示说明</h4>
+<p>图 3.26 展示了 <code>call</code> 和 <code>ret</code> 指令执行的过程。假设有两个函数 <code>main</code> 和 <code>multstore</code>，在 <code>main</code> 中调用 <code>multstore</code>：</p>
+<ol>
+<li>
+<p><strong>执行 <code>call</code> 之前</strong>：</p>
+<ul>
+<li>%rip 指向 <code>call</code> 指令。</li>
+<li>%rsp 指向栈顶。</li>
+</ul>
+</li>
+<li>
+<p><strong>执行 <code>call</code> 之后</strong>：</p>
+<ul>
+<li>返回地址被压入栈中。</li>
+<li>%rip 设置为 <code>multstore</code> 的起始地址。</li>
+<li>%rsp 更新为新的栈顶地址。</li>
+</ul>
+</li>
+<li>
+<p><strong>执行 <code>ret</code> 之后</strong>：</p>
+<ul>
+<li>从栈中弹出返回地址。</li>
+<li>%rip 恢复为返回地址。</li>
+<li>%rsp 恢复为调用 <code>multstore</code> 之前的栈顶地址。</li>
+</ul>
+</li>
+</ol>
+<p>通过这种机制，函数调用和返回能够准确地恢复执行上下文。</p>
+<h3>总结</h3>
+<p>控制转移是实现函数调用和返回的关键机制。在 x86-64 架构中，通过 <code>call</code> 和 <code>ret</code> 指令，可以有效地管理程序的控制流，确保在函数调用和返回时正确地恢复执行位置。这一机制对编写和优化低级别代码具有重要意义  。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 01_3.7.2_控制转移
+
+"""
+Lecture: 03_程序的机器级表示/3.7_程序
+Content: 01_3.7.2_控制转移
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

@@ -1,0 +1,116 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.11.5 在浮点代码中使用位操作</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>04_3.11.5_在浮点代码中使用位操作</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.11_浮点代码
+Content: 04_3.11.5_在浮点代码中使用位操作
+</code></pre>
+<h3>3.11.5 在浮点代码中使用位操作</h3>
+<h4>概述</h4>
+<p>在 x86-64 架构中，浮点代码中的位操作是实现一些有用的浮点运算结果的常见技术。这些操作通常是通过对 XMM 寄存器执行位操作来实现的，使用位操作可以实现对浮点数的高效处理和转换。</p>
+<h4>位操作指令集</h4>
+<p>以下是一些常见的位操作指令及其功能：</p>
+<ul>
+<li>
+<p><strong>按位异或（Bitwise Exclusive OR）</strong></p>
+<ul>
+<li><code>vxorps</code>：单精度浮点数按位异或。</li>
+<li><code>vxorpd</code>：双精度浮点数按位异或。</li>
+</ul>
+</li>
+<li>
+<p><strong>按位与（Bitwise AND）</strong></p>
+<ul>
+<li><code>vandps</code>：单精度浮点数按位与。</li>
+<li><code>vandpd</code>：双精度浮点数按位与。</li>
+</ul>
+</li>
+</ul>
+<p>这些指令可以在两个 XMM 寄存器之间或在 XMM 寄存器和内存之间执行操作，更新目标 XMM 寄存器的所有 128 位数据。</p>
+<h4>示例分析</h4>
+<p>以下示例展示了如何使用这些位操作指令实现对浮点数的处理：</p>
+<h5>示例 1：计算浮点数的绝对值</h5>
+<p>计算浮点数的绝对值可以通过清除其符号位来实现。这可以通过按位与一个所有位为1但符号位为0的掩码来实现。</p>
+<pre><code class="language-assembly">section .data
+    mask dq 0x7FFFFFFFFFFFFFFF  ; 定义掩码常量，符号位为0，其他位为1
+
+section .text
+    global _start
+
+_start:
+    vmovsd xmm0, [float_value]   ; 将浮点数加载到 XMM0
+    vmovsd xmm1, [mask]          ; 将掩码加载到 XMM1
+    vandpd xmm0, xmm0, xmm1      ; 对 XMM0 执行按位与操作，清除符号位
+    ; 继续处理
+    mov eax, 60                  ; 系统调用号 (sys_exit)
+    xor edi, edi                 ; 状态码 0
+    syscall                      ; 触发系统调用退出程序
+</code></pre>
+<p>在这个示例中，<code>vandpd</code> 指令用于计算浮点数的绝对值。</p>
+<h5>示例 2：将浮点数设置为0</h5>
+<p>将浮点数设置为0可以通过将寄存器与自身按位异或来实现。</p>
+<pre><code class="language-assembly">section .text
+    global _start
+
+_start:
+    vxorpd xmm0, xmm0, xmm0      ; 将 XMM0 设置为 0.0
+    ; 继续处理
+    mov eax, 60                  ; 系统调用号 (sys_exit)
+    xor edi, edi                 ; 状态码 0
+    syscall                      ; 触发系统调用退出程序
+</code></pre>
+<p>在这个示例中，<code>vxorpd</code> 指令用于将寄存器设置为0。</p>
+<h4>位操作的应用</h4>
+<p>位操作在浮点代码中的应用非常广泛，以下是一些常见的应用场景：</p>
+<ol>
+<li><strong>浮点数的绝对值计算</strong>：通过清除符号位计算绝对值。</li>
+<li><strong>浮点数的取反操作</strong>：通过翻转符号位实现取反。</li>
+<li><strong>特殊值的生成</strong>：例如，通过将寄存器与自身按位异或生成0.0。</li>
+</ol>
+<h4>深入分析</h4>
+<ol>
+<li>
+<p><strong>位操作与浮点运算的结合</strong>：
+位操作提供了一种高效的方法来操作浮点数的位级表示，这在许多情况下比传统的浮点运算更快。例如，计算绝对值时，通过清除符号位可以避免浮点乘法或条件判断，从而提高性能。</p>
+</li>
+<li>
+<p><strong>性能优化</strong>：
+在性能优化中，合理使用位操作可以减少指令数量和计算时间。例如，使用 <code>vxorpd</code> 指令将寄存器设置为0比通过加载常量0再进行运算更高效。</p>
+</li>
+<li>
+<p><strong>位操作的灵活性</strong>：
+位操作的灵活性使其能够适用于多种浮点数操作场景。通过不同的位操作组合，可以实现复杂的浮点数处理任务，例如特殊值处理、范围检查等。</p>
+</li>
+</ol>
+<h4>结论</h4>
+<p>位操作在浮点代码中的应用是实现高效浮点数处理的重要技术。通过理解和掌握这些位操作指令及其应用场景，可以编写出更高效和灵活的浮点运算代码。在实际应用中，合理使用位操作可以显著提高代码性能和可读性。</p>
+<h3>引用</h3>
+
+    <h3>Python 文件</h3>
+    <pre><code># 04_3.11.5_在浮点代码中使用位操作
+
+"""
+Lecture: 03_程序的机器级表示/3.11_浮点代码
+Content: 04_3.11.5_在浮点代码中使用位操作
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

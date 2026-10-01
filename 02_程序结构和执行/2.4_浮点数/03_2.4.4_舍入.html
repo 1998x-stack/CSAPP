@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>2.4.4 舍入</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>03_2.4.4_舍入</h1>
+<pre><code>Lecture: 02_程序结构和执行/2.4_浮点数
+Content: 03_2.4.4_舍入
+</code></pre>
+<h3>2.4.4 舍入</h3>
+<h4>浮点数运算中的舍入机制</h4>
+<p>在计算机系统中，由于浮点数表示的范围和精度有限，浮点数运算只能近似真实的算术运算。因此，对于一个值 $ x $，通常需要一个系统的方法来找到可以在所需浮点格式中表示的“最接近”的匹配值 $ x' $。这就是舍入操作的任务。一个关键问题是定义在两个可能结果之间的值该向哪个方向舍入。例如，如果我有 $1.50 并希望将其舍入到最接近的美元，那么结果应该是 $1 还是 $2？IEEE 浮点数格式定义了四种不同的舍入模式。默认方法是寻找最接近的匹配值，而其他三种方法可用于计算实际数值的上下限。</p>
+<h4>四种舍入模式</h4>
+<ol>
+<li>
+<p><strong>向偶数舍入（Round-to-Even）：</strong> 又称向最接近舍入，是默认模式。它尝试找到最接近的匹配值。例如，它将 $1.40 舍入到 $1，将 $1.60 舍入到 $2，因为这些是最接近的整美元值。对于刚好在两个可能结果之间的值，向偶数舍入采用使结果的最低有效位为偶数的惯例。因此，它将 $1.50 和 $2.50 都舍入到 $2。</p>
+</li>
+<li>
+<p><strong>向零舍入（Round-Toward-Zero）：</strong> 向零舍入将正数向下舍入，负数向上舍入。例如，它将 $1.40 舍入到 $1，将 $-1.50 舍入到 $-1。</p>
+</li>
+<li>
+<p><strong>向下舍入（Round-Down）：</strong> 向下舍入将所有数值向下舍入。例如，它将 $1.40 和 $1.60 都舍入到 $1，将 $-1.50 舍入到 $-2。</p>
+</li>
+<li>
+<p><strong>向上舍入（Round-Up）：</strong> 向上舍入将所有数值向上舍入。例如，它将 $1.40 和 $1.60 都舍入到 $2，将 $-1.50 舍入到 $-1。</p>
+</li>
+</ol>
+<p>图 2.37 说明了这四种舍入模式在将货币金额舍入到最接近的整美元时的应用。向偶数舍入在大多数实际情况下避免了统计偏差，它大约 50% 的时间向上舍入，50% 的时间向下舍入。</p>
+<h4>向偶数舍入的应用</h4>
+<p>向偶数舍入不仅适用于舍入到整数，当我们舍入到小数部分时同样适用。例如，当我们希望将小数舍入到最接近的百分位时，我们会将 1.2349999 舍入到 1.23，将 1.2350001 舍入到 1.24，因为这些值不在 1.23 和 1.24 的中间。另一方面，我们会将 1.2350000 和 1.2450000 都舍入到 1.24，因为 4 是偶数。</p>
+<p>同样地，向偶数舍入可以应用于二进制小数。当我们希望将二进制数舍入到最接近的四分之一（即二进制点右边的两位）时，假设数值为 10.000112（二进制），我们将其舍入到 10.00；对于 10.001102，我们将其舍入到 10.01。</p>
+<h4>数值示例</h4>
+<p>我们来看几个具体的二进制小数舍入示例：</p>
+<ul>
+<li>10.1112 (二进制 2.875) 向最接近偶数舍入为 11.00 (二进制 3)。</li>
+<li>11.0102 (二进制 3.25) 向最接近偶数舍入为 11.00 (二进制 3)。</li>
+<li>11.0002 (二进制 3) 保持不变。</li>
+<li>10.1102 (二进制 2.75) 向最接近偶数舍入为 10.10 (二进制 2.5)。</li>
+</ul>
+<h4>结论</h4>
+<p>通过了解浮点数的舍入机制，我们可以更准确地处理数值计算中的舍入问题。不同的舍入模式在不同的应用场景中具有各自的优势和局限性。向偶数舍入通过避免系统性偏差，在实际应用中广泛使用，特别是在金融计算和科学计算中。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 03_2.4.4_舍入
+
+"""
+Lecture: 02_程序结构和执行/2.4_浮点数
+Content: 03_2.4.4_舍入
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

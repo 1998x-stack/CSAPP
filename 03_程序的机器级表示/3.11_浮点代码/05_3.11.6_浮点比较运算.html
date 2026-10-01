@@ -1,0 +1,154 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.11.6 浮点比较运算</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>05_3.11.6_浮点比较运算</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.11_浮点代码
+Content: 05_3.11.6_浮点比较运算
+</code></pre>
+<h3>3.11.6 浮点比较运算</h3>
+<h4>概述</h4>
+<p>浮点比较运算是处理浮点数时常用的操作之一。在 x86-64 架构中，AVX2 指令集提供了两条用于比较浮点数的指令：<code>ucomiss</code> 和 <code>ucomisd</code>。这些指令类似于整数比较指令（如 <code>cmp</code>），它们通过比较两个操作数来设置条件码，以指示它们的相对大小。理解这些指令的使用和它们设置的条件码对于编写高效的浮点运算代码非常重要。</p>
+<h4>浮点比较指令</h4>
+<p>以下是两条主要的浮点比较指令及其功能：</p>
+<ul>
+<li><code>ucomiss S1, S2</code>：比较两个单精度浮点数（S1 和 S2），计算 S2 - S1。</li>
+<li><code>ucomisd S1, S2</code>：比较两个双精度浮点数（S1 和 S2），计算 S2 - S1。</li>
+</ul>
+<p>这些指令类似于整数比较指令 <code>cmp</code>，但是它们的操作顺序相反：操作数 S2 必须在 XMM 寄存器中，而操作数 S1 可以在 XMM 寄存器或内存中。</p>
+<h4>条件码设置</h4>
+<p>浮点比较指令设置三个条件码：零标志（ZF）、进位标志（CF）和奇偶标志（PF）。这些条件码用于指示两个操作数的相对大小或是否存在 NaN（非数值）情况。</p>
+<table>
+<thead>
+<tr>
+<th>比较结果</th>
+<th>CF</th>
+<th>ZF</th>
+<th>PF</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>无序（Unordered）</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>S2 &lt; S1</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>S2 = S1</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>S2 &gt; S1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>无序</strong>：当任一操作数为 NaN 时，比较结果为无序，所有条件码均为1。可以通过 <code>jp</code>（jump on parity）指令跳转到处理无序结果的代码段。</li>
+<li><strong>S2 &lt; S1</strong>：进位标志（CF）为1，零标志（ZF）和奇偶标志（PF）为0。</li>
+<li><strong>S2 = S1</strong>：零标志（ZF）为1，进位标志（CF）和奇偶标志（PF）为0。</li>
+<li><strong>S2 &gt; S1</strong>：所有条件码均为0。</li>
+</ul>
+<h4>示例分析</h4>
+<p>以下是一个包含浮点比较的C函数示例，以及生成的汇编代码：</p>
+<pre><code class="language-c">typedef enum {NEG, ZERO, POS, OTHER} range_t;
+
+range_t find_range(float x) {
+    int result;
+    if (x &lt; 0)
+        result = NEG;
+    else if (x == 0)
+        result = ZERO;
+    else if (x &gt; 0)
+        result = POS;
+    else
+        result = OTHER;
+    return result;
+}
+</code></pre>
+<p>其对应的 x86-64 汇编代码如下：</p>
+<pre><code class="language-assembly">range_t find_range(float x)
+x in %xmm0
+
+1 find_range:
+2 vxorps %xmm1, %xmm1, %xmm1      ; 将 %xmm1 置为0
+3 vucomiss %xmm0, %xmm1           ; 比较 x 和 0
+4 ja .L5                          ; 如果 x &gt; 0，跳转到 .L5
+5 vucomiss %xmm1, %xmm0           ; 再次比较 0 和 x
+6 jp .L8                          ; 如果 x 是 NaN，跳转到 .L8
+7 movl $1, %eax                   ; result = ZERO
+8 je .L3                          ; 如果 x == 0，跳转到 .L3
+9 .L8: posornan:
+10 vucomiss .LC0(%rip), %xmm0     ; 比较 x 和 0
+11 setbe %al                      ; 设置 AL = (x &lt;= 0 ? 1 : 0)
+12 movzbl %al, %eax               ; 将 AL 扩展到 EAX
+13 addl $2, %eax                  ; result += 2 (POS for &gt; 0, OTHER for NaN)
+14 ret                            ; 返回 result
+15 .L5: neg:
+16 movl $0, %eax                  ; result = NEG
+17 .L3: done:
+18 rep; ret                       ; 返回 result
+</code></pre>
+<h4>深入分析</h4>
+<ol>
+<li>
+<p><strong>条件码的使用</strong>：</p>
+<ul>
+<li><code>ucomiss</code> 和 <code>ucomisd</code> 指令通过比较两个浮点数来设置条件码，以指示它们的相对大小。通过检查这些条件码，可以决定下一步的操作，例如跳转到不同的代码段处理不同的情况。</li>
+</ul>
+</li>
+<li>
+<p><strong>NaN 处理</strong>：</p>
+<ul>
+<li>浮点比较中的一个重要特性是处理 NaN。当任一操作数为 NaN 时，比较结果为无序，可以通过检查奇偶标志（PF）来检测这一情况。在代码示例中，使用 <code>jp</code> 指令跳转到处理 NaN 的代码段。</li>
+</ul>
+</li>
+<li>
+<p><strong>优化和性能</strong>：</p>
+<ul>
+<li>使用浮点比较指令时，合理设置条件码检查和跳转指令可以优化代码性能。通过减少不必要的比较和跳转，可以提高代码执行效率。</li>
+</ul>
+</li>
+</ol>
+<h4>结论</h4>
+<p>浮点比较运算在处理浮点数时非常重要，通过理解 <code>ucomiss</code> 和 <code>ucomisd</code> 指令的使用及其条件码设置，可以编写出高效的浮点比较代码。合理处理 NaN 情况和优化条件码检查是编写高性能浮点运算代码的关键。</p>
+<h3>引用</h3>
+
+    <h3>Python 文件</h3>
+    <pre><code># 05_3.11.6_浮点比较运算
+
+"""
+Lecture: 03_程序的机器级表示/3.11_浮点代码
+Content: 05_3.11.6_浮点比较运算
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

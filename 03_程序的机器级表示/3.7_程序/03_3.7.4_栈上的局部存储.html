@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.7.4 栈上的局部存储</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>03_3.7.4_栈上的局部存储</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.7_程序
+Content: 03_3.7.4_栈上的局部存储
+</code></pre>
+<h3>深入分析《CS:APP》中的栈上的局部存储（Stack-based Local Storage）章节（3.7.4）</h3>
+<h4>1. 栈的基本概念</h4>
+<p>栈（Stack）是一种后进先出（LIFO，Last In, First Out）的数据结构。在程序执行过程中，栈用来存储函数调用的信息，包括函数的参数、局部变量、返回地址等。栈的操作主要包括压栈（Push）和弹栈（Pop）。</p>
+<h4>2. 栈帧（Stack Frame）</h4>
+<p>每当函数被调用时，系统会在栈上分配一个新的栈帧（Stack Frame）。栈帧用于保存函数的局部变量、返回地址、保存的寄存器值等。栈帧的结构因体系结构和编译器而异，但通常包括以下几个部分：</p>
+<ul>
+<li><strong>返回地址（Return Address）：</strong> 存储函数返回时的地址。</li>
+<li><strong>保存的帧指针（Saved Frame Pointer）：</strong> 存储调用者的栈帧指针。</li>
+<li><strong>局部变量（Local Variables）：</strong> 存储函数的局部变量。</li>
+<li><strong>临时数据（Temporary Data）：</strong> 存储临时数据，例如中间计算结果。</li>
+</ul>
+<h4>3. 函数调用和返回过程中的栈操作</h4>
+<p>在函数调用过程中，栈的操作步骤如下：</p>
+<ol>
+<li><strong>调用者保存上下文：</strong> 调用者（Caller）将必要的寄存器值保存到栈中，以便在函数返回后恢复现场。</li>
+<li><strong>参数传递：</strong> 调用者将参数压入栈中。</li>
+<li><strong>跳转到被调用函数：</strong> 调用者将返回地址压入栈中，并跳转到被调用函数（Callee）的入口。</li>
+<li><strong>被调用者设置栈帧：</strong> 被调用者将帧指针保存到栈中，并更新帧指针以指向新的栈帧。</li>
+<li><strong>局部变量分配：</strong> 被调用者在栈上分配空间以存储局部变量。</li>
+</ol>
+<p>函数返回时，栈的操作步骤如下：</p>
+<ol>
+<li><strong>恢复局部变量：</strong> 被调用者释放局部变量所占的栈空间。</li>
+<li><strong>恢复帧指针：</strong> 被调用者从栈中恢复帧指针。</li>
+<li><strong>跳转到返回地址：</strong> 被调用者从栈中弹出返回地址，并跳转到该地址。</li>
+<li><strong>调用者恢复上下文：</strong> 调用者从栈中恢复之前保存的寄存器值。</li>
+</ol>
+<h4>4. 示例：栈上的局部存储操作</h4>
+<p>以下是一个具体的示例，展示了函数调用过程中的栈操作。假设有一个简单的函数 <code>foo</code>，它接收两个参数并返回它们的和：</p>
+<pre><code class="language-c">int foo(int a, int b) {
+    int sum = a + b;
+    return sum;
+}
+</code></pre>
+<p>在汇编语言中，这个函数的实现可能如下：</p>
+<pre><code class="language-assembly">foo:
+    pushl %ebp              ; 保存调用者的帧指针
+    movl %esp, %ebp         ; 设置新的帧指针
+    subl $8, %esp           ; 为局部变量分配空间
+    movl 8(%ebp), %eax      ; 读取参数a
+    movl 12(%ebp), %edx     ; 读取参数b
+    addl %edx, %eax         ; 计算a + b
+    movl %eax, -4(%ebp)     ; 将结果存储到局部变量sum
+    movl -4(%ebp), %eax     ; 将sum的值加载到eax
+    leave                   ; 恢复帧指针和栈指针
+    ret                     ; 返回调用者
+</code></pre>
+<p>上述代码展示了函数 <code>foo</code> 在栈上的操作，包括压栈保存帧指针、分配局部变量空间、计算结果以及恢复栈帧和返回地址。</p>
+<h4>5. 栈上的局部存储的优化</h4>
+<p>在编写高效的程序时，栈上的局部存储需要进行优化，以减少栈空间的使用和提高程序的执行效率。以下是一些优化策略：</p>
+<ul>
+<li><strong>内联函数（Inline Functions）：</strong> 对于小型函数，可以使用内联方式，以避免函数调用的开销。</li>
+<li><strong>寄存器分配：</strong> 优化寄存器分配，以减少对栈的依赖。</li>
+<li><strong>栈空间复用：</strong> 尽量复用栈空间，以减少内存使用。</li>
+<li><strong>尾调用优化（Tail Call Optimization）：</strong> 对于尾递归函数，可以优化为循环，以避免递归调用的栈开销。</li>
+</ul>
+<h4>总结</h4>
+<p>栈上的局部存储是程序执行过程中管理函数调用和局部变量的重要机制。理解栈的结构和操作对于编写高效和可靠的程序至关重要。通过合理设计和优化，可以最大限度地利用栈空间，提高程序的性能和稳定性。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 03_3.7.4_栈上的局部存储
+
+"""
+Lecture: 03_程序的机器级表示/3.7_程序
+Content: 03_3.7.4_栈上的局部存储
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

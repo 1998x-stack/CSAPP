@@ -1,0 +1,109 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.5.1 加载有效地址</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>00_3.5.1_加载有效地址</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.5_算术和逻辑运算
+Content: 00_3.5.1_加载有效地址
+</code></pre>
+<h3>3.5.1 加载有效地址</h3>
+<p>在程序的机器级表示中，<code>LEA</code>（Load Effective Address）指令是一个非常重要的概念，尤其是在 x86-64 架构中。<code>LEA</code>指令被广泛用于地址计算，但它实际上并不执行内存访问操作。以下是对这一章节的详细分析。</p>
+<h4><code>LEA</code> 指令的基本功能</h4>
+<p><code>LEA</code> 指令的形式如下：</p>
+<pre><code>leaq S, D
+</code></pre>
+<p>其中，<code>S</code> 是源操作数，表示一个内存地址表达式，而 <code>D</code> 是目的操作数，必须是一个寄存器。<code>LEA</code> 指令的作用是将源操作数 <code>S</code> 的有效地址计算出来，并存储到目的操作数 <code>D</code> 中。注意，<code>LEA</code> 指令并不实际读取内存中的数据，它只是进行地址计算。</p>
+<p>例如，指令 <code>leaq 7(%rdx,%rdx,4), %rax</code> 会将 <code>%rdx</code> 寄存器中的值乘以 4 加上自身再加上 7，并将结果存储到 <code>%rax</code> 寄存器中。假设 <code>%rdx</code> 的初始值为 <code>x</code>，则执行后 <code>%rax</code> 中的值为 <code>5x + 7</code>。</p>
+<h4><code>LEA</code> 指令的用途</h4>
+<ol>
+<li><strong>指针运算</strong>：<code>LEA</code> 指令可以用于指针运算。例如，<code>leaq (%rdx,%rdx,4), %rax</code> 可以快速计算出复杂的地址表达式，而无需临时变量。</li>
+<li><strong>地址计算</strong>：在数组和结构体操作中，<code>LEA</code> 指令可以用于高效地计算元素地址。例如，访问二维数组的元素时，<code>LEA</code> 可以用来计算偏移量。</li>
+<li><strong>算术运算</strong>：尽管 <code>LEA</code> 是一个地址计算指令，但它也可以用于一般的算术运算，例如加法和乘法，这在优化编译器生成代码时非常有用。</li>
+</ol>
+<h4><code>LEA</code> 指令的优势</h4>
+<ol>
+<li><strong>效率高</strong>：<code>LEA</code> 指令可以在一个指令中完成复杂的地址计算，减少了指令的数量，提高了执行效率。</li>
+<li><strong>灵活性强</strong>：<code>LEA</code> 指令可以处理各种复杂的地址表达式，支持多种操作数组合形式。</li>
+<li><strong>无副作用</strong>：由于 <code>LEA</code> 指令不实际访问内存，只进行地址计算，因此不会引发内存访问错误。</li>
+</ol>
+<h4>示例分析</h4>
+<p>考虑以下 C 代码：</p>
+<pre><code class="language-c">long scale(long x, long y, long z) {
+    long t = x + 4 * y + 12 * z;
+    return t;
+}
+</code></pre>
+<p>编译后的汇编代码如下：</p>
+<pre><code class="language-assembly">scale:
+    leaq (%rdi,%rsi,4), %rax   # 计算 x + 4*y
+    leaq (%rdx,%rdx,2), %rdx   # 计算 z + 2*z = 3*z
+    leaq (%rax,%rdx,4), %rax   # 计算 (x+4*y) + 4*(3*z) = x + 4*y + 12*z
+    ret
+</code></pre>
+<p>在这个例子中，<code>LEA</code> 指令被用于高效地计算复杂的算术表达式，而不需要额外的临时变量和指令。</p>
+<h4>练习题</h4>
+<p>假设寄存器 <code>%rbx</code> 保存了值 <code>p</code>，寄存器 <code>%rdx</code> 保存了值 <code>q</code>，下表展示了不同 <code>LEA</code> 指令对 <code>%rax</code> 寄存器值的影响：</p>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>leaq 9(%rdx), %rax</td>
+<td>%rax = q + 9</td>
+</tr>
+<tr>
+<td>leaq (%rdx,%rbx), %rax</td>
+<td>%rax = q + p</td>
+</tr>
+<tr>
+<td>leaq (%rdx,%rbx,3), %rax</td>
+<td>%rax = q + 3*p</td>
+</tr>
+<tr>
+<td>leaq 2(%rbx,%rbx,7), %rax</td>
+<td>%rax = p + 7*p + 2</td>
+</tr>
+<tr>
+<td>leaq 0xE(,%rdx,3), %rax</td>
+<td>%rax = 3*q + 0xE</td>
+</tr>
+<tr>
+<td>leaq 6(%rbx,%rdx,7), %rax</td>
+<td>%rax = q + 7*p + 6</td>
+</tr>
+</tbody>
+</table>
+<p>通过这些示例可以看出，<code>LEA</code> 指令能够灵活地处理各种复杂的地址和算术运算，极大地提高了代码的执行效率和可读性。</p>
+<p>综上所述，<code>LEA</code> 指令在 x86-64 架构中的应用非常广泛，不仅在地址计算中发挥了重要作用，而且在编译器优化和高效代码生成中也具有不可替代的地位。理解和掌握 <code>LEA</code> 指令的使用方法，对深入学习和优化程序性能具有重要意义。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 00_3.5.1_加载有效地址
+
+"""
+Lecture: 03_程序的机器级表示/3.5_算术和逻辑运算
+Content: 00_3.5.1_加载有效地址
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

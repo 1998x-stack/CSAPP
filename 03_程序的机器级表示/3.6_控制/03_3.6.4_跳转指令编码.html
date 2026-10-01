@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.6.4 跳转指令编码</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>03_3.6.4_跳转指令编码</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.6_控制
+Content: 03_3.6.4_跳转指令编码
+</code></pre>
+<h3>3.6.4 跳转指令编码</h3>
+<p>在机器级编程中，跳转指令的编码方式对于程序的控制流至关重要。跳转指令允许程序在特定条件下改变执行路径，跳转到新的位置执行代码。以下是对跳转指令编码的详细分析。</p>
+<h4>跳转指令的类型</h4>
+<p>跳转指令主要分为两类：无条件跳转（unconditional jump）和条件跳转（conditional jump）。</p>
+<ol>
+<li>
+<p><strong>无条件跳转 (jmp)</strong>：</p>
+<ul>
+<li><strong>直接跳转 (direct jump)</strong>：跳转目标在指令中直接编码。例如，<code>jmp .L1</code> 无条件跳转到标签 <code>.L1</code>。</li>
+<li><strong>间接跳转 (indirect jump)</strong>：跳转目标存储在寄存器或内存位置中。例如，<code>jmp *%rax</code> 使用 <code>%rax</code> 寄存器中的值作为跳转目标地址。</li>
+</ul>
+</li>
+<li>
+<p><strong>条件跳转</strong>：
+条件跳转指令根据条件码的状态决定是否跳转。常见的条件跳转指令包括：</p>
+<ul>
+<li><code>je</code> 或 <code>jz</code>：当零标志 (ZF) 为 1 时跳转（相等/零）。</li>
+<li><code>jne</code> 或 <code>jnz</code>：当零标志 (ZF) 为 0 时跳转（不相等/非零）。</li>
+<li><code>jg</code> 或 <code>jnle</code>：当 SF 和 OF 异或为 0 且 ZF 为 0 时跳转（大于，带符号）。</li>
+<li><code>jl</code> 或 <code>jnge</code>：当 SF 和 OF 异或为 1 时跳转（小于，带符号）。</li>
+<li>其他条件跳转指令类似，都是根据不同的条件码状态进行跳转。</li>
+</ul>
+</li>
+</ol>
+<h4>跳转指令的编码方法</h4>
+<p>跳转指令的编码方式有多种，常见的是 PC 相对地址编码（PC-relative encoding）和绝对地址编码（absolute address encoding）。</p>
+<ol>
+<li>
+<p><strong>PC 相对地址编码</strong>：</p>
+<ul>
+<li>这种编码方式计算跳转目标地址与跳转指令之后一条指令地址之间的偏移量，并将该偏移量编码在跳转指令中。这种方式可以使用 1、2 或 4 字节来编码偏移量。</li>
+<li>例如，指令 <code>jmp .L2</code> 编码为 <code>eb 03</code>，其中 <code>03</code> 表示偏移量为3个字节。</li>
+</ul>
+</li>
+<li>
+<p><strong>绝对地址编码</strong>：</p>
+<ul>
+<li>使用 4 字节直接指定跳转目标地址。这种方式较少使用，因为 PC 相对地址编码更为灵活且节省空间。</li>
+</ul>
+</li>
+</ol>
+<h4>实例分析</h4>
+<p>考虑以下汇编代码示例：</p>
+<pre><code class="language-assembly">1  movq %rdi, %rax
+2  jmp .L2
+3  .L3:
+4  sarq %rax
+5  .L2:
+6  testq %rax, %rax
+7  jg .L3
+8  rep; ret
+</code></pre>
+<p>该代码包含两个跳转指令：第2行的 <code>jmp</code> 指令向前跳转，第7行的 <code>jg</code> 指令向后跳转。</p>
+<p>汇编生成的二进制代码如下：</p>
+<pre><code class="language-assembly">1  0:  48 89 f8        mov %rdi,%rax
+2  3:  eb 03           jmp 8 &lt;loop+0x8&gt;
+3  5:  48 d1 f8        sar %rax
+4  8:  48 85 c0        test %rax,%rax
+5  b:  7f f8           jg 5 &lt;loop+0x5&gt;
+6  d:  f3 c3           repz retq
+</code></pre>
+<p>在这个二进制代码中，第2行 <code>jmp</code> 指令的目标地址编码为 <code>03</code>，表示从当前地址开始偏移3个字节，即跳转到地址 <code>0x8</code>。第5行 <code>jg</code> 指令的目标地址编码为 <code>f8</code>，使用两补数表示负8，表示跳转到地址 <code>0x5</code>。</p>
+<p>通过这种方式，跳转指令可以紧凑地编码，并且目标地址可以在链接和加载过程中灵活调整。</p>
+<h3>总结</h3>
+<p>跳转指令的编码对于控制程序流程至关重要。PC 相对地址编码提供了一种高效且灵活的方法来实现跳转，节省了编码空间并允许程序在内存中重新定位时无需修改跳转指令。理解跳转指令的编码方式对于编写和优化机器级程序具有重要意义。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 03_3.6.4_跳转指令编码
+
+"""
+Lecture: 03_程序的机器级表示/3.6_控制
+Content: 03_3.6.4_跳转指令编码
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

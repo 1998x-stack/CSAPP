@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.11.1 浮点移动和转换操作</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>00_3.11.1_浮点移动和转换操作</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.11_浮点代码
+Content: 00_3.11.1_浮点移动和转换操作
+</code></pre>
+<h3>3.11.1 浮点移动和转换操作</h3>
+<h4>概述</h4>
+<p>浮点移动和转换操作是浮点运算中至关重要的一部分，涉及将浮点数据在寄存器和内存之间进行传输，以及在不同的浮点格式之间进行转换。浮点移动操作通常用于单个浮点数值（标量），而浮点转换操作则涉及浮点数和整数之间的相互转换。</p>
+<h4>浮点移动操作</h4>
+<p>浮点移动操作的目的是在寄存器之间、寄存器与内存之间传输浮点数据。这些操作的效率和准确性对于高性能计算至关重要。常见的浮点移动指令包括：</p>
+<ul>
+<li><code>vmovss</code>: 单精度浮点数传输指令，用于32位数据。</li>
+<li><code>vmovsd</code>: 双精度浮点数传输指令，用于64位数据。</li>
+<li><code>vmovaps</code>: 对齐的单精度浮点数传输指令，确保数据在内存中是对齐的。</li>
+<li><code>vmovapd</code>: 对齐的双精度浮点数传输指令。</li>
+</ul>
+<p>这些指令的使用情景如下：</p>
+<ul>
+<li><code>vmovss M32 X</code>: 将32位内存数据传输到XMM寄存器。</li>
+<li><code>vmovss X M32</code>: 将XMM寄存器中的32位数据传输到内存。</li>
+<li><code>vmovsd M64 X</code>: 将64位内存数据传输到XMM寄存器。</li>
+<li><code>vmovsd X M64</code>: 将XMM寄存器中的64位数据传输到内存。</li>
+</ul>
+<h4>浮点转换操作</h4>
+<p>浮点转换操作用于在不同格式之间进行数据转换，常见的转换包括浮点数与整数之间的相互转换。常见的转换指令包括：</p>
+<ul>
+<li><code>vcvttss2si</code>: 将单精度浮点数转换为32位整数，使用截断模式。</li>
+<li><code>vcvttsd2si</code>: 将双精度浮点数转换为32位整数，使用截断模式。</li>
+<li><code>vcvttss2siq</code>: 将单精度浮点数转换为64位整数，使用截断模式。</li>
+<li><code>vcvttsd2siq</code>: 将双精度浮点数转换为64位整数，使用截断模式。</li>
+</ul>
+<p>这些指令通常用于寄存器之间的数据转换。例如：</p>
+<ul>
+<li><code>vcvttss2si %xmm0, %eax</code>: 将XMM寄存器中的单精度浮点数转换为EAX寄存器中的32位整数。</li>
+<li><code>vcvttsd2si %xmm0, %eax</code>: 将XMM寄存器中的双精度浮点数转换为EAX寄存器中的32位整数。</li>
+</ul>
+<p>三操作数格式的浮点转换指令包括：</p>
+<ul>
+<li><code>vcvtsi2ss</code>: 将整数转换为单精度浮点数。</li>
+<li><code>vcvtsi2sd</code>: 将整数转换为双精度浮点数。</li>
+<li><code>vcvtsi2ssq</code>: 将64位整数转换为单精度浮点数。</li>
+<li><code>vcvtsi2sdq</code>: 将64位整数转换为双精度浮点数。</li>
+</ul>
+<p>这些指令的使用示例：</p>
+<ul>
+<li><code>vcvtsi2ss %eax, %xmm1, %xmm0</code>: 将EAX寄存器中的32位整数转换为单精度浮点数，并存储在XMM0寄存器中。</li>
+<li><code>vcvtsi2sd %rax, %xmm1, %xmm0</code>: 将RAX寄存器中的64位整数转换为双精度浮点数，并存储在XMM0寄存器中。</li>
+</ul>
+<h4>具体示例分析</h4>
+<p>以一个具体的C语言函数为例，展示浮点移动和转换操作的实际应用：</p>
+<pre><code class="language-c">float float_mov(float v1, float *src, float *dst) {
+    float v2 = *src;
+    *dst = v1;
+    return v2;
+}
+</code></pre>
+<p>对应的x86-64汇编代码如下：</p>
+<pre><code class="language-assembly">float_mov:
+    vmovaps %xmm0, %xmm1       ; 复制v1到XMM1寄存器
+    vmovss (%rdi), %xmm0       ; 从内存地址RDI读取单精度浮点数v2到XMM0
+    vmovss %xmm1, (%rsi)       ; 将XMM1中的v1写入内存地址RSI
+    ret                        ; 返回v2
+</code></pre>
+<p>在这个示例中，<code>vmovaps</code>用于在XMM寄存器之间传输数据，而<code>vmovss</code>用于在内存和XMM寄存器之间传输单精度浮点数。</p>
+<h4>深入分析</h4>
+<p>浮点移动和转换操作在现代计算中尤为重要，尤其是在科学计算和高性能计算领域。这些操作需要考虑以下几个方面：</p>
+<ol>
+<li><strong>内存对齐</strong>：虽然这些指令可以处理未对齐的数据，但对齐数据可以提高性能。例如，32位数据应当4字节对齐，64位数据应当8字节对齐。</li>
+<li><strong>指令选择</strong>：编译器在选择具体指令时会根据数据类型和操作需求进行优化选择。例如，当数据是对齐的，编译器更倾向于使用<code>vmovaps</code>和<code>vmovapd</code>来提高效率。</li>
+<li><strong>数据精度</strong>：浮点数的精度和范围是不同的，例如单精度浮点数和双精度浮点数。选择合适的浮点格式和指令可以在满足计算精度的同时提高计算性能。</li>
+<li><strong>转换精度</strong>：浮点数与整数之间的转换需要特别注意精度问题，例如截断和四舍五入等操作方式会影响最终结果。</li>
+</ol>
+<h4>结论</h4>
+<p>理解和优化浮点移动和转换操作对于提高程序性能和计算精度至关重要。通过深入理解这些操作的机制，程序员可以编写出更加高效和准确的代码，特别是在涉及大量浮点计算的应用中。</p>
+<h3>引用</h3>
+
+    <h3>Python 文件</h3>
+    <pre><code># 00_3.11.1_浮点移动和转换操作
+
+"""
+Lecture: 03_程序的机器级表示/3.11_浮点代码
+Content: 00_3.11.1_浮点移动和转换操作
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

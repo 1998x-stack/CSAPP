@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.10.1 理解指针</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>00_3.10.1_理解指针</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.10_在机器级程序中结合控制和数据
+Content: 00_3.10.1_理解指针
+</code></pre>
+<h2>3.10.1 理解指针</h2>
+<h3>章节概述</h3>
+<p>在《深入理解计算机系统》第3章“程序的机器级表示”中，第3.10.1节深入探讨了C语言中指针的基本概念和机器级实现。指针是C语言中的一个核心特性，它为引用不同数据结构的元素提供了统一的方法。尽管指针常常让初学者感到困惑，但其背后的基本概念相对简单。本节内容包括指针的类型和值、指针的创建与解引用、指针运算、指针与数组的关系，以及指针在函数调用中的应用。</p>
+<h3>指针的类型和值</h3>
+<ul>
+<li><strong>指针类型</strong>：每个指针都有一个关联的类型，这个类型指示了指针所指向的对象类型。例如，<code>int *ip;</code> 表示<code>ip</code>是一个指向<code>int</code>类型对象的指针，<code>char **cpp;</code> 表示<code>cpp</code>是一个指向<code>char</code>类型指针的指针。</li>
+<li><strong>指针值</strong>：指针的值是某个指定类型对象的地址。特殊的<code>NULL</code>值表示指针不指向任何地方。</li>
+</ul>
+<h3>指针的创建与解引用</h3>
+<ul>
+<li><strong>创建指针</strong>：使用<code>&amp;</code>操作符可以生成指向变量的指针。例如，<code>int x; int *p = &amp;x;</code> 表示创建一个指向变量<code>x</code>的指针<code>p</code>。</li>
+<li><strong>解引用指针</strong>：使用<code>*</code>操作符可以解引用指针，获取或设置指针指向的内存位置的值。例如，<code>*p = 10;</code> 表示将指针<code>p</code>指向的内存位置的值设置为10。</li>
+</ul>
+<h3>指针运算</h3>
+<p>指针运算允许对指针进行加减运算，结果根据指针所引用的数据类型的大小进行缩放。例如，如果<code>p</code>是一个指向<code>int</code>类型数据的指针，其值为<code>xp</code>，则表达式<code>p+i</code>的值为<code>xp + L * i</code>，其中<code>L</code>是<code>int</code>类型的数据大小。</p>
+<h3>指针与数组的关系</h3>
+<p>数组和指针在C语言中有密切的关系。数组名在表达式中通常会被转换为指向其第一个元素的指针。例如，<code>A[i]</code>可以表示为<code>*(A+i)</code>，这计算了数组<code>A</code>中第<code>i</code>个元素的地址并访问该地址的值。</p>
+<h3>示例分析</h3>
+<p>假设有以下代码：</p>
+<pre><code class="language-c">int *ip;
+char **cpp;
+</code></pre>
+<ul>
+<li><code>ip</code>是一个指向<code>int</code>类型对象的指针，其值是一个地址。</li>
+<li><code>cpp</code>是一个指向<code>char</code>类型指针的指针，其值也是一个地址。</li>
+</ul>
+<p>以下是一些常见的指针操作及其汇编代码实现：</p>
+<ul>
+<li>
+<p><strong>创建指针</strong>：</p>
+<pre><code class="language-c">int x;
+int *p = &amp;x;
+</code></pre>
+<p>汇编代码：</p>
+<pre><code class="language-assembly">leaq x(%rip), %rax  # 生成指针p，指向变量x
+</code></pre>
+</li>
+<li>
+<p><strong>解引用指针</strong>：</p>
+<pre><code class="language-c">*p = 10;
+</code></pre>
+<p>汇编代码：</p>
+<pre><code class="language-assembly">movl $10, (%rax)  # 将10存储到指针p指向的内存位置
+</code></pre>
+</li>
+</ul>
+<h3>指针运算和类型转换</h3>
+<p>指针运算中的类型转换不会改变指针的值，但会改变其类型。例如，如果<code>p</code>是一个<code>char *</code>类型的指针，则表达式<code>(int *)p + 1</code>计算的结果是<code>p + 4</code>，而<code>(int *)(p + 1)</code>计算的结果是<code>p + 1</code>。</p>
+<h3>函数指针</h3>
+<p>指针还可以指向函数，从而允许在程序的不同部分存储和传递代码引用。例如：</p>
+<pre><code class="language-c">int fun(int x, int *p);
+int (*fp)(int, int *);
+fp = fun;
+int result = fp(3, &amp;y);
+</code></pre>
+<p>上述代码定义了一个函数指针<code>fp</code>，并将其指向函数<code>fun</code>，然后通过指针调用函数。</p>
+<h3>小结</h3>
+<p>指针是C语言中的一个强大工具，通过理解指针的类型和值、创建与解引用、指针运算以及指针与数组的关系，可以更好地编写和调试程序。指针还可以指向函数，为代码的存储和传递提供了灵活性。掌握这些基本概念对于深入理解程序的机器级表示和实现至关重要。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 00_3.10.1_理解指针
+
+"""
+Lecture: 03_程序的机器级表示/3.10_在机器级程序中结合控制和数据
+Content: 00_3.10.1_理解指针
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

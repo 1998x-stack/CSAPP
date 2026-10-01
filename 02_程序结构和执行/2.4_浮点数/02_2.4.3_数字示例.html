@@ -1,0 +1,95 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>2.4.3 数字示例</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>02_2.4.3_数字示例</h1>
+<pre><code>Lecture: 02_程序结构和执行/2.4_浮点数
+Content: 02_2.4.3_数字示例
+</code></pre>
+<h3>2.4.3 数字示例</h3>
+<p>在本节中，我们将详细分析浮点数表示中的数字示例，特别是基于《深入理解计算机系统》一书中的第 2.4.3 节内容。</p>
+<h4>浮点数表示概述</h4>
+<p>浮点数表示是一种用于表示实数的计算机格式。IEEE 754 标准定义了浮点数的表示方法，主要包括单精度（32 位）和双精度（64 位）两种格式。浮点数由三个部分组成：</p>
+<ol>
+<li><strong>符号位（Sign Bit, S）</strong>：决定数字的正负。</li>
+<li><strong>指数部分（Exponent, E）</strong>：表示数的规模（大小）。</li>
+<li><strong>尾数部分（Mantissa or Fraction, M）</strong>：表示数的精度。</li>
+</ol>
+<p>浮点数表示的核心是归一化表示和非归一化表示。归一化表示确保尾数的最高位为 1，而非归一化表示用于表示非常接近零的小数。</p>
+<h4>数字示例分析</h4>
+<p><strong>示例 1：6 位浮点数格式</strong></p>
+<p>假设我们有一个 6 位浮点数格式，其中指数部分占 3 位，尾数部分占 2 位，指数偏置值（Bias）为 $2^{3-1} - 1 = 3$。</p>
+<h5>示例 1.1：所有可表示的值</h5>
+<p>根据上面的格式，我们可以表示的数值范围包括：</p>
+<ul>
+<li>正零和负零</li>
+<li>非正规数（Denormalized Numbers）：当指数全为零时，表示的小数。</li>
+<li>归一化数（Normalized Numbers）：当指数不全为零或全为一时，表示的一般实数。</li>
+<li>正无穷和负无穷：当指数全为一且尾数全为零时表示无穷大。</li>
+<li>NaN（Not a Number）：当指数全为一且尾数不全为零时表示不是一个数字。</li>
+</ul>
+<h5>示例 1.2：数值分布</h5>
+<p>在图 2.34 中，展示了上述 6 位浮点数格式的所有可表示值。图 (a) 部分显示了所有可表示值（除了 NaN 之外），图 (b) 部分专注于 -1.0 到 +1.0 之间的数值。</p>
+<ol>
+<li><strong>无穷值</strong>：分别位于正负方向的极限。</li>
+<li><strong>归一化数值</strong>：最大值为 $\pm 14$，这些值分布较均匀。</li>
+<li><strong>非正规数值</strong>：这些值聚集在接近零的地方，用于表示非常小的数。</li>
+</ol>
+<p><strong>示例 2：8 位浮点数格式</strong></p>
+<p>假设我们有一个 8 位浮点数格式，其中指数部分占 4 位，尾数部分占 3 位，指数偏置值（Bias）为 $2^{4-1} - 1 = 7$。</p>
+<h5>示例 2.1：数值分布</h5>
+<p>在图 2.35 中，展示了上述 8 位浮点数格式的一些具体示例。该图分为三个区域，分别表示三类数值：</p>
+<ol>
+<li><strong>归一化数值</strong>：这些数值用于表示较大的范围，指数部分和尾数部分都参与计算。</li>
+<li><strong>非正规数值</strong>：这些数值用于表示接近零的小数，只使用尾数部分参与计算。</li>
+<li><strong>特殊值</strong>：包括正无穷、负无穷和 NaN，用于表示溢出和无意义的计算结果。</li>
+</ol>
+<h5>具体数值计算</h5>
+<p>对于每个数值，我们可以通过以下步骤进行转换和表示：</p>
+<ol>
+<li><strong>计算指数值</strong>：实际指数值 $E = e - Bias$。</li>
+<li><strong>计算尾数值</strong>：归一化数值的尾数为 $1 + f$，非正规数值的尾数为 $f$。</li>
+<li><strong>组合数值</strong>：根据公式 $V = (-1)^S \times M \times 2^E$ 计算最终数值。</li>
+</ol>
+<p>例如，假设一个 8 位浮点数表示如下：</p>
+<ul>
+<li>符号位 S = 0（正数）</li>
+<li>指数部分 E = 1001（二进制）</li>
+<li>尾数部分 M = 101（二进制）</li>
+</ul>
+<p>步骤如下：</p>
+<ol>
+<li>指数值 $e = 9$，实际指数 $E = 9 - 7 = 2$。</li>
+<li>尾数值 $f = 1.101$。</li>
+<li>组合数值 $V = (-1)^0 \times 1.101 \times 2^2 = 1.101 \times 4 = 5.5$。</li>
+</ol>
+<h4>结论</h4>
+<p>通过上述示例和详细分析，我们可以更清晰地理解浮点数的表示方法及其在计算机系统中的应用。这种表示方法通过符号位、指数部分和尾数部分的组合，实现了对极大和极小数值的高效表示和计算。然而，这种表示方法也存在一定的局限性，如精度损失和舍入误差等，因此在实际应用中需要注意这些问题。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 02_2.4.3_数字示例
+
+"""
+Lecture: 02_程序结构和执行/2.4_浮点数
+Content: 02_2.4.3_数字示例
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

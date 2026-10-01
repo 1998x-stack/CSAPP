@@ -1,0 +1,79 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.10.4 防止缓冲区溢出攻击</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>03_3.10.4_防止缓冲区溢出攻击</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.10_在机器级程序中结合控制和数据
+Content: 03_3.10.4_防止缓冲区溢出攻击
+</code></pre>
+<h2>3.10.4 防止缓冲区溢出攻击</h2>
+<h3>章节概述</h3>
+<p>在《深入理解计算机系统》第3章“程序的机器级表示”中，第3.10.4节讨论了防止缓冲区溢出攻击的各种机制。缓冲区溢出攻击已经变得非常普遍，并且对计算机系统造成了许多问题。现代编译器和操作系统已经实现了多种机制，以使这些攻击更难实施，并限制攻击者通过缓冲区溢出攻击控制系统的方式。本节内容主要介绍了Linux系统中最近版本的gcc所提供的防御机制。</p>
+<h3>堆栈随机化</h3>
+<p>堆栈随机化是指在程序运行时，通过在堆栈上分配一个随机大小的空间，使得每次程序运行时堆栈地址都不同，从而增加攻击者猜测堆栈地址的难度。例如，可以使用<code>alloca</code>函数在堆栈上分配指定字节数的空间，导致后续的堆栈位置随每次程序执行而变化。</p>
+<h3>示例分析</h3>
+<p>以下代码展示了如何确定一个典型的堆栈地址：</p>
+<pre><code class="language-c">int main() {
+    long local;
+    printf(&quot;local at %p\n&quot;, &amp;local);
+    return 0;
+}
+</code></pre>
+<p>运行该代码10000次，可以观察到堆栈地址的变化范围。例如，在32位模式下，地址范围约为223；在64位模式下，地址范围接近232。</p>
+<h3>堆栈保护</h3>
+<p>另一种防御机制是检测堆栈是否已被破坏。gcc最近的版本中包含了一种机制，即在生成的代码中插入“金丝雀”值，以检测缓冲区溢出。金丝雀值是在每次程序运行时随机生成的，并存储在局部缓冲区和堆栈状态之间。在函数返回之前，程序会检查金丝雀值是否被修改，如果是，程序会中止并报告错误。</p>
+<p>以下是启用堆栈保护的<code>echo</code>函数汇编代码：</p>
+<pre><code class="language-assembly">void echo() {
+1 echo:
+2     subq $24, %rsp        # 分配24字节堆栈空间
+3     movq %fs:40, %rax     # 检索金丝雀值
+4     movq %rax, 8(%rsp)    # 将金丝雀值存储在堆栈上
+5     xorl %eax, %eax       # 清空寄存器
+6     movq %rsp, %rdi       # 计算buf作为%rsp
+7     call gets             # 调用gets
+8     movq %rsp, %rdi       # 计算buf作为%rsp
+9     call puts             # 调用puts
+10    movq 8(%rsp), %rax    # 检索金丝雀值
+11    xorq %fs:40, %rax     # 与存储值比较
+12    je .L9                # 如果相等，跳转到ok
+13    call __stack_chk_fail # 堆栈损坏！
+14 .L9: ok:
+15    addq $24, %rsp        # 释放堆栈空间
+16    ret
+}
+</code></pre>
+<p>这段代码在堆栈保护启用时检索和存储金丝雀值，并在函数返回前比较该值。如果发现值已被修改，函数将调用错误例程。</p>
+<h3>限制可执行代码区域</h3>
+<p>最终的防御步骤是限制攻击者向系统中插入可执行代码的能力。可以通过限制哪些内存区域可以存储可执行代码来实现。例如，典型程序中只有编译器生成的代码部分需要是可执行的，其他部分可以限制为仅读写。x86架构引入了NX（No-Execute）位，将读取和执行访问模式分离，这使得堆栈可以标记为可读写但不可执行。</p>
+<h3>结合防御机制</h3>
+<p>上述防御机制，包括堆栈随机化、堆栈保护和限制可执行代码区域，是减少程序对缓冲区溢出攻击脆弱性的三种最常见方法。这些方法的共同特点是它们不需要程序员的特殊努力，并且几乎没有性能损失。每种方法单独使用时都可以减少漏洞，当它们结合使用时效果更佳。</p>
+<h3>总结</h3>
+<p>防止缓冲区溢出攻击需要多种防御机制的结合，包括堆栈随机化、堆栈保护和限制可执行代码区域。理解这些机制的基本原理和实现方法，有助于编写更加安全和健壮的程序。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 03_3.10.4_防止缓冲区溢出攻击
+
+"""
+Lecture: 03_程序的机器级表示/3.10_在机器级程序中结合控制和数据
+Content: 03_3.10.4_防止缓冲区溢出攻击
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

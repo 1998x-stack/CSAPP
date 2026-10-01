@@ -1,0 +1,132 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.7.1 运行时栈</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>00_3.7.1_运行时栈</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.7_程序
+Content: 00_3.7.1_运行时栈
+</code></pre>
+<h3>3.7.1 运行时栈</h3>
+<p>在机器级编程中，运行时栈（run-time stack）是管理函数调用和内存分配的重要机制。它采用先进后出的（Last In, First Out, LIFO）原则，支持临时存储局部变量、函数参数、返回地址和保存寄存器状态。以下是对这一章节的详细分析。</p>
+<h4>栈的基本结构</h4>
+<p>在 x86-64 架构中，栈向低地址方向增长，栈顶由栈指针寄存器 %rsp 指向。数据可以通过 <code>pushq</code> 和 <code>popq</code> 指令进行压栈和出栈操作，此外也可以通过直接修改 %rsp 寄存器的值来分配或释放栈空间。</p>
+<p>当一个函数需要使用寄存器无法存储的额外空间时，它会在栈上分配空间。这部分空间称为函数的栈帧（stack frame）。栈帧包括以下几部分内容：</p>
+<ul>
+<li><strong>参数传递区</strong>：用于传递超过六个整数参数时的额外参数。</li>
+<li><strong>返回地址</strong>：存储调用函数时的返回地址。</li>
+<li><strong>保存的寄存器</strong>：保存调用者的寄存器状态。</li>
+<li><strong>局部变量</strong>：存储函数内部使用的局部变量。</li>
+</ul>
+<h4>栈帧的结构</h4>
+<p>如下图所示，栈帧的结构可以根据需要进行裁剪，当某些部分不需要时，可以省略。</p>
+<pre><code>. . .
+. . .
+
+栈底部
+
+栈顶
+
+参数 n
+
+参数 7
+
+参数传递区
+
+返回地址
+
+局部变量
+
+保存的寄存器
+
+栈指针 %rsp
+
+更早的帧
+
+地址递增方向
+
+调用函数 P 的栈帧
+
+执行函数 Q 的栈帧
+</code></pre>
+<h4>栈的操作</h4>
+<ol>
+<li>
+<p><strong>压栈（Push）</strong>：将数据推入栈顶。通常使用 <code>pushq</code> 指令或直接减小 %rsp 寄存器的值。例如：</p>
+<pre><code class="language-assembly">pushq %rax        ; 将 %rax 寄存器的值压入栈
+subq $8, %rsp     ; 分配 8 字节的栈空间
+</code></pre>
+</li>
+<li>
+<p><strong>出栈（Pop）</strong>：从栈顶弹出数据。通常使用 <code>popq</code> 指令或直接增大 %rsp 寄存器的值。例如：</p>
+<pre><code class="language-assembly">popq %rax         ; 将栈顶的值弹出到 %rax 寄存器
+addq $8, %rsp     ; 释放 8 字节的栈空间
+</code></pre>
+</li>
+</ol>
+<h4>函数调用与返回</h4>
+<p>函数调用时，会将返回地址压入栈，以便函数执行完毕后能正确返回调用点。常见的调用和返回指令包括：</p>
+<ul>
+<li><strong>调用指令 <code>call</code></strong>：将返回地址压入栈，并跳转到被调用函数的入口。例如：<pre><code class="language-assembly">call printf       ; 调用 printf 函数
+</code></pre>
+</li>
+<li><strong>返回指令 <code>ret</code></strong>：从栈中弹出返回地址，并跳转到该地址继续执行。例如：<pre><code class="language-assembly">ret               ; 返回到调用点
+</code></pre>
+</li>
+</ul>
+<p>在调用过程中，调用函数 P 会暂停执行，而被调用函数 Q 会在栈上分配自己的栈帧。Q 完成执行后，恢复 P 的执行，并释放 Q 的栈帧 。</p>
+<h4>栈帧示例</h4>
+<p>考虑一个 C 函数调用的示例：</p>
+<pre><code class="language-c">long add(long a, long b) {
+    return a + b;
+}
+
+long caller() {
+    long result = add(1, 2);
+    return result;
+}
+</code></pre>
+<p>对应的汇编代码如下：</p>
+<pre><code class="language-assembly">caller:
+    subq $8, %rsp         ; 分配 8 字节的栈空间
+    movq $1, %rdi         ; 将 1 作为第一个参数
+    movq $2, %rsi         ; 将 2 作为第二个参数
+    call add              ; 调用 add 函数
+    addq $8, %rsp         ; 释放 8 字节的栈空间
+    ret                   ; 返回调用点
+
+add:
+    movq %rdi, %rax       ; 将第一个参数存储到 %rax
+    addq %rsi, %rax       ; 将第二个参数加到 %rax
+    ret                   ; 返回调用点
+</code></pre>
+<p>在这个示例中，<code>caller</code> 函数首先分配了 8 字节的栈空间，然后调用 <code>add</code> 函数。<code>add</code> 函数在完成加法运算后，返回结果并释放栈空间。</p>
+<h3>总结</h3>
+<p>运行时栈是管理函数调用和内存分配的关键机制。通过栈，可以有效地管理函数参数、返回地址、局部变量和寄存器状态。理解运行时栈的工作原理，对于编写高效的低级代码和优化程序性能具有重要意义 。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 00_3.7.1_运行时栈
+
+"""
+Lecture: 03_程序的机器级表示/3.7_程序
+Content: 00_3.7.1_运行时栈
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

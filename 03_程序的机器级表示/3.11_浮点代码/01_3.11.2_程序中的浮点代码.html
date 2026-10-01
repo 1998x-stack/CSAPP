@@ -1,0 +1,103 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.11.2 程序中的浮点代码</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>01_3.11.2_程序中的浮点代码</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.11_浮点代码
+Content: 01_3.11.2_程序中的浮点代码
+</code></pre>
+<h3>3.11.2 程序中的浮点代码</h3>
+<h4>概述</h4>
+<p>在 x86-64 架构中，浮点数的传递和返回使用 XMM 寄存器。这些寄存器不仅用于函数参数的传递，还用于浮点数结果的返回。理解这些寄存器的使用规则和传递约定对于编写高效的汇编代码至关重要。</p>
+<h4>浮点数参数传递</h4>
+<p>在 x86-64 架构中，最多可以通过 XMM 寄存器传递八个浮点数参数。这些参数按顺序使用 XMM 寄存器 %xmm0 到 %xmm7 进行传递。如果浮点数参数超过八个，额外的参数将通过栈传递。</p>
+<p>例如，以下是几个函数声明及其参数在寄存器中的分配情况：</p>
+<ul>
+<li>
+<p><code>double f1(int x, double y, long z);</code></p>
+<ul>
+<li>x 在 %edi</li>
+<li>y 在 %xmm0</li>
+<li>z 在 %rsi</li>
+</ul>
+</li>
+<li>
+<p><code>double f2(double y, int x, long z);</code></p>
+<ul>
+<li>y 在 %xmm0</li>
+<li>x 在 %edi</li>
+<li>z 在 %rsi</li>
+</ul>
+</li>
+<li>
+<p><code>double f1(float x, double *y, long *z);</code></p>
+<ul>
+<li>x 在 %xmm0</li>
+<li>y 在 %rdi</li>
+<li>z 在 %rsi</li>
+</ul>
+</li>
+</ul>
+<p>从这些示例中可以看出，当函数包含指针、整数和浮点数参数时，指针和整数参数通过通用寄存器传递，而浮点数参数通过 XMM 寄存器传递。</p>
+<h4>浮点数返回值</h4>
+<p>函数返回浮点数值时，结果存储在 %xmm0 寄存器中。这是约定俗成的规则，确保了调用者能够从预定的寄存器中获取返回值。</p>
+<h4>调用者和被调用者保存规则</h4>
+<p>所有的 XMM 寄存器都是调用者保存（caller-saved）的。这意味着在函数调用过程中，被调用者可以自由覆盖这些寄存器的内容，而无需保存原值。因此，如果调用者在调用函数前需要保留某个 XMM 寄存器的内容，必须在调用前保存并在调用后恢复。</p>
+<h4>具体示例分析</h4>
+<p>以下是一个包含浮点数参数和返回值的函数示例：</p>
+<pre><code class="language-c">double funct(double a, float x, double b, int i) {
+    return a*x - b/i;
+}
+</code></pre>
+<p>其对应的 x86-64 汇编代码如下：</p>
+<pre><code class="language-assembly">double funct(double a, float x, double b, int i)
+a in %xmm0, x in %xmm1, b in %xmm2, i in %edi
+
+1 funct:
+2 vunpcklps %xmm1, %xmm1, %xmm1       ; 将单精度浮点数 x 转换为双精度浮点数
+3 vcvtps2pd %xmm1, %xmm1
+4 vmulsd %xmm0, %xmm1, %xmm0          ; 计算 a*x
+5 vcvtsi2sd %edi, %xmm1, %xmm1        ; 将整数 i 转换为双精度浮点数
+6 vdivsd %xmm1, %xmm2, %xmm2          ; 计算 b/i
+7 vsubsd %xmm2, %xmm0, %xmm0          ; 计算 a*x - b/i
+8 ret                                 ; 返回结果，存储在 %xmm0 中
+</code></pre>
+<p>在这个例子中，浮点数参数 a, x 和 b 分别存储在 XMM 寄存器 %xmm0, %xmm1 和 %xmm2 中，而整数参数 i 存储在 %edi 寄存器中。代码首先将单精度浮点数 x 转换为双精度浮点数，然后进行乘法和除法运算，最终结果存储在 %xmm0 中并返回。</p>
+<h4>详细分析</h4>
+<h5>浮点数转换</h5>
+<p>浮点数转换操作在浮点代码中非常常见。例如，在上述汇编代码中，使用了 <code>vunpcklps</code> 和 <code>vcvtps2pd</code> 指令将单精度浮点数转换为双精度浮点数。这种转换通常需要两个指令：一个用于解包（unpack）低位浮点数，另一个用于转换精度。</p>
+<h5>效率优化</h5>
+<p>为了提高效率，编译器在选择具体的指令时会考虑操作数的类型和顺序。例如，当涉及到多个浮点数运算时，编译器会优先选择可以并行执行的指令，以减少处理时间。此外，编译器还会尽量减少内存访问次数，通过寄存器传递和存储中间结果来优化性能。</p>
+<h5>调用约定</h5>
+<p>理解和遵循调用约定对于编写正确和高效的汇编代码至关重要。调用约定规定了函数如何传递参数和返回值，以及哪些寄存器需要由调用者或被调用者保存。这些约定确保了不同函数之间能够正确地进行数据传递和处理。</p>
+<h4>总结</h4>
+<p>在 x86-64 架构中，浮点数的传递和返回主要通过 XMM 寄存器进行。理解这些寄存器的使用规则、转换操作和调用约定对于编写高效的浮点数处理代码至关重要。通过深入分析具体示例，我们可以更好地掌握浮点代码的编写技巧和优化方法。</p>
+<h3>引用</h3>
+
+    <h3>Python 文件</h3>
+    <pre><code># 01_3.11.2_程序中的浮点代码
+
+"""
+Lecture: 03_程序的机器级表示/3.11_浮点代码
+Content: 01_3.11.2_程序中的浮点代码
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

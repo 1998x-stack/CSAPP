@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.10.2 现实生活中的使用：使用 gdb 调试器</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>01_3.10.2_现实生活中的使用：使用_gdb_调试器</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.10_在机器级程序中结合控制和数据
+Content: 01_3.10.2_现实生活中的使用：使用_gdb_调试器
+</code></pre>
+<h2>3.10.2 现实生活中的使用：使用_gdb_调试器</h2>
+<h3>章节概述</h3>
+<p>在《深入理解计算机系统》第3章“程序的机器级表示”中，第3.10.2节讨论了GNU调试器gdb的使用。gdb提供了许多有用的功能，支持对机器级程序的运行时评估和分析。通过gdb，可以在程序执行过程中观察其行为，并对其执行进行高度控制。这一节的内容涵盖了gdb的基本命令、设置断点、单步执行程序以及检查寄存器和内存。</p>
+<h3>gdb的基本使用</h3>
+<p>gdb是一个强大的调试工具，主要用于调试C和C++程序。以下是一些常见的gdb命令及其功能：</p>
+<ul>
+<li>
+<p><strong>启动和停止</strong></p>
+<ul>
+<li><code>quit</code>：退出gdb。</li>
+<li><code>run</code>：运行程序（可以在此处提供命令行参数）。</li>
+<li><code>kill</code>：停止程序。</li>
+</ul>
+</li>
+<li>
+<p><strong>断点</strong></p>
+<ul>
+<li><code>break function_name</code>：在函数<code>function_name</code>入口处设置断点。</li>
+<li><code>break *address</code>：在指定的地址处设置断点。</li>
+<li><code>delete 1</code>：删除断点1。</li>
+<li><code>delete</code>：删除所有断点。</li>
+</ul>
+</li>
+<li>
+<p><strong>执行控制</strong></p>
+<ul>
+<li><code>stepi</code>：执行一条指令。</li>
+<li><code>stepi 4</code>：执行四条指令。</li>
+<li><code>nexti</code>：类似于<code>stepi</code>，但会跳过函数调用。</li>
+<li><code>continue</code>：继续执行程序直到下一个断点。</li>
+<li><code>finish</code>：执行当前函数直到返回。</li>
+</ul>
+</li>
+<li>
+<p><strong>检查代码</strong></p>
+<ul>
+<li><code>disas</code>：反汇编当前函数。</li>
+<li><code>disas function_name</code>：反汇编指定函数<code>function_name</code>。</li>
+</ul>
+</li>
+</ul>
+<p>这些命令可以帮助开发人员在程序的关键位置设置断点、单步执行程序以及检查程序的内部状态。</p>
+<h3>使用gdb调试机器级x86-64程序的示例</h3>
+<p>以下是使用gdb调试一个名为<code>prog</code>的程序的示例：</p>
+<pre><code class="language-bash">linux&gt; gdb prog
+</code></pre>
+<p>进入gdb后，可以设置断点、运行程序以及检查程序的状态。例如，设置断点并运行程序：</p>
+<pre><code class="language-bash">(gdb) break main
+(gdb) run
+</code></pre>
+<p>当程序在<code>main</code>函数入口处停止时，可以使用以下命令检查寄存器和内存状态：</p>
+<pre><code class="language-bash">(gdb) info registers
+(gdb) x/10i $pc  # 显示从程序计数器开始的10条指令
+</code></pre>
+<h3>设置断点和单步执行</h3>
+<p>断点是调试程序时非常重要的工具。设置断点可以让程序在特定位置停止，便于检查程序的状态。以下是一些设置断点和单步执行的示例：</p>
+<pre><code class="language-bash">(gdb) break main  # 在main函数入口处设置断点
+(gdb) run  # 运行程序
+(gdb) stepi  # 执行一条指令
+(gdb) nexti  # 执行一条指令，跳过函数调用
+(gdb) continue  # 继续执行程序直到下一个断点
+</code></pre>
+<p>这些命令可以帮助开发人员逐步分析程序的执行过程，找出可能存在的问题。</p>
+<h3>检查寄存器和内存</h3>
+<p>在调试过程中，检查寄存器和内存的状态是非常重要的。以下是一些常见的检查命令：</p>
+<pre><code class="language-bash">(gdb) info registers  # 显示所有寄存器的值
+(gdb) x/10xw $sp  # 显示从栈指针开始的10个字（以十六进制显示）
+(gdb) x/s $rdi  # 显示寄存器rdi所指向的字符串
+</code></pre>
+<p>这些命令可以帮助开发人员了解程序在特定时刻的内部状态，从而更好地理解程序的行为。</p>
+<h3>示例分析</h3>
+<p>假设我们有一个简单的C程序<code>prog.c</code>：</p>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+
+void foo(int a) {
+    printf(&quot;a = %d\n&quot;, a);
+}
+
+int main() {
+    int x = 42;
+    foo(x);
+    return 0;
+}
+</code></pre>
+<p>我们可以使用gdb来调试这个程序，设置断点、单步执行并检查变量的值。以下是一些具体的调试步骤：</p>
+<ol>
+<li>编译程序：<pre><code class="language-bash">gcc -g -o prog prog.c
+</code></pre>
+</li>
+<li>启动gdb并运行程序：<pre><code class="language-bash">gdb prog
+(gdb) break main  # 在main函数入口处设置断点
+(gdb) run  # 运行程序
+</code></pre>
+</li>
+<li>程序在<code>main</code>函数入口处停止后，检查变量的值：<pre><code class="language-bash">(gdb) print x  # 打印变量x的值
+</code></pre>
+</li>
+<li>单步执行程序并观察变化：<pre><code class="language-bash">(gdb) stepi  # 执行一条指令
+(gdb) nexti  # 执行一条指令，跳过函数调用
+</code></pre>
+</li>
+<li>查看函数调用情况：<pre><code class="language-bash">(gdb) finish  # 执行当前函数直到返回
+</code></pre>
+</li>
+</ol>
+<h3>小结</h3>
+<p>gdb是一个功能强大的调试工具，能够帮助开发人员在程序的关键位置设置断点、单步执行程序以及检查程序的内部状态。通过熟练掌握gdb的使用，可以更有效地调试和优化程序。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 01_3.10.2_现实生活中的使用：使用_gdb_调试器
+
+"""
+Lecture: 03_程序的机器级表示/3.10_在机器级程序中结合控制和数据
+Content: 01_3.10.2_现实生活中的使用：使用_gdb_调试器
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

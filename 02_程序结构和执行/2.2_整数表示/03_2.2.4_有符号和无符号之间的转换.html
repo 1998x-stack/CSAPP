@@ -1,0 +1,128 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>2.2.4 有符号和无符号之间的转换</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>03_2.2.4_有符号和无符号之间的转换</h1>
+<pre><code>Lecture: 02_程序结构和执行/2.2_整数表示
+Content: 03_2.2.4_有符号和无符号之间的转换
+</code></pre>
+<h3>2.2.4 有符号和无符号之间的转换</h3>
+<h4>简介</h4>
+<p>在C语言中，有时需要在有符号整数和无符号整数之间进行转换。这种转换可以通过显式类型转换（casting）或隐式类型转换实现。转换的效果通常依赖于底层的位级表示，而不是直接数值上的解释。这部分将详细探讨有符号和无符号整数之间的转换机制及其影响。</p>
+<h4>显式类型转换</h4>
+<ol>
+<li>
+<p><strong>有符号转换为无符号</strong>：
+当将一个有符号整数转换为无符号整数时，位模式保持不变，但解释方式改变。例如，假设有一个<code>short</code>类型的变量<code>v</code>，值为-12345，将其转换为<code>unsigned short</code>类型时，输出如下：</p>
+<pre><code class="language-c">short v = -12345;
+unsigned short uv = (unsigned short)v;
+printf(&quot;v = %d, uv = %u\n&quot;, v, uv);
+</code></pre>
+<p>结果：</p>
+<pre><code>v = -12345, uv = 53191
+</code></pre>
+<p>这里，-12345的16位补码表示与53191的16位无符号表示相同，只是解释方式不同。</p>
+</li>
+<li>
+<p><strong>无符号转换为有符号</strong>：
+当将一个无符号整数转换为有符号整数时，位模式同样保持不变。例如：</p>
+<pre><code class="language-c">unsigned u = 4294967295u; // UMax
+int tu = (int)u;
+printf(&quot;u = %u, tu = %d\n&quot;, u, tu);
+</code></pre>
+<p>结果：</p>
+<pre><code>u = 4294967295, tu = -1
+</code></pre>
+<p>对于32位字长，4294967295（UMax）的位模式与-1的补码表示相同。</p>
+</li>
+</ol>
+<h4>隐式类型转换</h4>
+<ol>
+<li>
+<p><strong>赋值操作</strong>：
+当将一个类型的值赋给另一个类型的变量时，如果类型不同，会发生隐式转换。例如：</p>
+<pre><code class="language-c">int tx;
+unsigned ux = 10;
+tx = ux; // 隐式转换为有符号整数
+printf(&quot;tx = %d\n&quot;, tx);
+</code></pre>
+</li>
+<li>
+<p><strong>表达式中的转换</strong>：
+在表达式中，如果操作数类型不同，C语言会进行隐式转换。例如：</p>
+<pre><code class="language-c">int x = -1;
+unsigned y = 1;
+printf(&quot;%u\n&quot;, x + y); // -1隐式转换为无符号整数
+</code></pre>
+</li>
+</ol>
+<h4>转换规则</h4>
+<ol>
+<li>
+<p><strong>T2Uw</strong>函数（有符号到无符号的转换）：
+对于一个有符号整数x，如果其位于范围$$TMinw, TMaxw$$内，则有：</p>
+<ul>
+<li>如果x &lt; 0，则T2Uw(x) = x + 2^w</li>
+<li>否则，T2Uw(x) = x
+例如，T2U16(-12345) = 53191。</li>
+</ul>
+</li>
+<li>
+<p><strong>U2Tw</strong>函数（无符号到有符号的转换）：
+对于一个无符号整数u，如果其位于范围$$0, UMaxw$$内，则有：</p>
+<ul>
+<li>如果u &gt; TMaxw，则U2Tw(u) = u - 2^w</li>
+<li>否则，U2Tw(u) = u
+例如，U2T32(4294967295) = -1。</li>
+</ul>
+</li>
+</ol>
+<h4>转换影响</h4>
+<ol>
+<li>
+<p><strong>算术操作的影响</strong>：
+在包含有符号和无符号操作数的表达式中，操作数会被隐式转换为无符号类型，可能导致非预期的结果。例如：</p>
+<pre><code class="language-c">int a = -1;
+unsigned b = 2;
+printf(&quot;%d\n&quot;, a &lt; b); // 输出0，因为-1被转换为无符号数
+</code></pre>
+</li>
+<li>
+<p><strong>比较操作的影响</strong>：
+当比较操作的操作数类型不同时，会进行隐式转换，导致比较结果可能与预期不符。例如：</p>
+<pre><code class="language-c">int x = -1;
+unsigned y = 0;
+printf(&quot;%d\n&quot;, x &lt; y); // 输出0，因为-1被转换为无符号数，实际比较的是4294967295 &lt; 0
+</code></pre>
+</li>
+</ol>
+<h4>结论</h4>
+<p>有符号和无符号之间的转换在C语言中是一个常见的操作，但需要注意的是，这种转换通常依赖于底层的位级表示，而不是数值上的直接解释。理解这些转换规则及其影响，对于编写正确和高效的代码至关重要。通过显式和隐式转换的机制，可以更好地控制和预期程序的行为，避免潜在的错误和漏洞。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 03_2.2.4_有符号和无符号之间的转换
+
+"""
+Lecture: 02_程序结构和执行/2.2_整数表示
+Content: 03_2.2.4_有符号和无符号之间的转换
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

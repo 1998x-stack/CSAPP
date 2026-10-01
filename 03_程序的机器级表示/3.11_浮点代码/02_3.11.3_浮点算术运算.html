@@ -1,0 +1,217 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.11.3 浮点算术运算</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>02_3.11.3_浮点算术运算</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.11_浮点代码
+Content: 02_3.11.3_浮点算术运算
+</code></pre>
+<h3>3.11.3 浮点算术运算</h3>
+<h4>概述</h4>
+<p>浮点算术运算在计算机程序中扮演着重要角色，特别是在科学计算和图形处理等领域。x86-64架构提供了一组强大的浮点算术指令，支持单精度和双精度浮点数运算。这些指令利用XMM寄存器进行高效计算，支持加法、减法、乘法、除法等操作。</p>
+<h4>浮点算术指令集</h4>
+<p>以下是一些常见的浮点算术指令及其功能：</p>
+<ul>
+<li>
+<p><strong>加法（Addition）</strong></p>
+<ul>
+<li><code>vaddss</code>：单精度浮点数加法。</li>
+<li><code>vaddsd</code>：双精度浮点数加法。</li>
+</ul>
+</li>
+<li>
+<p><strong>减法（Subtraction）</strong></p>
+<ul>
+<li><code>vsubss</code>：单精度浮点数减法。</li>
+<li><code>vsubsd</code>：双精度浮点数减法。</li>
+</ul>
+</li>
+<li>
+<p><strong>乘法（Multiplication）</strong></p>
+<ul>
+<li><code>vmulss</code>：单精度浮点数乘法。</li>
+<li><code>vmulsd</code>：双精度浮点数乘法。</li>
+</ul>
+</li>
+<li>
+<p><strong>除法（Division）</strong></p>
+<ul>
+<li><code>vdivss</code>：单精度浮点数除法。</li>
+<li><code>vdivsd</code>：双精度浮点数除法。</li>
+</ul>
+</li>
+<li>
+<p><strong>平方根（Square Root）</strong></p>
+<ul>
+<li><code>vsqrtss</code>：单精度浮点数平方根。</li>
+<li><code>vsqrtsd</code>：双精度浮点数平方根。</li>
+</ul>
+</li>
+</ul>
+<p>这些指令可以在XMM寄存器之间执行操作，或在XMM寄存器和内存之间进行操作。</p>
+<h4>示例分析</h4>
+<p>以下示例展示了如何使用这些浮点算术指令执行基本的浮点运算：</p>
+<pre><code class="language-assembly">section .data
+    a dq 3.14
+    b dq 2.71
+    result dq 0.0
+
+section .text
+    global _start
+
+_start:
+    ; 加载浮点数到XMM寄存器
+    movsd xmm0, [a]
+    movsd xmm1, [b]
+
+    ; 执行浮点加法
+    addsd xmm0, xmm1
+
+    ; 将结果存储到内存
+    movsd [result], xmm0
+
+    ; 退出程序
+    mov eax, 60                ; 系统调用号 (sys_exit)
+    xor edi, edi               ; 状态码 0
+    syscall
+</code></pre>
+<p>在这个示例中，<code>movsd</code>指令用于加载和存储双精度浮点数，<code>addsd</code>指令用于执行浮点加法。</p>
+<h4>深入分析</h4>
+<h5>精度和舍入</h5>
+<p>浮点数运算的精度和舍入方式是理解浮点算术运算的关键。IEEE 754标准定义了多种舍入模式，包括向偶数舍入（round to even）、向零舍入（round towards zero）、向正无穷大舍入（round towards +∞）和向负无穷大舍入（round towards -∞）。默认的舍入模式是向偶数舍入，这种模式能够最小化舍入误差。</p>
+<p>例如，考虑以下两种舍入方式：</p>
+<ul>
+<li><strong>向偶数舍入</strong>：当两个可能的结果距离原始值等距离时，选择结果的最低有效位为偶数的那个。例如，1.5舍入为2.0，而2.5也舍入为2.0。</li>
+<li><strong>向零舍入</strong>：直接舍去小数部分。例如，1.7舍入为1.0，而-1.7舍入为-1.0。</li>
+</ul>
+<h5>算术运算的非结合性</h5>
+<p>浮点数运算不满足结合律，这意味着计算顺序会影响结果。例如：</p>
+<pre><code class="language-assembly">movsd xmm0, [a]        ; xmm0 = 3.14
+movsd xmm1, [b]        ; xmm1 = 2.71
+addsd xmm0, xmm1       ; xmm0 = 5.85
+movsd xmm1, [c]        ; xmm1 = 1.41
+subsd xmm0, xmm1       ; xmm0 = 4.44
+</code></pre>
+<p>如果我们改变运算顺序，结果可能会不同，这在科学计算中尤其需要注意。</p>
+<h5>优化和性能</h5>
+<p>在编写高性能代码时，理解和利用寄存器的特点非常重要。以下是一些优化技巧：</p>
+<ul>
+<li><strong>减少内存访问</strong>：尽量在寄存器之间进行操作，减少内存读取和写入的次数。</li>
+<li><strong>并行计算</strong>：利用向量化指令（如AVX）进行并行计算，提高处理效率。</li>
+</ul>
+<p>例如，以下代码使用AVX指令进行并行加法：</p>
+<pre><code class="language-assembly">section .data
+    a dq 3.14, 2.71
+    b dq 1.41, 1.73
+    result dq 0.0, 0.0
+
+section .text
+    global _start
+
+_start:
+    ; 加载浮点数组到YMM寄存器
+    vmovapd ymm0, [a]
+    vmovapd ymm1, [b]
+
+    ; 执行并行浮点加法
+    vaddpd ymm0, ymm0, ymm1
+
+    ; 将结果存储到内存
+    vmovapd [result], ymm0
+
+    ; 退出程序
+    mov eax, 60                ; 系统调用号 (sys_exit)
+    xor edi, edi               ; 状态码 0
+    syscall
+</code></pre>
+<p>在这个示例中，<code>vmovapd</code>和<code>vaddpd</code>指令用于并行处理两个双精度浮点数，显著提高了计算效率。</p>
+<h4>总结</h4>
+<p>浮点算术运算在x86-64架构中有着广泛的应用，通过理解和掌握这些指令及其特点，可以编写出高效、准确的浮点数处理代码。优化浮点运算时，需要特别注意精度和舍入问题，并尽量利用寄存器和并行计算能力来提高性能。</p>
+<h3>引用</h3>
+<hr>
+<h3>代码详细解释及寄存器搭配</h3>
+<h4>概述</h4>
+<p>这段汇编代码演示了如何使用 AVX 指令集进行并行浮点运算。代码将两个浮点数数组加载到 YMM 寄存器中，执行并行加法运算，并将结果存储回内存。代码最后通过系统调用退出程序。</p>
+<h4>数据段</h4>
+<p>在数据段中定义了两个浮点数组 <code>a</code> 和 <code>b</code>，以及存储结果的数组 <code>result</code>：</p>
+<pre><code class="language-assembly">section .data
+    a dq 3.14, 2.71      ; 定义一个包含两个双精度浮点数的数组
+    b dq 1.41, 1.73      ; 定义另一个包含两个双精度浮点数的数组
+    result dq 0.0, 0.0   ; 定义一个用于存储结果的数组，初始值为0.0
+</code></pre>
+<h4>代码段</h4>
+<p>在代码段中定义了程序的主入口 <code>_start</code>，并使用 AVX 指令进行浮点运算：</p>
+<pre><code class="language-assembly">section .text
+    global _start
+
+_start:
+    ; 加载浮点数组到YMM寄存器
+    vmovapd ymm0, [a]    ; 将内存中数组 a 的内容加载到 YMM0 寄存器中
+    vmovapd ymm1, [b]    ; 将内存中数组 b 的内容加载到 YMM1 寄存器中
+
+    ; 执行并行浮点加法
+    vaddpd ymm0, ymm0, ymm1  ; 将 YMM0 和 YMM1 中的浮点数相加，并将结果存储在 YMM0 中
+
+    ; 将结果存储到内存
+    vmovapd [result], ymm0   ; 将 YMM0 寄存器中的结果存储回内存中的 result 数组
+
+    ; 退出程序
+    mov eax, 60              ; 系统调用号 (sys_exit)
+    xor edi, edi             ; 状态码 0
+    syscall                  ; 触发系统调用退出程序
+</code></pre>
+<h4>指令详解</h4>
+<ul>
+<li><code>vmovapd ymm0, [a]</code>：将内存地址 <code>[a]</code> 处的两个双精度浮点数加载到 <code>YMM0</code> 寄存器中。<code>vmovapd</code> 指令用于加载或存储对齐的打包双精度浮点数。</li>
+<li><code>vmovapd ymm1, [b]</code>：将内存地址 <code>[b]</code> 处的两个双精度浮点数加载到 <code>YMM1</code> 寄存器中。</li>
+<li><code>vaddpd ymm0, ymm0, ymm1</code>：将 <code>YMM0</code> 和 <code>YMM1</code> 寄存器中的浮点数逐元素相加，结果存储在 <code>YMM0</code> 中。<code>vaddpd</code> 指令用于执行对齐的打包双精度浮点数加法。</li>
+<li><code>vmovapd [result], ymm0</code>：将 <code>YMM0</code> 寄存器中的结果存储回内存地址 <code>[result]</code> 处。</li>
+</ul>
+<h4>寄存器搭配</h4>
+<p>在这段代码中，主要使用了以下寄存器：</p>
+<ul>
+<li><strong>YMM0</strong>：用于存储数组 <code>a</code> 的值，以及最终的加法结果。</li>
+<li><strong>YMM1</strong>：用于存储数组 <code>b</code> 的值。</li>
+</ul>
+<p>此外，以下寄存器用于系统调用退出程序：</p>
+<ul>
+<li><strong>EAX</strong>：存储系统调用号 <code>60</code>，表示 <code>sys_exit</code> 系统调用。</li>
+<li><strong>EDI</strong>：存储退出状态码 <code>0</code>。</li>
+</ul>
+<h4>执行流程</h4>
+<ol>
+<li><strong>加载数据</strong>：使用 <code>vmovapd</code> 指令将两个浮点数组加载到 YMM 寄存器中。</li>
+<li><strong>浮点加法</strong>：使用 <code>vaddpd</code> 指令对两个寄存器中的浮点数执行并行加法运算。</li>
+<li><strong>存储结果</strong>：使用 <code>vmovapd</code> 指令将运算结果存储回内存。</li>
+<li><strong>退出程序</strong>：通过系统调用 <code>sys_exit</code> 退出程序。</li>
+</ol>
+<h3>总结</h3>
+<p>这段代码展示了如何使用 AVX 指令进行高效的并行浮点运算。通过利用 YMM 寄存器，可以同时处理多个浮点数，大大提高了计算效率。理解这些指令和寄存器的搭配，对于编写高性能的汇编代码非常重要。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 02_3.11.3_浮点算术运算
+
+"""
+Lecture: 03_程序的机器级表示/3.11_浮点代码
+Content: 02_3.11.3_浮点算术运算
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

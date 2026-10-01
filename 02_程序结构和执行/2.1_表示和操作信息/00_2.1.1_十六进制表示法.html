@@ -1,0 +1,86 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>2.1.1 十六进制表示法</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>00_2.1.1_十六进制表示法</h1>
+<pre><code>Lecture: 02_程序结构和执行/2.1_表示和操作信息
+Content: 00_2.1.1_十六进制表示法
+</code></pre>
+<h3>2.1.1 十六进制表示法详解</h3>
+<h4>十六进制表示法的基本概念</h4>
+<p>十六进制表示法（Hexadecimal Notation）是计算机系统中用于简化二进制表示的一种方法。由于计算机内部处理的是二进制数据，但二进制表示法往往过于冗长，不便于人类阅读和理解。因此，引入了十六进制表示法，将二进制数据转换为更加简洁易读的形式。</p>
+<h4>十六进制与二进制的关系</h4>
+<p>十六进制（基数16）使用数字0到9和字母A到F来表示16个不同的值。其中，字母A到F分别表示十进制的10到15。例如：</p>
+<ul>
+<li>十进制数字10在十六进制中表示为A</li>
+<li>十进制数字15在十六进制中表示为F</li>
+</ul>
+<p>一个十六进制数字可以表示4个二进制位（bits），因此，一个字节（8 bits）可以用两个十六进制数字来表示。例如，字节的二进制值<code>10101100</code>可以表示为十六进制的<code>AC</code>。</p>
+<h4>十六进制与十进制的转换</h4>
+<p>将十进制数转换为十六进制数的方法是不断将十进制数除以16，并记录每次的余数。最后将余数从最低位到最高位排列。例如：</p>
+<ul>
+<li>将十进制数314,156转换为十六进制：
+<ol>
+<li>314,156 ÷ 16 = 19,634 余 12（C）</li>
+<li>19,634 ÷ 16 = 1,227 余 2（2）</li>
+<li>1,227 ÷ 16 = 76 余 11（B）</li>
+<li>76 ÷ 16 = 4 余 12（C）</li>
+<li>4 ÷ 16 = 0 余 4（4）
+最终结果为0x4CB2C</li>
+</ol>
+</li>
+</ul>
+<p>将十六进制数转换为十进制数的方法是将每个十六进制位乘以16的对应次方并求和。例如：</p>
+<ul>
+<li>将十六进制数0x7AF转换为十进制：
+$ 7 \times 16^2 + 10 \times 16^1 + 15 \times 16^0 = 7 \times 256 + 10 \times 16 + 15 = 1792 + 160 + 15 = 1967 $</li>
+</ul>
+<h4>十六进制与二进制的转换</h4>
+<p>由于一个十六进制数字对应4个二进制位，二进制与十六进制的转换非常简单。可以通过查表或直接计算来实现。例如：</p>
+<ul>
+<li>将二进制数<code>1111001010110110110011</code>转换为十六进制：
+<ol>
+<li>按照4位一组分割二进制数：<code>1111 0010 1011 0110 1100 11</code></li>
+<li>补全最后一组：<code>0011</code></li>
+<li>分别转换：<code>1111(F) 0010(2) 1011(B) 0110(6) 1100(C) 0011(3)</code>
+最终结果为0xF2B6C3</li>
+</ol>
+</li>
+</ul>
+<h4>实际应用</h4>
+<p>在计算机系统中，十六进制表示法广泛用于表示内存地址、机器码、错误码等。例如：</p>
+<ul>
+<li>内存地址：通常以十六进制形式显示，便于查看和调试。</li>
+<li>机器码：汇编语言和机器语言指令常用十六进制表示。</li>
+<li>错误码：系统错误和状态码通常以十六进制表示，便于查找文档和调试。</li>
+</ul>
+<h4>总结</h4>
+<p>十六进制表示法通过将二进制数据转换为更简洁的表示形式，简化了数据的阅读和处理。理解十六进制表示法的基本概念和转换方法，对于计算机系统的开发、调试和优化具有重要意义。在实际应用中，掌握十六进制与二进制、十进制之间的转换方法，可以有效提高工作效率。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 00_2.1.1_十六进制表示法
+
+"""
+Lecture: 02_程序结构和执行/2.1_表示和操作信息
+Content: 00_2.1.1_十六进制表示法
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

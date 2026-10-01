@@ -1,0 +1,150 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.9.1 结构体</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>00_3.9.1_结构体</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.9_异质数据结构
+Content: 00_3.9.1_结构体
+</code></pre>
+<h2>3.9.1 结构体</h2>
+<h3>章节概述</h3>
+<p>在《深入理解计算机系统》第3章“程序的机器级表示”中，第3.9.1节讨论了结构体的基本原理。结构体是C语言中一种重要的数据类型，允许将不同类型的对象组合成一个单一的对象。结构体的实现类似于数组，即所有的结构体成员存储在一块连续的内存区域中，结构体的指针指向其第一个字节。</p>
+<h3>结构体的定义</h3>
+<p>在C语言中，可以使用<code>struct</code>关键字来定义结构体。例如，下面的代码定义了一个名为<code>rec</code>的结构体：</p>
+<pre><code class="language-c">struct rec {
+    int i;
+    int j;
+    int a[2];
+    int *p;
+};
+</code></pre>
+<p>该结构体包含四个字段：两个4字节的<code>int</code>类型字段，一个包含两个<code>int</code>类型元素的数组，以及一个8字节的整数指针，总共占用24字节的内存。</p>
+<h3>内存布局</h3>
+<p>结构体的所有成员存储在一块连续的内存区域中，每个成员的内存地址相对于结构体起始地址的偏移量是固定的。例如，考虑以下结构体：</p>
+<pre><code class="language-c">struct rec {
+    int i;
+    int j;
+    int a[2];
+    int *p;
+};
+</code></pre>
+<p>其内存布局如下：</p>
+<table>
+<thead>
+<tr>
+<th>偏移量</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>i</td>
+</tr>
+<tr>
+<td>4</td>
+<td>j</td>
+</tr>
+<tr>
+<td>8</td>
+<td>a[0]</td>
+</tr>
+<tr>
+<td>12</td>
+<td>a[1]</td>
+</tr>
+<tr>
+<td>16</td>
+<td>p</td>
+</tr>
+</tbody>
+</table>
+<p>在这个例子中，数组<code>a</code>嵌入在结构体中，其元素的偏移量相对于结构体起始地址依次为8和12。</p>
+<h3>访问结构体成员</h3>
+<p>为了访问结构体的成员，编译器生成的代码会将结构体的起始地址与成员的偏移量相加。例如，假设变量<code>r</code>是<code>struct rec</code>类型的结构体，其地址存储在寄存器<code>%rdi</code>中，以下汇编代码将<code>r-&gt;i</code>的值复制到寄存器<code>%eax</code>中，并将<code>r-&gt;j</code>的值复制到内存中：</p>
+<pre><code class="language-assembly">movl (%rdi), %eax      # 获取r-&gt;i的值
+movl %eax, 4(%rdi)     # 将值存储到r-&gt;j中
+</code></pre>
+<p>由于<code>i</code>的偏移量为0，访问<code>r-&gt;i</code>时直接使用<code>r</code>的地址。为了访问<code>j</code>，需要将<code>r</code>的地址加上偏移量4。</p>
+<h3>生成指向结构体成员的指针</h3>
+<p>通过将字段的偏移量与结构体地址相加，可以生成指向结构体成员的指针。例如，生成指针<code>&amp;(r-&gt;a[1])</code>的汇编代码如下：</p>
+<pre><code class="language-assembly">leaq 12(%rdi), %rax     # 生成指针&amp;(r-&gt;a[1])
+</code></pre>
+<p>假设<code>r</code>在寄存器<code>%rdi</code>中，计算<code>&amp;(r-&gt;a[i])</code>的地址，可以使用以下指令：</p>
+<pre><code class="language-assembly">leaq 8(%rdi,%rsi,4), %rax   # 计算&amp;r-&gt;a[i]
+</code></pre>
+<p>其中，<code>r</code>在寄存器<code>%rdi</code>中，<code>i</code>在寄存器<code>%rsi</code>中。</p>
+<h3>结构体在函数中的使用</h3>
+<p>结构体在函数中常常以指针的形式传递，以避免复制整个结构体。例如，以下函数计算矩形的面积，参数是一个指向矩形结构体的指针：</p>
+<pre><code class="language-c">long area(struct rect *rp) {
+    return rp-&gt;width * rp-&gt;height;
+}
+</code></pre>
+<p>表达式<code>rp-&gt;width</code>通过指针解引用并选择结构体的<code>width</code>字段。为了方便，这种组合操作可以简写为<code>rp-&gt;width</code>，等价于<code>(*rp).width</code>。</p>
+<h3>优化和对齐</h3>
+<p>为了提高访问效率，编译器会在结构体成员之间插入填充字节，以确保每个成员都满足其对齐要求。例如，以下结构体定义：</p>
+<pre><code class="language-c">struct S1 {
+    int i;
+    char c;
+    int j;
+};
+</code></pre>
+<p>编译器会插入3个字节的填充，使得<code>j</code>的地址对齐到4的倍数，从而提高访问效率：</p>
+<table>
+<thead>
+<tr>
+<th>偏移量</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>i</td>
+</tr>
+<tr>
+<td>4</td>
+<td>c</td>
+</tr>
+<tr>
+<td>8</td>
+<td>填充</td>
+</tr>
+<tr>
+<td>12</td>
+<td>j</td>
+</tr>
+</tbody>
+</table>
+<h3>实际应用</h3>
+<p>结构体广泛用于需要将多个不同类型的数据组合在一起的场景，如定义复合数据类型、实现数据结构（如链表、树等）以及描述复杂的实体对象（如矩形、图形等）。</p>
+<h3>总结</h3>
+<p>本节详细讨论了结构体的定义、内存布局和访问方式。结构体允许将不同类型的对象组合成一个单一对象，所有成员存储在一块连续的内存区域中。理解结构体的内存布局和访问机制，有助于编写高效的代码，并通过合理的对齐和优化策略进一步提升程序性能。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 00_3.9.1_结构体
+
+"""
+Lecture: 03_程序的机器级表示/3.9_异质数据结构
+Content: 00_3.9.1_结构体
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

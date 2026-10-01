@@ -1,0 +1,152 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.6.8 开关语句</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>07_3.6.8_开关语句</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.6_控制
+Content: 07_3.6.8_开关语句
+</code></pre>
+<h3>3.6.8 开关语句</h3>
+<p>在C语言中，<code>switch</code>语句提供了一种多路分支的能力，根据一个整数索引的值执行不同的代码段。这种结构在处理可能有大量结果的测试时特别有用。通过使用一种叫做跳转表（jump table）的数据结构，<code>switch</code>语句不仅使C代码更加可读，还允许更高效的实现。以下是对这一章节的详细分析。</p>
+<h4>跳转表的基本概念</h4>
+<p>跳转表是一个数组，其中每个条目是一个代码段的地址，程序根据<code>switch</code>索引值来确定跳转指令的目标。使用跳转表的主要优势在于执行<code>switch</code>的时间与<code>switch</code>案例的数量无关。GCC编译器会根据案例的数量和值的稀疏性来选择翻译<code>switch</code>语句的方法。当有多个案例（例如，四个或更多）且它们跨越一个小的值范围时，使用跳转表是最有效的。</p>
+<h4><code>switch</code> 语句的实现</h4>
+<p>让我们看一个具体的C <code>switch</code>语句的例子：</p>
+<pre><code class="language-c">void switch_eg(long x, long n, long *dest) {
+    long val = x;
+    switch (n) {
+        case 100:
+            val *= 13;
+            break;
+        case 102:
+            val += 10;
+            // Fall through
+        case 103:
+            val += 11;
+            break;
+        case 104:
+        case 106:
+            val *= val;
+            break;
+        default:
+            val = 0;
+    }
+    *dest = val;
+}
+</code></pre>
+<p>这个例子展示了几个有趣的特性，包括不连续的标签范围（例如，没有标签101和105），多个标签共享同一代码段（例如，104和106），以及没有<code>break</code>语句导致的案例透传（例如，102）。</p>
+<p>编译后的汇编代码如下：</p>
+<pre><code class="language-assembly">switch_eg:
+    subq $100, %rsi         ; 计算索引 = n - 100
+    cmpq $6, %rsi           ; 比较索引：6
+    ja .L8                  ; 如果索引 &gt; 6，跳转到loc_def
+    jmp *.L4(,%rsi,8)       ; 根据索引值从跳转表中获取目标地址并跳转
+.L3:                        ; loc_A
+    leaq (%rdi,%rdi,2), %rax ; val = 3 * x
+    leaq (%rdi,%rax,4), %rdi ; val = 13 * x
+    jmp .L2                 ; 跳转到done
+.L5:                        ; loc_B
+    addq $10, %rdi          ; val = x + 10
+.L6:                        ; loc_C
+    addq $11, %rdi          ; val = x + 11
+    jmp .L2                 ; 跳转到done
+.L7:                        ; loc_D
+    imulq %rdi, %rdi        ; val = x * x
+    jmp .L2                 ; 跳转到done
+.L8:                        ; loc_def
+    movl $0, %edi           ; val = 0
+.L2:                        ; done
+    movq %rdi, (%rdx)       ; 将val的值存储到*dest中
+    ret                     ; 返回
+</code></pre>
+<p>这个汇编代码展示了如何通过减去基值100来计算索引值，然后通过跳转表进行多路分支。跳转表在<code>.rodata</code>段中声明，如下所示：</p>
+<pre><code class="language-assembly">.section .rodata
+.align 8
+.L4:
+    .quad .L3   ; Case 100: loc_A
+    .quad .L8   ; Case 101: loc_def
+    .quad .L5   ; Case 102: loc_B
+    .quad .L6   ; Case 103: loc_C
+    .quad .L7   ; Case 104: loc_D
+    .quad .L8   ; Case 105: loc_def
+    .quad .L7   ; Case 106: loc_D
+</code></pre>
+<h4>使用跳转表的优势</h4>
+<p>使用跳转表的主要优势在于其效率。与一长串<code>if-else</code>语句相比，跳转表的查找时间与案例数量无关，可以显著提高程序性能。即使有上百个案例，通过一次跳转表访问即可处理所有情况。</p>
+<h4>实例分析</h4>
+<p>考虑以下C代码：</p>
+<pre><code class="language-c">long switchv(long idx) {
+    long result = 0;
+    switch(idx) {
+        case 0:
+            result = 0xaaa;
+            break;
+        case 2:
+        case 5:
+            result = 0xbbb;
+            break;
+        case 3:
+            result = 0xccc;
+            break;
+        default:
+            result = 0xddd;
+    }
+    return result;
+}
+</code></pre>
+<p>对应的汇编代码如下：</p>
+<pre><code class="language-assembly">switchv:
+    cmpq $5, %rdi
+    ja .L2
+    jmp *.L4(,%rdi,8)
+.L4:
+    .quad .L6  ; Case 0
+    .quad .L2  ; Case default
+    .quad .L7  ; Case 2
+    .quad .L8  ; Case 3
+    .quad .L2  ; Case default
+    .quad .L7  ; Case 5
+.L6:
+    movl $0xaaa, %eax
+    ret
+.L7:
+    movl $0xbbb, %eax
+    ret
+.L8:
+    movl $0xccc, %eax
+    ret
+.L2:
+    movl $0xddd, %eax
+    ret
+</code></pre>
+<p>在这个例子中，<code>switchv</code>函数使用了一个跳转表来实现多路分支。通过比较索引值并查找跳转表，可以快速跳转到对应的代码段。</p>
+<h3>总结</h3>
+<p><code>switch</code>语句通过使用跳转表提供了一种高效的多路分支实现方式。在处理具有大量可能结果的测试时，跳转表不仅提高了代码的可读性，还显著提高了执行效率。理解<code>switch</code>语句及其实现方法，对于编写高效的C代码和汇编代码具有重要意义    。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 07_3.6.8_开关语句
+
+"""
+Lecture: 03_程序的机器级表示/3.6_控制
+Content: 07_3.6.8_开关语句
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

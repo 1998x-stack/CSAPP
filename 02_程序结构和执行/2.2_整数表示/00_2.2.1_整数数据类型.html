@@ -1,0 +1,133 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>2.2.1 整数数据类型</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>00_2.2.1_整数数据类型</h1>
+<pre><code>Lecture: 02_程序结构和执行/2.2_整数表示
+Content: 00_2.2.1_整数数据类型
+</code></pre>
+<h3>2.2.1 整数数据类型</h3>
+<p>整数数据类型在C语言中非常重要，它们表示一组有限范围的整数。C语言支持多种整数数据类型，这些类型在32位和64位程序中具有不同的值范围。</p>
+<h4>典型的整数数据类型及其范围</h4>
+<p>C语言中的整数数据类型及其在32位和64位程序中的典型值范围如下所示：</p>
+<table>
+<thead>
+<tr>
+<th>数据类型</th>
+<th>最小值</th>
+<th>最大值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>[signed] char</td>
+<td>-128</td>
+<td>127</td>
+</tr>
+<tr>
+<td>unsigned char</td>
+<td>0</td>
+<td>255</td>
+</tr>
+<tr>
+<td>short</td>
+<td>-32,768</td>
+<td>32,767</td>
+</tr>
+<tr>
+<td>unsigned short</td>
+<td>0</td>
+<td>65,535</td>
+</tr>
+<tr>
+<td>int</td>
+<td>-2,147,483,648</td>
+<td>2,147,483,647</td>
+</tr>
+<tr>
+<td>unsigned int</td>
+<td>0</td>
+<td>4,294,967,295</td>
+</tr>
+<tr>
+<td>long</td>
+<td>-2,147,483,648</td>
+<td>2,147,483,647</td>
+</tr>
+<tr>
+<td>unsigned long</td>
+<td>0</td>
+<td>4,294,967,295</td>
+</tr>
+<tr>
+<td>int32_t</td>
+<td>-2,147,483,648</td>
+<td>2,147,483,647</td>
+</tr>
+<tr>
+<td>uint32_t</td>
+<td>0</td>
+<td>4,294,967,295</td>
+</tr>
+<tr>
+<td>int64_t</td>
+<td>-9,223,372,036,854,775,808</td>
+<td>9,223,372,036,854,775,807</td>
+</tr>
+<tr>
+<td>uint64_t</td>
+<td>0</td>
+<td>18,446,744,073,709,551,615</td>
+</tr>
+</tbody>
+</table>
+<p>这些数据类型可以指定大小，如<code>char</code>、<code>short</code>、<code>long</code>，以及是否为无符号类型（使用<code>unsigned</code>声明）。</p>
+<h4>固定大小的整数类型</h4>
+<p>为了确保数据类型在不同编译器和机器上的一致性，ISO C99标准引入了一组固定大小的整数类型，这些类型在头文件<code>stdint.h</code>中定义。固定大小的整数类型包括<code>intN_t</code>和<code>uintN_t</code>，其中N表示位数，如<code>int32_t</code>表示32位有符号整数，<code>uint32_t</code>表示32位无符号整数。</p>
+<h4>有符号和无符号整数</h4>
+<p>C语言支持有符号和无符号整数。有符号整数可以表示负数、零和正数，而无符号整数只能表示非负数。在C标准中，有符号整数的表示方法没有特别指定，但几乎所有机器都使用二进制补码表示法。这种表示法的特点是最左边的一位（最高有效位）表示符号位，0表示正数，1表示负数。</p>
+<p>例如，对于8位有符号整数：</p>
+<ul>
+<li>最大正数：01111111（127）</li>
+<li>最小负数：10000000（-128）</li>
+</ul>
+<p>无符号整数的最大值是所有位都为1，例如，8位无符号整数的最大值是255（11111111）。</p>
+<h4>数值范围和溢出</h4>
+<p>整数类型在不同的机器和编译器上可能有不同的实现，因此C标准只规定了数据类型的最小范围，而没有规定最大范围。对于需要精确控制数据表示的程序，使用固定大小的整数类型是最佳选择。</p>
+<p>溢出是整数运算中的一个常见问题。当一个操作数超过了它的表示范围时，就会发生溢出。例如，对于一个32位的有符号整数，如果结果超过了2,147,483,647或小于-2,147,483,648，就会发生溢出。</p>
+<h4>数值扩展</h4>
+<p>在将一个较小的整数类型转换为较大的整数类型时，需要进行数值扩展。有两种主要的扩展方式：</p>
+<ol>
+<li><strong>零扩展</strong>：用于无符号整数，通过在高位添加零来扩展。</li>
+<li><strong>符号扩展</strong>：用于有符号整数，通过在高位添加符号位的副本来扩展。</li>
+</ol>
+<h4>结论</h4>
+<p>整数数据类型是C语言中的基本构建块，理解它们的表示范围、符号和无符号的区别，以及数值扩展的方法，对于编写高效和可靠的代码至关重要。通过使用固定大小的整数类型，可以提高程序的可移植性和一致性，避免在不同平台和编译器上的潜在问题。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 00_2.2.1_整数数据类型
+
+"""
+Lecture: 02_程序结构和执行/2.2_整数表示
+Content: 00_2.2.1_整数数据类型
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

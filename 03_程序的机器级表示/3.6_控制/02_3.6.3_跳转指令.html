@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.6.3 跳转指令</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>02_3.6.3_跳转指令</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.6_控制
+Content: 02_3.6.3_跳转指令
+</code></pre>
+<h3>3.6.3 跳转指令</h3>
+<p>在机器级编程中，跳转指令是控制程序流程的关键工具。它们允许程序在特定条件下改变执行路径，从而实现复杂的控制流结构。以下是对跳转指令的详细分析。</p>
+<h4>跳转指令的类型</h4>
+<p>跳转指令可以分为两大类：无条件跳转（unconditional jump）和条件跳转（conditional jump）。</p>
+<ol>
+<li>
+<p><strong>无条件跳转 (jmp)</strong>：</p>
+<ul>
+<li><strong>直接跳转 (direct jump)</strong>：跳转目标是硬编码在指令中的。例如，<code>jmp .L1</code> 会无条件地跳转到标签 <code>.L1</code> 所在的位置。</li>
+<li><strong>间接跳转 (indirect jump)</strong>：跳转目标存储在寄存器或内存位置中。例如，<code>jmp *%rax</code> 使用 <code>%rax</code> 寄存器中的值作为跳转目标地址。</li>
+</ul>
+</li>
+<li>
+<p><strong>条件跳转</strong>：
+条件跳转指令根据条件码的状态决定是否跳转。常见的条件跳转指令包括：</p>
+<ul>
+<li><code>je</code> 或 <code>jz</code>：当零标志 (ZF) 为 1 时跳转（相等/零）。</li>
+<li><code>jne</code> 或 <code>jnz</code>：当零标志 (ZF) 为 0 时跳转（不相等/非零）。</li>
+<li><code>js</code>：当符号标志 (SF) 为 1 时跳转（负数）。</li>
+<li><code>jns</code>：当符号标志 (SF) 为 0 时跳转（非负数）。</li>
+<li><code>jg</code> 或 <code>jnle</code>：当 SF 和 OF 异或为 0 且 ZF 为 0 时跳转（大于，带符号）。</li>
+<li><code>jge</code> 或 <code>jnl</code>：当 SF 和 OF 异或为 0 时跳转（大于等于，带符号）。</li>
+<li><code>jl</code> 或 <code>jnge</code>：当 SF 和 OF 异或为 1 时跳转（小于，带符号）。</li>
+<li><code>jle</code> 或 <code>jng</code>：当 SF 和 OF 异或为 1 或 ZF 为 1 时跳转（小于等于，带符号）。</li>
+</ul>
+</li>
+</ol>
+<h4>跳转指令的使用</h4>
+<p>跳转指令广泛用于实现控制结构，如条件语句和循环。以下是一些典型的使用场景：</p>
+<ol>
+<li>
+<p><strong>条件语句</strong>：
+条件跳转指令常用于实现 <code>if-else</code> 结构。例如：</p>
+<pre><code class="language-assembly">cmpq %rsi, %rdi    ; 比较 a 和 b
+je equal_label     ; 如果相等，跳转到 equal_label
+</code></pre>
+</li>
+<li>
+<p><strong>循环结构</strong>：
+跳转指令也用于实现循环结构，如 <code>for</code> 和 <code>while</code> 循环。例如：</p>
+<pre><code class="language-assembly">loop_start:
+    ; 循环体代码
+    cmpq %rcx, %rbx
+    jne loop_start ; 如果不相等，跳转回循环开始
+</code></pre>
+</li>
+</ol>
+<h4>实例分析</h4>
+<p>考虑以下 C 代码：</p>
+<pre><code class="language-c">long absdiff(long x, long y) {
+    long result;
+    if (x &lt; y) {
+        result = y - x;
+    } else {
+        result = x - y;
+    }
+    return result;
+}
+</code></pre>
+<p>其汇编代码如下：</p>
+<pre><code class="language-assembly">absdiff:
+    cmpq %rsi, %rdi   ; 比较 x 和 y
+    jge .L1           ; 如果 x &gt;= y，跳转到 .L1
+    subq %rdi, %rsi   ; result = y - x
+    movq %rsi, %rax   ; 将结果存储在 %rax 中
+    ret
+.L1:
+    subq %rsi, %rdi   ; result = x - y
+    movq %rdi, %rax   ; 将结果存储在 %rax 中
+    ret
+</code></pre>
+<p>在这个例子中，<code>cmpq</code> 指令比较了两个操作数并设置条件码，<code>jge</code> 指令根据条件码决定是否跳转到标签 <code>.L1</code>。如果 <code>x &gt;= y</code>，程序将跳转到标签 <code>.L1</code> 继续执行；否则，程序将执行减法 <code>y - x</code> 并返回结果。</p>
+<h4>跳转指令的编码</h4>
+<p>跳转指令在机器码中有多种编码方式，最常用的是基于程序计数器 (PC) 相对地址的编码。这种编码方式计算跳转目标与跳转指令之后一条指令之间的偏移量，并将该偏移量编码在跳转指令中。例如：</p>
+<pre><code class="language-assembly">jmp .L1
+</code></pre>
+<p>这个指令的编码可能如下：</p>
+<pre><code class="language-assembly">0: eb 03      ; jmp 指令，目标偏移量为 3
+1: ...        ; 跳转指令之后的指令
+4: ...        ; .L1 标签对应的指令
+</code></pre>
+<p>通过这种方式，跳转指令可以被紧凑地编码，并且目标地址在链接和加载过程中可以灵活调整。</p>
+<h3>总结</h3>
+<p>跳转指令在控制程序流程中发挥着至关重要的作用。通过合理使用跳转指令，可以实现复杂的控制结构，提高程序的灵活性和效率。理解跳转指令的工作原理及其在汇编代码中的应用，对于编写和优化低级别程序具有重要意义   。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 02_3.6.3_跳转指令
+
+"""
+Lecture: 03_程序的机器级表示/3.6_控制
+Content: 02_3.6.3_跳转指令
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

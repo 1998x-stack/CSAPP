@@ -1,0 +1,129 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.8.4 固定大小数组</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>03_3.8.4_固定大小数组</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.8_数组分配和访问
+Content: 03_3.8.4_固定大小数组
+</code></pre>
+<h2>3.8.4 固定大小数组</h2>
+<h3>章节概述</h3>
+<p>在《深入理解计算机系统》第3章“程序的机器级表示”中，第3.8.4节讨论了固定大小数组的基本原理。固定大小数组是一种在编译时就确定大小的多维数组，这种数组允许编译器进行各种优化，从而提高代码的运行效率。本节主要探讨了固定大小数组的定义、内存布局及其在x86-64架构下的实现和优化。</p>
+<h3>固定大小数组的定义</h3>
+<p>在C语言中，可以使用宏定义（<code>#define</code>）和类型定义（<code>typedef</code>）来定义固定大小数组。例如，定义一个16x16的整型矩阵：</p>
+<pre><code class="language-c">#define N 16
+typedef int fix_matrix[N][N];
+</code></pre>
+<p>这种定义方式不仅使代码更加简洁明了，还方便在需要修改数组大小时，只需更改宏定义的值即可。</p>
+<h3>固定大小数组的内存布局</h3>
+<p>固定大小数组在内存中是按行优先（row-major order）排列的，这意味着数组的所有行依次存储，每行的元素紧挨着前一行的元素。例如，对于<code>fix_matrix</code>类型的数组<code>A</code>，其内存布局如下：</p>
+<table>
+<thead>
+<tr>
+<th>元素</th>
+<th>地址偏移量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A[0][0]</td>
+<td>xA</td>
+</tr>
+<tr>
+<td>A[0][1]</td>
+<td>xA + 4</td>
+</tr>
+<tr>
+<td>A[0][2]</td>
+<td>xA + 8</td>
+</tr>
+<tr>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<td>A[0][15]</td>
+<td>xA + 60</td>
+</tr>
+<tr>
+<td>A[1][0]</td>
+<td>xA + 64</td>
+</tr>
+<tr>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<td>A[15][15]</td>
+<td>xA + 1020</td>
+</tr>
+</tbody>
+</table>
+<h3>元素访问的地址计算</h3>
+<p>为了访问固定大小数组的元素，编译器生成的代码会计算目标元素的偏移量，并使用数组起始地址和偏移量来访问内存。例如，对于<code>fix_matrix</code>类型的二维数组<code>A</code>，元素<code>A[i][j]</code>的地址计算公式为：</p>
+<pre><code class="language-plaintext">&amp;A[i][j] = xA + L * (N * i + j)
+</code></pre>
+<p>其中，<code>xA</code>是数组<code>A</code>的起始地址，<code>L</code>是元素类型的大小（以字节为单位），<code>N</code>是数组的列数，<code>i</code>和<code>j</code>分别是行和列的索引。</p>
+<h3>示例分析</h3>
+<p>假设有以下固定大小数组定义：</p>
+<pre><code class="language-c">#define N 16
+typedef int fix_matrix[N][N];
+fix_matrix A;
+</code></pre>
+<p>若<code>xA</code>、<code>i</code>和<code>j</code>分别存储在寄存器<code>%rdi</code>、<code>%rsi</code>和<code>%rdx</code>中，那么要访问元素<code>A[i][j]</code>，可以使用以下指令：</p>
+<pre><code class="language-assembly">1  leaq  (%rsi,%rsi,4), %rax  # 计算 4*i
+2  leaq  (%rdi,%rax,4), %rax  # 计算 xA + 16*i
+3  movl  (%rax,%rdx,4), %eax  # 读取 M[xA + 16*i + 4*j]
+</code></pre>
+<p>这段代码通过缩放和加法计算地址<code>xA + 16*i + 4*j</code>，并使用该地址访问内存中的数据。</p>
+<h3>优化策略</h3>
+<p>固定大小数组的特点使得编译器可以进行多种优化，从而提高代码的运行效率。以下是一些常见的优化策略：</p>
+<ol>
+<li><strong>消除索引变量</strong>：编译器可以将数组引用转换为指针运算，避免使用索引变量。例如，使用指针遍历数组元素可以减少循环开销。</li>
+<li><strong>循环展开</strong>：对于固定大小的数组，编译器可以展开循环，减少循环控制的开销，提高流水线效率。</li>
+<li><strong>预取（Prefetching）</strong>：编译器可以生成预取指令，将即将使用的数据提前加载到缓存中，减少内存访问延迟。</li>
+</ol>
+<h4>示例：矩阵乘法的优化</h4>
+<p>以下是一个矩阵乘法的优化示例，展示了如何利用固定大小数组的特点进行优化：</p>
+<pre><code class="language-c">#define N 16
+typedef int fix_matrix[N][N];
+
+int fix_prod_ele(fix_matrix A, fix_matrix B, long i, long k) {
+    long j;
+    int result = 0;
+    for (j = 0; j &lt; N; j++)
+        result += A[i][j] * B[j][k];
+    return result;
+}
+</code></pre>
+<p>优化后的代码通过使用指针运算和循环展开，可以显著提高性能。</p>
+<h3>总结</h3>
+<p>固定大小数组在编译时确定大小，允许编译器进行各种优化，显著提高了代码的运行效率。理解固定大小数组的内存布局和访问方式，有助于编写高效的数组操作代码，并通过合理的优化策略进一步提升程序性能。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 03_3.8.4_固定大小数组
+
+"""
+Lecture: 03_程序的机器级表示/3.8_数组分配和访问
+Content: 03_3.8.4_固定大小数组
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

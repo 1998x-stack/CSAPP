@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>2.2.7 截断数字</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>06_2.2.7_截断数字</h1>
+<pre><code>Lecture: 02_程序结构和执行/2.2_整数表示
+Content: 06_2.2.7_截断数字
+</code></pre>
+<h3>2.2.7 截断数字</h3>
+<h4>简介</h4>
+<p>在计算机系统中，位表示的整数可能需要被截断（Truncation），即减少其位数。这种操作在将一个宽度较大的数据类型转换为宽度较小的数据类型时尤为常见。截断操作会丢弃高位，从而可能改变数值，这是溢出的一种形式。理解截断对于避免计算错误和数据损失非常重要。</p>
+<h4>截断无符号整数</h4>
+<p>截断无符号整数时，只需保留最低的k位，高位丢弃。例如，将32位无符号整数$$x_{31}, x_{30}, ..., x_0$$截断为16位无符号整数$$x_{15}, x_{14}, ..., x_0$$，数学上可以表示为：
+$$ x' = x \mod 2^k $$</p>
+<h5>举例说明</h5>
+<p>假设有一个32位无符号整数<code>x = 53191</code>，其二进制表示为：
+$$ x = 00000000000000001100101101110111 $$</p>
+<p>将其截断为16位：
+$$ x' = 00101101110111 $$</p>
+<p>其十进制值为<code>11799</code>。</p>
+<h4>截断有符号整数</h4>
+<p>对于有符号整数的截断，除了丢弃高位外，还需要处理符号位。截断后的数值需要进行符号扩展以保持正确的数值表示。例如，将32位有符号整数$$x_{31}, x_{30}, ..., x_0$$截断为16位$$x_{15}, x_{14}, ..., x_0$$，数学上可以表示为：
+$$ x' = (x \mod 2^k) - 2^k $$</p>
+<h5>举例说明</h5>
+<p>假设有一个32位有符号整数<code>x = -12345</code>，其二进制补码表示为：
+$$ x = 11111111111111111111111111001111 $$</p>
+<p>将其截断为16位：
+$$ x' = 11001111 $$</p>
+<p>进行符号扩展后的值为：
+$$ x' = 1111111111111111 11001111 = -12345 $$</p>
+<h4>理论推导</h4>
+<p>对于无符号整数截断后的值，可以通过模运算推导：
+$$ B2U_w([x_{w-1}, x_{w-2}, ..., x_0]) \mod 2^k = \sum_{i=0}^{w-1} x_i \cdot 2^i \mod 2^k $$
+$$ = \sum_{i=0}^{k-1} x_i \cdot 2^i = B2U_k([x_{k-1}, x_{k-2}, ..., x_0]) $$</p>
+<p>对于有符号整数的截断，除了模运算外，还需要考虑符号位的影响：
+$$ B2T_w([x_{w-1}, x_{w-2}, ..., x_0]) \mod 2^k = B2U_k([x_{k-1}, x_{k-2}, ..., x_0]) $$
+$$ x' = U2T_k(x \mod 2^k) $$</p>
+<p>其中，$U2T_k$函数将无符号整数转换为有符号整数。</p>
+<h4>应用场景</h4>
+<ol>
+<li><strong>数据类型转换</strong>：在进行数据类型转换时，尤其是从较大位宽转换为较小位宽时，截断操作是不可避免的。例如，将一个32位整数转换为16位整数。</li>
+<li><strong>数据存储优化</strong>：在某些情况下，为了节省存储空间，可能需要将数据截断为较小的位宽进行存储。</li>
+<li><strong>溢出处理</strong>：在算术运算中，当结果超出数据类型的表示范围时，可以通过截断操作进行处理。</li>
+</ol>
+<h4>截断的影响</h4>
+<p>截断操作会导致数据精度的丧失，甚至可能改变数据的符号和数值。因此，在进行截断操作时，需要特别注意数据的范围和符号，以避免数据损失和计算错误。</p>
+<h3>总结</h3>
+<p>截断数字是计算机系统中常见的操作，主要用于数据类型转换和存储优化。无符号整数和有符号整数的截断方式有所不同，但都涉及到高位的丢弃。理解截断操作的数学原理和应用场景，对于避免数据损失和计算错误具有重要意义     。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 06_2.2.7_截断数字
+
+"""
+Lecture: 02_程序结构和执行/2.2_整数表示
+Content: 06_2.2.7_截断数字
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

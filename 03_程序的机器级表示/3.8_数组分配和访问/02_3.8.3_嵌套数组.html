@@ -1,0 +1,165 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.8.3 嵌套数组</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>02_3.8.3_嵌套数组</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.8_数组分配和访问
+Content: 02_3.8.3_嵌套数组
+</code></pre>
+<h2>3.8.3 嵌套数组</h2>
+<h3>章节概述</h3>
+<p>在《深入理解计算机系统》第3章“程序的机器级表示”中，第3.8.3节探讨了嵌套数组的基本原理。嵌套数组，也称多维数组，是数组的元素本身也是数组。这一节详细分析了嵌套数组的定义、内存布局及在x86-64架构下的访问方式。</p>
+<h3>嵌套数组的定义</h3>
+<p>在C语言中，嵌套数组可以定义为多维数组。例如，以下代码定义了一个包含5行3列的二维整型数组：</p>
+<pre><code class="language-c">int A[5][3];
+</code></pre>
+<p>这意味着数组<code>A</code>包含5个元素，每个元素又是一个包含3个<code>int</code>类型元素的数组。等价地，可以使用类型定义：</p>
+<pre><code class="language-c">typedef int row3_t[3];
+row3_t A[5];
+</code></pre>
+<p>这里，<code>row3_t</code>被定义为一个包含3个<code>int</code>类型元素的数组，而<code>A</code>是包含5个<code>row3_t</code>类型元素的数组。</p>
+<h3>内存布局</h3>
+<p>嵌套数组在内存中是按行优先（row-major order）排列的。这意味着，数组的所有行依次存储，每行的元素紧挨着前一行的元素。例如，对于数组<code>A[5][3]</code>，内存布局如下：</p>
+<table>
+<thead>
+<tr>
+<th>元素</th>
+<th>地址偏移量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A[0][0]</td>
+<td>xA</td>
+</tr>
+<tr>
+<td>A[0][1]</td>
+<td>xA + 4</td>
+</tr>
+<tr>
+<td>A[0][2]</td>
+<td>xA + 8</td>
+</tr>
+<tr>
+<td>A[1][0]</td>
+<td>xA + 12</td>
+</tr>
+<tr>
+<td>A[1][1]</td>
+<td>xA + 16</td>
+</tr>
+<tr>
+<td>A[1][2]</td>
+<td>xA + 20</td>
+</tr>
+<tr>
+<td>A[2][0]</td>
+<td>xA + 24</td>
+</tr>
+<tr>
+<td>A[2][1]</td>
+<td>xA + 28</td>
+</tr>
+<tr>
+<td>A[2][2]</td>
+<td>xA + 32</td>
+</tr>
+<tr>
+<td>A[3][0]</td>
+<td>xA + 36</td>
+</tr>
+<tr>
+<td>A[3][1]</td>
+<td>xA + 40</td>
+</tr>
+<tr>
+<td>A[3][2]</td>
+<td>xA + 44</td>
+</tr>
+<tr>
+<td>A[4][0]</td>
+<td>xA + 48</td>
+</tr>
+<tr>
+<td>A[4][1]</td>
+<td>xA + 52</td>
+</tr>
+<tr>
+<td>A[4][2]</td>
+<td>xA + 56</td>
+</tr>
+</tbody>
+</table>
+<h3>元素访问的地址计算</h3>
+<p>为了访问嵌套数组的元素，编译器生成的代码会计算目标元素的偏移量，并使用数组起始地址和偏移量来访问内存。例如，对于二维数组<code>T D[R][C]</code>，元素<code>D[i][j]</code>的地址计算公式为：</p>
+<pre><code class="language-plaintext">&amp;D[i][j] = xD + L * (C * i + j)
+</code></pre>
+<p>其中，<code>xD</code>是数组<code>D</code>的起始地址，<code>L</code>是元素类型的大小（以字节为单位），<code>C</code>是数组的列数，<code>i</code>和<code>j</code>分别是行和列的索引。</p>
+<h3>示例分析</h3>
+<p>假设有以下二维数组定义：</p>
+<pre><code class="language-c">int A[5][3];
+</code></pre>
+<p>此数组占用连续的内存块，每个元素的大小为4个字节（<code>int</code>类型）。若<code>xA</code>、<code>i</code>和<code>j</code>分别存储在寄存器<code>%rdi</code>、<code>%rsi</code>和<code>%rdx</code>中，那么要访问元素<code>A[i][j]</code>，可以使用以下指令：</p>
+<pre><code class="language-assembly">1  leaq  (%rsi,%rsi,2), %rax  # 计算 3*i
+2  leaq  (%rdi,%rax,4), %rax  # 计算 xA + 12*i
+3  movl  (%rax,%rdx,4), %eax  # 读取 M[xA + 12*i + 4*j]
+</code></pre>
+<p>这段代码通过缩放和加法计算地址<code>xA + 12*i + 4*j</code>，并使用该地址访问内存中的数据。</p>
+<h3>内存对齐</h3>
+<p>为了提高内存访问的效率，编译器和处理器通常会对内存进行对齐。对齐意味着数据的起始地址是某个字节边界的倍数。对于嵌套数组中的每个元素，其地址必须对齐到元素类型大小的整数倍。例如，一个<code>int</code>类型数组的元素地址应该是4的倍数。</p>
+<h3>多维数组的访问方式</h3>
+<p>在C语言中，访问多维数组的元素可以使用多个下标。例如，<code>A[i][j]</code>表示数组<code>A</code>中第<code>i</code>行第<code>j</code>列的元素。其内存地址计算公式为：</p>
+<pre><code class="language-plaintext">&amp;A[i][j] = xA + (i * 列数 + j) * sizeof(元素类型)
+</code></pre>
+<p>具体到<code>A[5][3]</code>，<code>A[i][j]</code>的内存地址为<code>xA + (i * 3 + j) * 4</code>。</p>
+<h3>应用场景</h3>
+<p>嵌套数组在实际编程中非常常见，特别是在处理矩阵或多维数据时。例如，图像处理中的二维像素矩阵、科学计算中的多维数据集等，都会用到嵌套数组。</p>
+<h4>示例：矩阵乘法</h4>
+<p>矩阵乘法是嵌套数组的典型应用。假设有两个矩阵<code>A</code>和<code>B</code>，其元素分别存储在二维数组中，矩阵乘法可以通过嵌套循环实现：</p>
+<pre><code class="language-c">for (i = 0; i &lt; 行数A; i++) {
+    for (j = 0; j &lt; 列数B; j++) {
+        C[i][j] = 0;
+        for (k = 0; k &lt; 列数A; k++) {
+            C[i][j] += A[i][k] * B[k][j];
+        }
+    }
+}
+</code></pre>
+<p>这种嵌套循环结构反映了嵌套数组的存取方式，内层循环遍历矩阵的每一行和每一列。</p>
+<h3>优化策略</h3>
+<p>由于嵌套数组的访问涉及多次内存读取和写入，优化这些操作可以显著提高程序的性能。常见的优化策略包括：</p>
+<ol>
+<li><strong>提高缓存命中率</strong>：调整数组访问顺序，使得连续访问的元素尽量存储在相邻的内存位置。</li>
+<li><strong>避免缓存行冲突</strong>：确保不同数组或数组不同部分不频繁地映射到相同的缓存行。</li>
+<li><strong>使用块划分</strong>：将大数组划分为多个小块，每次处理一个块，从而减少缓存缺失。</li>
+</ol>
+<h3>总结</h3>
+<p>本节详细讨论了嵌套数组的定义、内存布局和访问方式。在x86-64架构下，嵌套数组的访问通过基址加索引的方式实现，支持高效的地址计算和内存访问。理解这些基本原理有助于编写高效且正确的嵌套数组操作代码，并通过优化策略进一步提高程序性能。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 02_3.8.3_嵌套数组
+
+"""
+Lecture: 03_程序的机器级表示/3.8_数组分配和访问
+Content: 02_3.8.3_嵌套数组
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

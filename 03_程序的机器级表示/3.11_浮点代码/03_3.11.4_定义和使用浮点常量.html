@@ -1,0 +1,114 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.11.4 定义和使用浮点常量</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>03_3.11.4_定义和使用浮点常量</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.11_浮点代码
+Content: 03_3.11.4_定义和使用浮点常量
+</code></pre>
+<h3>3.11.4 定义和使用浮点常量</h3>
+<h4>概述</h4>
+<p>在 x86-64 架构中，AVX 浮点运算指令不能直接使用立即数作为操作数。这意味着在进行浮点运算时，编译器必须为所有的浮点常量分配并初始化存储空间，然后从内存中读取这些常量值。理解如何定义和使用浮点常量对于编写高效的浮点运算代码至关重要。</p>
+<h4>浮点常量的定义和使用</h4>
+<p>浮点常量在汇编代码中通常以特定的内存位置存储。以下是一个将摄氏温度转换为华氏温度的 C 函数示例：</p>
+<pre><code class="language-c">double cel2fahr(double temp) {
+    return 1.8 * temp + 32.0;
+}
+</code></pre>
+<p>其对应的 x86-64 汇编代码如下：</p>
+<pre><code class="language-assembly">double cel2fahr(double temp)
+temp in %xmm0
+
+1 cel2fahr:
+2 vmulsd .LC2(%rip), %xmm0, %xmm0  ; 将 %xmm0 中的 temp 乘以 1.8
+3 vaddsd .LC3(%rip), %xmm0, %xmm0  ; 将 %xmm0 中的结果加上 32.0
+4 ret
+
+5 .LC2:
+6 .long 3435973837  ; 1.8 的低4字节
+7 .long 1073532108  ; 1.8 的高4字节
+8 .LC3:
+9 .long 0           ; 32.0 的低4字节
+10 .long 1077936128 ; 32.0 的高4字节
+</code></pre>
+<p>在这个示例中，我们可以看到函数从标签 <code>.LC2</code> 读取值 1.8，并从标签 <code>.LC3</code> 读取值 32.0。每个常量值都是通过一对 <code>.long</code> 声明指定的，表示为十进制值。</p>
+<h4>浮点常量的内存表示</h4>
+<ul>
+<li><code>.LC2</code> 定义了 1.8 的存储位置，其值由低4字节 <code>3435973837 (0xcccccccd)</code> 和高4字节 <code>1073532108 (0x3ffccccc)</code> 组成。</li>
+<li><code>.LC3</code> 定义了 32.0 的存储位置，其值由低4字节 <code>0</code> 和高4字节 <code>1077936128 (0x40400000)</code> 组成。</li>
+</ul>
+<p>这些值在内存中的表示方式如下：</p>
+<ul>
+<li>
+<p><strong>1.8</strong>：存储为两个 <code>.long</code> 值，其中低字节在前，高字节在后。</p>
+<ul>
+<li>低4字节：<code>3435973837</code> (0xcccccccd)</li>
+<li>高4字节：<code>1073532108</code> (0x3ffccccc)</li>
+<li>组合成一个64位浮点数：0x3ffccccc00000000</li>
+</ul>
+</li>
+<li>
+<p><strong>32.0</strong>：同样存储为两个 <code>.long</code> 值。</p>
+<ul>
+<li>低4字节：<code>0</code></li>
+<li>高4字节：<code>1077936128</code> (0x40400000)</li>
+<li>组合成一个64位浮点数：0x4040000000000000</li>
+</ul>
+</li>
+</ul>
+<h4>浮点常量的使用</h4>
+<p>在汇编代码中使用这些浮点常量时，通过 <code>vmulsd</code> 和 <code>vaddsd</code> 指令分别从内存中读取常量值并进行运算。这些指令通过 <code>%rip</code> 相对寻址模式访问内存中的常量值，以确保代码可以在位置无关代码（Position-Independent Code，PIC）中执行。</p>
+<h4>深入分析</h4>
+<ol>
+<li>
+<p><strong>立即数与内存常量的区别</strong>：</p>
+<ul>
+<li>立即数是直接嵌入到指令中的常量值，不需要额外的内存访问。</li>
+<li>内存常量需要额外的内存访问，但可以表示更大的数值范围和更高的精度。</li>
+</ul>
+</li>
+<li>
+<p><strong>内存对齐和性能优化</strong>：</p>
+<ul>
+<li>在使用浮点常量时，确保这些常量在内存中的对齐是优化性能的关键。对齐的常量访问速度更快，因为它们可以通过单次内存访问读取完整的值。</li>
+</ul>
+</li>
+<li>
+<p><strong>指令选择</strong>：</p>
+<ul>
+<li>编译器在选择具体指令时会考虑性能和指令集的特性。<code>vmulsd</code> 和 <code>vaddsd</code> 指令在操作双精度浮点数时表现优异，适用于高性能计算。</li>
+</ul>
+</li>
+</ol>
+<h4>结论</h4>
+<p>定义和使用浮点常量是浮点运算代码中的重要环节。通过理解这些常量的内存表示和访问方式，可以编写出更高效和可靠的浮点运算代码。在实际应用中，选择合适的指令和优化内存访问是提升代码性能的关键。</p>
+<h3>引用</h3>
+<hr>
+
+    <h3>Python 文件</h3>
+    <pre><code># 03_3.11.4_定义和使用浮点常量
+
+"""
+Lecture: 03_程序的机器级表示/3.11_浮点代码
+Content: 03_3.11.4_定义和使用浮点常量
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

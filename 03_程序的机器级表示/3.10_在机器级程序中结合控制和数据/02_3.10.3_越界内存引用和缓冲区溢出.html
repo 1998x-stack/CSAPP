@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.10.3 越界内存引用和缓冲区溢出</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>02_3.10.3_越界内存引用和缓冲区溢出</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.10_在机器级程序中结合控制和数据
+Content: 02_3.10.3_越界内存引用和缓冲区溢出
+</code></pre>
+<h2>3.10.3 越界内存引用和缓冲区溢出</h2>
+<h3>章节概述</h3>
+<p>在《深入理解计算机系统》第3章“程序的机器级表示”中，第3.10.3节详细讨论了越界内存引用和缓冲区溢出的问题。C语言不对数组引用进行任何边界检查，同时局部变量存储在堆栈上，与保存的寄存器值和返回地址等状态信息一起。这种组合可能导致严重的程序错误，当堆栈上的状态信息因写入越界数组元素而被破坏时，程序可能会尝试重新加载被破坏的寄存器或执行带有错误状态的<code>ret</code>指令，从而导致严重问题。</p>
+<h3>缓冲区溢出问题</h3>
+<p>缓冲区溢出是最常见的状态破坏源之一。通常情况下，一些字符数组在堆栈上分配空间来存储字符串，但字符串的大小超过了为数组分配的空间。这导致了缓冲区溢出，覆盖了堆栈上的其他数据，包括返回地址和寄存器值。以下代码展示了<code>gets</code>函数的一个实现，该函数允许从标准输入读取一个字符串到缓冲区中，而不检查字符串的长度：</p>
+<pre><code class="language-c">/* Implementation of library function gets() */
+char *gets(char *s) {
+    int c;
+    char *dest = s;
+    while ((c = getchar()) != '\n' &amp;&amp; c != EOF)
+        *dest++ = c;
+    if (c == EOF &amp;&amp; dest == s)
+        return NULL;  // No characters read
+    *dest++ = '\0';  // Terminate string
+    return s;
+}
+</code></pre>
+<p>这种实现方式在读取超过缓冲区大小的字符串时，会导致缓冲区溢出。以下是<code>gets</code>函数的堆栈组织示意图 ：</p>
+<pre><code>Stack frame
+for caller
+
+Stack frame
+for echo
+
+Return address %rsp+24
+
+buf = %rsp[6][5][4][3][2][1][0]
+</code></pre>
+<h3>示例分析</h3>
+<p>以下代码展示了一个简单的C程序，该程序读取输入行并将其写回：</p>
+<pre><code class="language-c">void echo() {
+    char buf[64];
+    gets(buf);  /* Here is the stack buffer overflow bug */
+    puts(buf);
+}
+</code></pre>
+<p>在这个示例中，<code>gets</code>函数没有检查输入字符串的长度，如果输入字符串长度超过64字节，就会导致缓冲区溢出，覆盖堆栈上的其他数据，如返回地址等。</p>
+<h3>实际缓冲区溢出攻击</h3>
+<p>缓冲区溢出不仅会导致程序崩溃，还可以被恶意利用来执行任意代码。攻击者可以通过精心构造的输入字符串，覆盖返回地址，使程序跳转到攻击者提供的恶意代码位置。例如，1988年的Internet蠕虫攻击就是利用了finger daemon中的缓冲区溢出漏洞来远程执行恶意代码，导致大量计算机资源被消耗，系统瘫痪 。</p>
+<h3>防止缓冲区溢出的策略</h3>
+<p>为了防止缓冲区溢出，现代编译器和操作系统实现了多种机制，如堆栈保护（stack protection）和地址空间布局随机化（Address Space Layout Randomization，ASLR）。以下是一些常见的缓冲区溢出防护机制：</p>
+<ol>
+<li><strong>堆栈随机化</strong>：通过在程序启动时随机分配堆栈空间，使得每次执行程序时堆栈地址不同，从而增加攻击者猜测堆栈地址的难度。</li>
+<li><strong>堆栈保护</strong>：在局部缓冲区和堆栈状态之间插入一个特殊的“金丝雀”值，在函数返回前检查该值是否被修改，从而检测缓冲区溢出。</li>
+<li><strong>限制可执行代码区域</strong>：限制哪些内存区域可以存储可执行代码，防止攻击者在堆栈中插入并执行恶意代码  。</li>
+</ol>
+<h3>总结</h3>
+<p>缓冲区溢出是C语言编程中常见且危险的漏洞，可能导致严重的安全问题和程序崩溃。理解缓冲区溢出的原理及其攻击方式，并采用适当的防护策略，可以有效减少此类漏洞的风险，提高程序的安全性和稳定性。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 02_3.10.3_越界内存引用和缓冲区溢出
+
+"""
+Lecture: 03_程序的机器级表示/3.10_在机器级程序中结合控制和数据
+Content: 02_3.10.3_越界内存引用和缓冲区溢出
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

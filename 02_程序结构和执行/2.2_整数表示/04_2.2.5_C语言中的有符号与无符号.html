@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>2.2.5 C语言中的有符号与无符号</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>04_2.2.5_C语言中的有符号与无符号</h1>
+<pre><code>Lecture: 02_程序结构和执行/2.2_整数表示
+Content: 04_2.2.5_C语言中的有符号与无符号
+</code></pre>
+<h3>2.2.5 C语言中的有符号与无符号</h3>
+<h4>简介</h4>
+<p>在C语言中，有符号整数和无符号整数是两种主要的整数数据类型。尽管它们在大多数情况下可以互换使用，但在某些特定情况下，它们的行为和结果会有所不同。理解这两种类型的区别和转换规则对于编写高效和正确的代码至关重要。</p>
+<h4>有符号整数与无符号整数的定义</h4>
+<ol>
+<li>
+<p><strong>有符号整数</strong>：默认情况下，C语言中的整数类型（如<code>int</code>、<code>short</code>、<code>long</code>）都是有符号的，这意味着它们可以表示正数、负数和零。有符号整数通常使用二进制补码表示法。对于一个w位的有符号整数，其取值范围是-$2^{w-1}$到$2^{w-1} - 1$。</p>
+</li>
+<li>
+<p><strong>无符号整数</strong>：无符号整数只能表示非负数。它们的取值范围是0到$2^w - 1$。在声明一个无符号整数时，可以在类型前添加<code>unsigned</code>关键字。例如<code>unsigned int</code>。</p>
+</li>
+</ol>
+<h4>显式和隐式转换</h4>
+<ol>
+<li>
+<p><strong>显式转换</strong>：可以通过强制类型转换（casting）将有符号整数转换为无符号整数，反之亦然。例如：</p>
+<pre><code class="language-c">int tx;
+unsigned ux;
+tx = (int) ux; // 无符号转有符号
+ux = (unsigned) tx; // 有符号转无符号
+</code></pre>
+<p>显式转换的结果取决于底层的位级表示，而不是直接的数值解释。例如，假设<code>short v = -12345</code>，将其转换为<code>unsigned short</code>时，结果如下：</p>
+<pre><code class="language-c">short v = -12345;
+unsigned short uv = (unsigned short)v;
+printf(&quot;v = %d, uv = %u\n&quot;, v, uv); // 输出：v = -12345, uv = 53191
+</code></pre>
+</li>
+<li>
+<p><strong>隐式转换</strong>：在表达式中，如果操作数类型不同，C语言会进行隐式转换。例如：</p>
+<pre><code class="language-c">int x = -1;
+unsigned y = 1;
+printf(&quot;%u\n&quot;, x + y); // -1隐式转换为无符号整数
+</code></pre>
+</li>
+</ol>
+<h4>转换规则</h4>
+<ol>
+<li>
+<p><strong>有符号到无符号的转换（T2Uw）</strong>：</p>
+<ul>
+<li>如果x &lt; 0，则T2Uw(x) = x + 2^w</li>
+<li>否则，T2Uw(x) = x
+例如，T2U16(-12345) = 53191。</li>
+</ul>
+</li>
+<li>
+<p><strong>无符号到有符号的转换（U2Tw）</strong>：</p>
+<ul>
+<li>如果u &gt; TMaxw，则U2Tw(u) = u - 2^w</li>
+<li>否则，U2Tw(u) = u
+例如，U2T32(4294967295) = -1。</li>
+</ul>
+</li>
+</ol>
+<h4>比较操作中的转换</h4>
+<p>在比较操作中，如果操作数类型不同，C语言会隐式地将有符号数转换为无符号数。例如：</p>
+<pre><code class="language-c">int a = -1;
+unsigned b = 2;
+printf(&quot;%d\n&quot;, a &lt; b); // 输出0，因为-1被转换为无符号数
+</code></pre>
+<p>这种隐式转换会导致非预期的结果，尤其是在涉及负数和无符号数的比较时。</p>
+<h4>关键点总结</h4>
+<ol>
+<li>
+<p><strong>有符号与无符号的基本区别</strong>：</p>
+<ul>
+<li>有符号整数可以表示负数、零和正数，而无符号整数只能表示非负数。</li>
+<li>无符号整数的取值范围比相同位宽的有符号整数大一倍。</li>
+</ul>
+</li>
+<li>
+<p><strong>显式和隐式转换</strong>：</p>
+<ul>
+<li>显式转换通过强制类型转换实现，结果取决于底层位级表示。</li>
+<li>隐式转换在表达式中自动进行，可能导致非预期的结果。</li>
+</ul>
+</li>
+<li>
+<p><strong>转换规则和影响</strong>：</p>
+<ul>
+<li>理解T2Uw和U2Tw函数的行为对于正确进行类型转换至关重要。</li>
+<li>在比较操作中，注意隐式转换可能导致的结果偏差。</li>
+</ul>
+</li>
+</ol>
+<h4>结论</h4>
+<p>有符号和无符号整数在C语言中有着不同的应用场景和转换规则。理解它们的区别以及显式和隐式转换的机制，有助于编写更加健壮和高效的代码。在实际编程中，应特别注意类型转换的规则和潜在影响，避免因隐式转换导致的逻辑错误和程序漏洞。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 04_2.2.5_C语言中的有符号与无符号
+
+"""
+Lecture: 02_程序结构和执行/2.2_整数表示
+Content: 04_2.2.5_C语言中的有符号与无符号
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

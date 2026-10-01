@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.2.3 格式化注意事项</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>02_3.2.3_格式化注意事项</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.2_程序编码
+Content: 02_3.2.3_格式化注意事项
+</code></pre>
+<h3>3.2.3 格式化注意事项</h3>
+<p>本节详细介绍了生成的汇编代码的格式化注意事项，以及如何通过更清晰的展示方式来理解汇编代码。以下是对关键部分的深入分析：</p>
+<h4>1. 汇编代码的生成</h4>
+<p>当我们使用 <code>gcc</code> 编译器生成汇编代码时，命令如下：</p>
+<pre><code class="language-sh">gcc -Og -S mstore.c
+</code></pre>
+<p>生成的汇编文件 <code>mstore.s</code> 包含以下内容：</p>
+<pre><code class="language-assembly">.file &quot;010-mstore.c&quot;
+.text
+.globl multstore
+.type multstore, @function
+multstore:
+pushq %rbx
+movq %rdx, %rbx
+call mult2
+movq %rax, (%rbx)
+popq %rbx
+ret
+.size multstore, .-multstore
+.ident &quot;GCC: (Ubuntu 4.8.1-2ubuntu1~12.04) 4.8.1&quot;
+.section .note.GNU-stack,&quot;&quot;,@progbits
+</code></pre>
+<p>这些生成的汇编代码包含许多以 <code>.</code> 开头的指令，这些指令主要是用于指导汇编器和链接器的。例如，<code>.file</code> 指示符用于指定源文件名，<code>.text</code> 指示符用于表明接下来的代码段是可执行代码。</p>
+<h4>2. 指令的解析与注释</h4>
+<p>为了使汇编代码更易于理解，我们通常会忽略这些指令，同时添加注释来解释每一行代码的功能。例如：</p>
+<pre><code class="language-assembly">void multstore(long x, long y, long *dest)
+x in %rdi, y in %rsi, dest in %rdx
+1 multstore:
+2 pushq %rbx    # 保存 %rbx 的值
+3 movq %rdx, %rbx    # 将 dest 的值复制到 %rbx
+4 call mult2    # 调用 mult2(x, y)
+5 movq %rax, (%rbx)    # 将结果存储在 *dest
+6 popq %rbx    # 恢复 %rbx 的值
+7 ret    # 返回
+</code></pre>
+<p>这种格式化方式通过省略多余的指令，并添加注释来解释每条指令的作用，使得代码更具可读性和理解性。</p>
+<h4>3. 格式化的实用性</h4>
+<p>汇编代码的格式化对理解程序的机器级表示非常重要。以下几点是格式化汇编代码的实用建议：</p>
+<ul>
+<li><strong>省略不必要的指令</strong>：许多以 <code>.</code> 开头的指令对于理解程序逻辑并不重要，可以省略。</li>
+<li><strong>添加注释</strong>：在每条指令后添加注释，解释其作用和与源代码的对应关系。</li>
+<li><strong>行号与对齐</strong>：通过添加行号和对齐指令，使代码结构更清晰。</li>
+</ul>
+<h4>4. 汇编器和链接器指令</h4>
+<p>尽管许多指令可以忽略，但了解它们的作用对深度调试和优化是有帮助的。以下是一些常见指令的作用：</p>
+<ul>
+<li><code>.file</code>：指定源文件名。</li>
+<li><code>.text</code>：表示接下来的代码段是可执行代码。</li>
+<li><code>.globl</code>：声明全局符号。</li>
+<li><code>.type</code>：指定符号的类型。</li>
+<li><code>.size</code>：定义符号的大小。</li>
+<li><code>.ident</code>：插入标识符信息。</li>
+<li><code>.section</code>：定义新的段或改变段属性。</li>
+</ul>
+<h4>5. 编译器生成的代码样式</h4>
+<p>不同的编译器和编译选项会生成不同风格的汇编代码。例如，优化级别 <code>-Og</code> 旨在提供易于调试的优化，这可能会影响生成代码的结构和注释。</p>
+<p>通过格式化汇编代码并添加注释，可以更好地理解机器级程序的执行流程，有助于调试和优化程序性能。了解这些格式化注意事项，可以帮助我们更深入地掌握程序编码和计算机系统的工作原理。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 02_3.2.3_格式化注意事项
+
+"""
+Lecture: 03_程序的机器级表示/3.2_程序编码
+Content: 02_3.2.3_格式化注意事项
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

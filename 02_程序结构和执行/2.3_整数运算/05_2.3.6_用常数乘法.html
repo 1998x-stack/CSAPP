@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>2.3.6 用常数乘法</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>05_2.3.6_用常数乘法</h1>
+<pre><code>Lecture: 02_程序结构和执行/2.3_整数运算
+Content: 05_2.3.6_用常数乘法
+</code></pre>
+<h3>05_2.3.6_用常数乘法</h3>
+<h4>概述</h4>
+<p>在计算机体系结构中，整数乘法操作通常相对较慢，这源于它在硬件层面需要更多的时钟周期来完成。因此，在许多计算平台上，通过常数乘法优化算法性能是一个常见的做法。这种优化方法包括将乘法运算替换为移位和加法运算，从而提升执行效率。</p>
+<h4>乘以2的幂</h4>
+<p>乘以2的幂是最简单的常数乘法优化方式。例如，对于任意整数 $ x $ 和非负整数 $ k $ ， $ x \times 2^k $ 可以通过将 $ x $ 左移 $ k $ 位来实现，即：</p>
+<p>$$ x \times 2^k = x \ll k $$</p>
+<p>这种操作在硬件上极为高效，因为移位操作通常只需一个时钟周期即可完成。</p>
+<h4>常数乘法的优化方法</h4>
+<p>对于非2的幂常数的乘法，可以使用移位和加法的组合来实现。例如：</p>
+<ul>
+<li><strong>乘以14</strong>：由于14可以表示为 $ 2^3 + 2^2 + 2^1 $，即：</li>
+</ul>
+<p>$$ x \times 14 = x \times (2^3 + 2^2 + 2^1) = (x \ll 3) + (x \ll 2) + (x \ll 1) $$</p>
+<ul>
+<li><strong>乘以7</strong>：由于7可以表示为 $ 2^3 - 1 $，即：</li>
+</ul>
+<p>$$ x \times 7 = x \times (2^3 - 1) = (x \ll 3) - x $$</p>
+<p>这种方法利用了位操作的快速特性，可以显著提高乘法运算的性能。</p>
+<h4>移位与加法的综合应用</h4>
+<p>编译器通常会自动识别和优化这些常数乘法。例如：</p>
+<ul>
+<li><strong>乘以15</strong>：由于15可以表示为 $ 2^4 - 1 $，即：</li>
+</ul>
+<p>$$ x \times 15 = x \times (2^4 - 1) = (x \ll 4) - x $$</p>
+<ul>
+<li><strong>乘以60</strong>：由于60可以表示为 $ 64 - 4 $，即：</li>
+</ul>
+<p>$$ x \times 60 = x \times (2^6 - 2^2) = (x \ll 6) - (x \ll 2) $$</p>
+<p>这些优化不仅减少了乘法运算的时钟周期，还能在一定程度上减少功耗，因为加法和移位操作在硬件实现中通常比乘法更节能。</p>
+<h4>常数乘法的实际应用</h4>
+<p>在实际编程中，尤其是在对性能要求较高的场合，如嵌入式系统和高性能计算中，这些优化方法被广泛应用。开发者可以通过手动优化代码或依赖编译器的自动优化来实现这些改进。</p>
+<h4>编译器优化实例</h4>
+<p>现代编译器（如GCC、Clang）会自动检测和应用这些优化。例如，在GCC中，针对如下代码：</p>
+<pre><code class="language-c">int multiply_by_14(int x) {
+    return x * 14;
+}
+</code></pre>
+<p>编译器会将其转换为：</p>
+<pre><code class="language-c">int multiply_by_14(int x) {
+    return (x &lt;&lt; 3) + (x &lt;&lt; 2) + (x &lt;&lt; 1);
+}
+</code></pre>
+<p>这种转换大大提高了代码的执行效率，使得乘法操作能够以更少的时钟周期完成。</p>
+<h3>总结</h3>
+<p>用常数乘法优化是计算机体系结构中一个重要的技巧，通过将乘法转换为更高效的移位和加法操作，可以显著提升运算性能。在编写高性能代码时，理解并利用这些优化方法，对于提升整体系统性能具有重要意义。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 05_2.3.6_用常数乘法
+
+"""
+Lecture: 02_程序结构和执行/2.3_整数运算
+Content: 05_2.3.6_用常数乘法
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

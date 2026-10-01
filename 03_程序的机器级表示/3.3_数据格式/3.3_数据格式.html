@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.3 数据格式</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>3.3_数据格式</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.3_数据格式
+Content: 3.3_数据格式
+</code></pre>
+<h3>3.3 数据格式详细分析</h3>
+<p>本节探讨了在程序的机器级表示中，数据格式的重要性和不同数据类型在内存中的表示。以下是对关键部分的深入分析：</p>
+<h4>1. 数据类型和大小</h4>
+<p>现代计算机支持多种数据格式和不同的长度，包括整数和浮点数。例如，许多机器有处理单字节、2 字节、4 字节和 8 字节整数的指令。浮点数通常有 4 字节的单精度和 8 字节的双精度表示。</p>
+<h5>常见数据类型和大小</h5>
+<ul>
+<li><strong>char</strong>：1 字节</li>
+<li><strong>short</strong>：2 字节</li>
+<li><strong>int</strong>：4 字节</li>
+<li><strong>long</strong>：32 位系统中为 4 字节，64 位系统中为 8 字节</li>
+<li><strong>float</strong>：4 字节</li>
+<li><strong>double</strong>：8 字节</li>
+<li><strong>指针类型</strong>：在 32 位系统中为 4 字节，在 64 位系统中为 8 字节</li>
+</ul>
+<h4>2. 数据格式的表示</h4>
+<p>由于其起源于 16 位架构并扩展到 32 位，Intel 使用术语“word”来表示 16 位数据类型。基于此，他们将 32 位数量称为“双字”（double words），将 64 位数量称为“四字”（quad words）。例如，在 x86-64 架构中，标准 int 值以双字（32 位）存储，指针以 8 字节的四字存储。</p>
+<h4>3. 数据对齐</h4>
+<p>许多计算机系统对基本数据类型的允许地址施加了限制，要求某些对象的地址必须是某个值 K（通常是 2、4 或 8）的倍数。这些对齐限制简化了处理器和内存系统之间接口的设计。例如，x86-64 硬件在数据对齐时性能更好，尽管它在不对齐时也能正确工作。Intel 建议数据对齐以提高内存系统性能。</p>
+<p>常见的对齐规则是：任意 K 字节的原始对象，其地址必须是 K 的倍数。这意味着：</p>
+<ul>
+<li><strong>1 字节</strong>：<code>char</code></li>
+<li><strong>2 字节</strong>：<code>short</code></li>
+<li><strong>4 字节</strong>：<code>int</code>, <code>float</code></li>
+<li><strong>8 字节</strong>：<code>long</code>, <code>double</code>, <code>char*</code></li>
+</ul>
+<h4>4. 字节序</h4>
+<p>字节序指示在内存中存储多字节对象的字节顺序。主要有两种字节序：</p>
+<ul>
+<li><strong>小端序（Little Endian）</strong>：最低有效字节存储在最低的内存地址。</li>
+<li><strong>大端序（Big Endian）</strong>：最高有效字节存储在最低的内存地址。</li>
+</ul>
+<p>在 x86-64 架构中，通常使用小端序。例如，一个 32 位整数 0x12345678 在小端序机器中的存储顺序为 <code>0x78 0x56 0x34 0x12</code>。</p>
+<h4>5. 浮点数表示</h4>
+<p>浮点数使用 IEEE 标准 754 表示，包括单精度（32 位）和双精度（64 位）格式。浮点数的表示由三个部分组成：</p>
+<ul>
+<li><strong>符号位（s）</strong>：表示数的正负。</li>
+<li><strong>指数（E）</strong>：以偏移量形式存储。</li>
+<li><strong>尾数（M）</strong>：存储有效数字。</li>
+</ul>
+<h5>标准浮点格式</h5>
+<ul>
+<li><strong>单精度</strong>：1 位符号位，8 位指数，23 位尾数。</li>
+<li><strong>双精度</strong>：1 位符号位，11 位指数，52 位尾数。</li>
+</ul>
+<p>IEEE 浮点数标准还包括一些特殊值的表示，如正无穷大、负无穷大和 NaN（非数值）。</p>
+<h4>6. 使用固定大小的数据类型</h4>
+<p>为避免依赖“典型”大小和不同编译器设置的差异，ISO C99 引入了一类固定大小的数据类型，例如 <code>int32_t</code> 和 <code>int64_t</code>，分别为 4 字节和 8 字节。使用固定大小的整数类型可以让程序员更好地控制数据表示。</p>
+<h4>7. 数据类型的便携性</h4>
+<p>程序员应尽量使他们的程序在不同的机器和编译器上具有可移植性。C 标准定义了每种数据类型必须能够表示的最小范围，但没有上限。这种灵活性允许 C 能够在广泛的机器上实现，但也要求程序员在编写代码时注意避免依赖特定的实现细节。</p>
+<h3>结论</h3>
+<p>通过详细分析数据格式及其表示方法，可以更好地理解计算机系统如何管理和操作不同类型的数据。这对于编写高效、可靠和可移植的代码至关重要。理解数据对齐、字节序以及浮点数表示等概念，有助于优化程序性能，并避免潜在的编程错误。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 3.3_数据格式
+
+"""
+Lecture: 03_程序的机器级表示/3.3_数据格式
+Content: 3.3_数据格式
+"""
+
+import numpy as np
+import sys
+from typing import Tuple
+
+class DataFormats:
+    """
+    Class to demonstrate data formats using NumPy.
+    
+    Attributes:
+        int_array (np.ndarray): NumPy array of integers for demonstration.
+        float_array (np.ndarray): NumPy array of floats for demonstration.
+    """
+    
+    def __init__(self, int_values: Tuple[int, int, int], float_values: Tuple[float, float, float]):
+        """
+        Initialize the DataFormats class with integer and float values.
+        
+        Args:
+            int_values (Tuple[int, int, int]): Tuple of three integers.
+            float_values (Tuple[float, float, float]): Tuple of three floats.
+        """
+        self.int_array = np.array(int_values, dtype=np.int32)
+        self.float_array = np.array(float_values, dtype=np.float64)
+    
+    def display_sizes(self):
+        """
+        Display sizes of integer and float arrays.
+        """
+        print("Sizes of Arrays:")
+        print("================")
+        print(f"Int Array: {self.int_array.size} elements of {self.int_array.dtype} each")
+        print(f"Float Array: {self.float_array.size} elements of {self.float_array.dtype} each")
+    
+    def display_memory_layout(self):
+        """
+        Display memory layout and alignment of arrays.
+        """
+        print("\nMemory Layout and Alignment:")
+        print("============================")
+        print(f"Int Array Memory Layout:\n{self.int_array}")
+        print(f"Float Array Memory Layout:\n{self.float_array}")
+    
+    def check_endianness(self):
+        """
+        Check the endianness of the system using NumPy.
+        """
+        if sys.byteorder == 'little':
+            print("\nSystem Endianness: Little Endian")
+        else:
+            print("\nSystem Endianness: Big Endian")
+        
+        # NumPy's byte order for the integer array
+        int_byte_order = self.int_array.dtype.byteorder
+        print(f"Int Array Byte Order (NumPy): {int_byte_order}")
+        
+        # NumPy's byte order for the float array
+        float_byte_order = self.float_array.dtype.byteorder
+        print(f"Float Array Byte Order (NumPy): {float_byte_order}")
+
+# Example usage
+if __name__ == "__main__":
+    # Initialize DataFormats object with example values
+    data_formats = DataFormats((10, 20, 30), (1.5, 2.5, 3.5))
+    
+    # Display sizes of arrays
+    data_formats.display_sizes()
+    
+    # Display memory layout and alignment
+    data_formats.display_memory_layout()
+    
+    # Check endianness
+    data_formats.check_endianness()</code></pre>
+  </div>
+</body>
+</html>
+  

@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>1.9.2 并发和并行</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>01_1.9.2_并发和并行</h1>
+<pre><code>Lecture: 01_计算机系统概览/1.9_重要主题
+Content: 01_1.9.2_并发和并行
+</code></pre>
+<h3>1.9.2 并发和并行详解</h3>
+<h4>并发和并行的基本概念</h4>
+<p>并发（Concurrency）和并行（Parallelism）是计算机系统中提高性能的两种重要技术。虽然这两个术语常常互换使用，但它们实际上有不同的含义和应用场景。</p>
+<ul>
+<li><strong>并发</strong>：指系统中存在多个同时进行的活动，这些活动可能在同一时间交替进行，但不一定真正同时进行。并发强调的是活动的交替执行和系统对多个任务的处理能力。</li>
+<li><strong>并行</strong>：利用并发来加速系统运行，通过多个处理器或多个核心同时执行多个任务。并行强调的是任务的同时执行，以提高系统的整体性能。</li>
+</ul>
+<p>并发和并行可以在计算机系统的多个抽象层次上实现。下面将详细讨论线程级并发（Thread-Level Concurrency）、指令级并行（Instruction-Level Parallelism）和单指令多数据并行（Single-Instruction, Multiple-Data Parallelism）。</p>
+<h4>线程级并发</h4>
+<p>线程级并发基于进程抽象，允许多个程序同时执行。在一个进程中，可以存在多个线程，每个线程都有独立的控制流。早期的并发执行是通过快速切换进程来模拟的，这种方法称为单处理器系统（uniprocessor system）。现代系统中，多处理器和多核心处理器（multi-core processor）使得真正的并行执行成为可能。</p>
+<ul>
+<li><strong>多处理器系统</strong>：由多个处理器在单一操作系统内核的控制下工作。</li>
+<li><strong>多核心处理器</strong>：在单个集成电路芯片上集成多个CPU核心。</li>
+</ul>
+<h4>指令级并行</h4>
+<p>指令级并行是在较低的抽象层次上实现的，现代处理器可以同时执行多条指令。例如，1978年推出的Intel 8086处理器需要3-10个时钟周期才能执行一条指令，而现代处理器可以每个时钟周期执行2-4条指令。通过流水线技术（pipelining），处理器将指令的执行划分为多个步骤，每个步骤在不同的硬件阶段并行进行，从而提高指令执行速度。</p>
+<ul>
+<li><strong>超标量处理器（Superscalar Processor）</strong>：能够每个时钟周期执行多条指令的处理器。</li>
+</ul>
+<h4>单指令多数据并行</h4>
+<p>在最低的抽象层次上，现代处理器具有允许单条指令并行执行多次操作的特殊硬件，这种模式称为单指令多数据并行（SIMD Parallelism）。例如，Intel和AMD处理器支持并行执行多个浮点数加法操作的指令。</p>
+<ul>
+<li><strong>SIMD指令</strong>：用于加速图像、声音和视频数据处理的特殊指令。</li>
+</ul>
+<h4>并发和并行的实际应用</h4>
+<ol>
+<li><strong>网络服务器</strong>：高并发的Web服务器可以同时处理多个客户端请求，提高响应速度。</li>
+<li><strong>数据库服务器</strong>：并行处理数据库查询，提高查询效率。</li>
+<li><strong>科学计算</strong>：并行计算可以加速复杂的科学模拟和计算任务。</li>
+<li><strong>主流应用程序</strong>：例如Web浏览器、电子表格和文档处理器，利用并行处理提高性能。</li>
+</ol>
+<h4>并发编程中的问题</h4>
+<ol>
+<li><strong>同步问题</strong>：在并发编程中，多个线程可能需要访问共享数据，必须使用同步机制防止数据竞争和不一致。例如，使用互斥锁（mutex）保护共享数据。</li>
+<li><strong>死锁</strong>：多个线程相互等待资源，导致系统无法继续运行。</li>
+<li><strong>线程安全</strong>：确保函数在多线程环境中正确执行，不引发数据竞争和错误。</li>
+</ol>
+<h4>结论</h4>
+<p>并发和并行是现代计算机系统提高性能的关键技术。理解并发和并行的基本概念和实现细节，对于开发高效的并发和并行程序至关重要。通过合理利用多线程、多处理器和特殊指令集，程序可以显著提高执行速度和系统性能。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 01_1.9.2_并发和并行
+
+"""
+Lecture: 01_计算机系统概览/1.9_重要主题
+Content: 01_1.9.2_并发和并行
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

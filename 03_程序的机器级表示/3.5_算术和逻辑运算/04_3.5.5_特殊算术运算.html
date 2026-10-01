@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.5.5 特殊算术运算</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>04_3.5.5_特殊算术运算</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.5_算术和逻辑运算
+Content: 04_3.5.5_特殊算术运算
+</code></pre>
+<h3>3.5.5 特殊算术运算</h3>
+<p>在机器级表示中，特殊算术运算对于处理大数和复杂的算术操作非常重要。x86-64 指令集提供了一些指令来支持128位（16字节）数的操作。这些操作通常涉及乘法和除法运算。下面是对这一章节的详细分析。</p>
+<h4>128位乘法与除法</h4>
+<p>对于64位整数的乘法，结果可能需要128位来表示。x86-64指令集提供了支持128位结果的乘法和除法操作。Intel将这种16字节的量称为“八字”（oct word）。以下是这些特殊算术操作的描述：</p>
+<ul>
+<li><code>imulq S</code>: 有符号全乘法，将乘积存储在寄存器对 <code>%rdx:%rax</code> 中。执行 <code>R[%rdx]:R[%rax] ← S × R[%rax]</code>。</li>
+<li><code>mulq S</code>: 无符号全乘法，将乘积存储在寄存器对 <code>%rdx:%rax</code> 中。执行 <code>R[%rdx]:R[%rax] ← S × R[%rax]</code>。</li>
+<li><code>cqto</code>: 将64位符号扩展为128位，存储在 <code>%rdx:%rax</code> 中。执行 <code>R[%rdx]:R[%rax] ← SignExtend(R[%rax])</code>。</li>
+<li><code>idivq S</code>: 有符号除法，将商存储在 <code>%rax</code> 中，余数存储在 <code>%rdx</code> 中。执行 <code>R[%rdx]:R[%rax] ÷ S</code> 以及 <code>R[%rdx] ← R[%rdx]:R[%rax] mod S</code>。</li>
+<li><code>divq S</code>: 无符号除法，将商存储在 <code>%rax</code> 中，余数存储在 <code>%rdx</code> 中。执行 <code>R[%rdx]:R[%rax] ÷ S</code> 以及 <code>R[%rdx] ← R[%rdx]:R[%rax] mod S</code>。</li>
+</ul>
+<p>这些操作允许在单个指令中处理更大范围的数值，从而提高了计算的效率和精度。</p>
+<h4><code>imulq</code> 指令</h4>
+<p><code>imulq</code> 指令有两种形式，一种是基本的乘法指令，用于生成两个64位操作数的64位乘积。另一种形式是用于生成128位乘积。如下是两种形式的例子：</p>
+<ul>
+<li><code>imulq %rbx, %rax</code>: 将 <code>%rbx</code> 和 <code>%rax</code> 相乘，结果存储在 <code>%rax</code> 中，只保留低64位。</li>
+<li><code>imulq $3, %rbx, %rax</code>: 将 <code>%rbx</code> 的值乘以3，结果存储在 <code>%rax</code> 中，保留低64位。</li>
+<li><code>imulq %rbx</code>: 将 <code>%rbx</code> 的值与 <code>%rax</code> 的值相乘，结果存储在 <code>%rdx:%rax</code> 中，保留128位。</li>
+</ul>
+<h4>整数溢出与处理</h4>
+<p>由于编码长度有限，计算机算术与传统整数算术和实数算术有很大的不同。有限长度会导致数字溢出，当它们超出表示范围时。这在进行浮点运算时也会遇到下溢问题，即数值接近0.0时变为0。</p>
+<p>在C语言和大多数其他编程语言中，有限整数算术相较于真正的整数算术有一些奇特的性质。例如，表达式 <code>x * x</code> 可能因为溢出而计算出负数。然而，无符号和二进制补码算术满足许多整数算术的性质，包括结合律、交换律和分配律。这允许编译器进行许多优化。例如，在将表达式 <code>7 * x</code> 替换为 <code>(x &lt;&lt; 3) - x</code> 时，利用了这些性质以及移位与乘以2的幂之间的关系。</p>
+<h4>示例分析</h4>
+<p>考虑以下C代码：</p>
+<pre><code class="language-c">long special_arith(long x, long y) {
+    long result;
+    __asm__ (&quot;imulq %1, %0&quot;
+             : &quot;=r&quot;(result)
+             : &quot;r&quot;(y), &quot;0&quot;(x));
+    return result;
+}
+</code></pre>
+<p>其汇编代码如下：</p>
+<pre><code class="language-assembly">special_arith:
+    imulq %rsi, %rdi  ; 将 %rsi 和 %rdi 相乘，结果存储在 %rdi 中
+    movq %rdi, %rax   ; 将结果移动到 %rax 中以返回
+    ret
+</code></pre>
+<p>这个例子展示了如何使用 <code>imulq</code> 指令来执行乘法运算，并将结果存储在寄存器中返回。</p>
+<h4>特殊算术操作的应用</h4>
+<p>特殊算术操作在处理大数、科学计算和高精度运算中有广泛的应用。例如：</p>
+<ol>
+<li><strong>大整数运算</strong>：在加密算法中，常常需要对大整数进行乘法和除法运算。</li>
+<li><strong>科学计算</strong>：在科学计算和仿真中，常常需要高精度的乘法和除法运算。</li>
+<li><strong>高精度运算</strong>：在金融计算和其他需要高精度的领域，这些操作也是必不可少的。</li>
+</ol>
+<h3>总结</h3>
+<p>特殊算术运算在机器级编程中起着至关重要的作用。理解和掌握这些操作对于处理复杂的算术运算和优化程序性能具有重要意义。在实际应用中，这些操作可以显著提高计算效率和精度。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 04_3.5.5_特殊算术运算
+
+"""
+Lecture: 03_程序的机器级表示/3.5_算术和逻辑运算
+Content: 04_3.5.5_特殊算术运算
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

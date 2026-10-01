@@ -1,0 +1,70 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.8.1 基本原理</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>00_3.8.1_基本原理</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.8_数组分配和访问
+Content: 00_3.8.1_基本原理
+</code></pre>
+<h2>3.8.1 基本原理</h2>
+<h3>章节概述</h3>
+<p>《深入理解计算机系统》第3章的“程序的机器级表示”部分讨论了数组的分配和访问，其中第3.8.1节详细讲述了数组的基本原理。本节内容主要涉及C语言中的数组如何在内存中表示和访问，x86-64架构如何处理数组，以及相关的指针算术。</p>
+<h3>数组的定义和内存分配</h3>
+<p>在C语言中，数组是一种聚合数据类型，用于将多个标量数据类型（如int、char、double等）组合在一起。数组的定义通常采用以下形式：</p>
+<pre><code class="language-c">T A[N];
+</code></pre>
+<p>其中，T表示数组的元素类型，N是数组的长度。例如，定义一个包含12个char元素的数组A：</p>
+<pre><code class="language-c">char A[12];
+</code></pre>
+<p>这将分配一个连续的内存区域来存储数组的所有元素。每个元素占用T类型的大小（以字节为单位），整个数组占用的内存大小为<code>L * N</code>，其中L是T类型的大小。</p>
+<h3>数组元素的访问</h3>
+<p>数组的元素通过索引访问，索引范围为0到N-1。数组元素i存储在内存地址<code>xA + L * i</code>处，其中xA是数组的起始地址。例如，考虑以下数组定义：</p>
+<pre><code class="language-c">int C[6];
+</code></pre>
+<p>每个int类型元素占用4个字节，数组C的元素i存储在地址<code>xC + 4 * i</code>处。</p>
+<h3>示例</h3>
+<p>以下是几种不同类型的数组及其内存布局：</p>
+<pre><code class="language-c">char A[12];       // 每个元素1字节，总共12字节
+char *B[8];       // 每个元素8字节（指针），总共64字节
+int C[6];         // 每个元素4字节，总共24字节
+double *D[5];     // 每个元素8字节（指针），总共40字节
+</code></pre>
+<h3>x86-64架构中的数组访问</h3>
+<p>在x86-64架构中，访问数组元素时使用基址加索引的寻址方式。例如，假设E是一个int类型数组，其起始地址存储在寄存器%rdx中，索引i存储在寄存器%rcx中，要访问元素E[i]，可以使用以下指令：</p>
+<pre><code class="language-assembly">movl (%rdx,%rcx,4), %eax
+</code></pre>
+<p>这条指令计算地址<code>xE + 4 * i</code>，读取该地址的内存内容，并将其存储到%eax寄存器中。x86-64的内存引用指令支持的缩放因子有1、2、4和8，覆盖了常见的基本数据类型的大小。</p>
+<h3>数组访问中的指针算术</h3>
+<p>C语言允许生成指向数组元素的指针，并对这些指针进行算术运算。这些操作在机器代码中被翻译为地址计算。例如，对于一个int类型数组E，计算E[i]的地址等价于计算<code>xE + 4 * i</code>，其中4是int类型的大小。</p>
+<h3>内存对齐</h3>
+<p>为了提高内存访问的效率，编译器和处理器通常会对内存进行对齐。对于数组，这意味着数组的起始地址和每个元素的地址通常都对齐到元素大小的整数倍。比如，一个int类型数组的起始地址应该是4字节对齐的，即它是4的倍数。</p>
+<h3>总结</h3>
+<p>本节详细讨论了C语言中数组的基本原理，包括数组的定义、内存分配和访问方式。在x86-64架构中，数组的访问通过基址加索引的方式实现，支持高效的地址计算和内存访问。理解这些基本原理对于编写高效的数组操作代码非常重要，有助于更好地理解程序在机器级别的表现。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 00_3.8.1_基本原理
+
+"""
+Lecture: 03_程序的机器级表示/3.8_数组分配和访问
+Content: 00_3.8.1_基本原理
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

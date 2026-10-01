@@ -1,0 +1,114 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>2.2.2 无符号编码</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>01_2.2.2_无符号编码</h1>
+<pre><code>Lecture: 02_程序结构和执行/2.2_整数表示
+Content: 01_2.2.2_无符号编码
+</code></pre>
+<h3>2.2.2 无符号编码</h3>
+<p>无符号整数表示是一种将位模式解释为非负整数的方式。对于一个宽度为w的位向量$$x_{w-1}, x_{w-2}, ..., x_0$$，无符号整数表示将每个位的值乘以2的相应幂次，再求和以得到整数值。这种表示方法广泛用于计算机系统中，尤其是在需要表示大范围正整数的场合。</p>
+<h4>无符号整数的定义</h4>
+<p>无符号整数的数学定义如下：
+$$ B2U_w(x) = \sum_{i=0}^{w-1} x_i \cdot 2^i $$</p>
+<p>其中，$x_i$为位向量中的第i位，其值为0或1，$B2U_w$表示将长度为w的二进制位向量转换为无符号整数的函数。</p>
+<h4>示例</h4>
+<p>以4位无符号整数为例，其可能的值范围为0到15（即$$0000$$到$$1111$$）。几个具体的例子如下：</p>
+<ul>
+<li>$ B2U_4([0001]) = 0 \cdot 2^3 + 0 \cdot 2^2 + 0 \cdot 2^1 + 1 \cdot 2^0 = 1 $</li>
+<li>$ B2U_4([0101]) = 0 \cdot 2^3 + 1 \cdot 2^2 + 0 \cdot 2^1 + 1 \cdot 2^0 = 4 + 1 = 5 $</li>
+<li>$ B2U_4([1011]) = 1 \cdot 2^3 + 0 \cdot 2^2 + 1 \cdot 2^1 + 1 \cdot 2^0 = 8 + 2 + 1 = 11 $</li>
+<li>$ B2U_4([1111]) = 1 \cdot 2^3 + 1 \cdot 2^2 + 1 \cdot 2^1 + 1 \cdot 2^0 = 8 + 4 + 2 + 1 = 15 $</li>
+</ul>
+<h4>最大值和最小值</h4>
+<p>对于宽度为w的无符号整数，其最小值为0（所有位均为0），最大值为$2^w - 1$（所有位均为1）。因此，对于w位无符号整数，其取值范围为0到$2^w - 1$。</p>
+<p>例如，对于4位无符号整数：</p>
+<ul>
+<li>最小值：$$0000$$ = 0</li>
+<li>最大值：$$1111$$ = 15</li>
+</ul>
+<h4>独特的表示</h4>
+<p>无符号整数表示具有唯一性，即每一个整数值在0到$2^w - 1$范围内都有一个唯一的w位二进制表示。数学上，这意味着无符号整数编码是一个双射（bijection），即每个无符号整数都有唯一的二进制表示，反之亦然。</p>
+<h4>无符号整数的扩展</h4>
+<p>当需要将较小位宽的无符号整数扩展到较大位宽时，通常采用零扩展（zero extension）的方法，即在高位添加零。例如，将一个4位无符号整数$$1010$$扩展到8位，可以得到$$00001010$$。</p>
+<h4>应用</h4>
+<p>无符号整数在计算机系统中有广泛应用，特别是在需要处理非负数的场合，如内存地址、文件大小等。此外，在某些算法中，无符号整数的使用可以避免负数带来的复杂性。</p>
+<h3>代码示例</h3>
+<p>下面是一个C++示例程序，演示如何使用无符号整数以及其一些基本操作：</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;limits&gt;
+#include &lt;bitset&gt;
+
+// 打印二进制表示
+void print_binary(const std::string&amp; label, unsigned int value) {
+    std::cout &lt;&lt; label &lt;&lt; &quot;: &quot; &lt;&lt; std::bitset&lt;32&gt;(value) &lt;&lt; std::endl;
+}
+
+int main() {
+    unsigned int a = 5;  // 0101
+    unsigned int b = 12; // 1100
+
+    // 基本的无符号整数操作
+    unsigned int sum = a + b;
+    unsigned int difference = a - b;
+    unsigned int product = a * b;
+    unsigned int quotient = b / a;
+    unsigned int remainder = b % a;
+
+    // 打印结果
+    print_binary(&quot;a&quot;, a);
+    print_binary(&quot;b&quot;, b);
+    print_binary(&quot;sum&quot;, sum);
+    print_binary(&quot;difference&quot;, difference);
+    print_binary(&quot;product&quot;, product);
+    print_binary(&quot;quotient&quot;, quotient);
+    print_binary(&quot;remainder&quot;, remainder);
+
+    // 最大和最小值
+    std::cout &lt;&lt; &quot;最大 unsigned int: &quot; &lt;&lt; std::numeric_limits&lt;unsigned int&gt;::max() &lt;&lt; std::endl;
+    std::cout &lt;&lt; &quot;最小 unsigned int: &quot; &lt;&lt; std::numeric_limits&lt;unsigned int&gt;::min() &lt;&lt; std::endl;
+
+    return 0;
+}
+</code></pre>
+<h3>代码解释</h3>
+<ol>
+<li><strong>print_binary函数</strong>：这个函数用来打印一个无符号整数的二进制表示。</li>
+<li><strong>主函数</strong>：
+<ul>
+<li>定义了两个无符号整数<code>a</code>和<code>b</code>。</li>
+<li>演示了基本的无符号整数操作，包括加法、减法、乘法、除法和取余。</li>
+<li>使用<code>print_binary</code>函数打印每个操作的结果。</li>
+<li>打印了无符号整数的最大值和最小值。</li>
+</ul>
+</li>
+</ol>
+<p>通过这个示例，可以更好地理解无符号整数的基本概念及其在C++中的使用方法。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 01_2.2.2_无符号编码
+
+"""
+Lecture: 02_程序结构和执行/2.2_整数表示
+Content: 01_2.2.2_无符号编码
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

@@ -1,0 +1,131 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.9.2 联合</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>01_3.9.2_联合</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.9_异质数据结构
+Content: 01_3.9.2_联合
+</code></pre>
+<h2>3.9.2 联合</h2>
+<h3>章节概述</h3>
+<p>在《深入理解计算机系统》第3章“程序的机器级表示”中，第3.9.2节讨论了联合（union）的基本原理。联合是一种允许单个对象根据不同的类型进行引用的C语言数据结构。与结构体类似，联合的声明语法与结构体相同，但语义却大不相同。联合中的所有字段共享同一块内存，而不是不同字段引用不同的内存块。</p>
+<h3>联合的定义</h3>
+<p>联合的定义与结构体非常类似，只是语义不同。以下是一个联合的定义示例：</p>
+<pre><code class="language-c">union U3 {
+    char c;
+    int i[2];
+    double v;
+};
+</code></pre>
+<p>在这个定义中，联合<code>U3</code>包含一个字符类型的字段<code>c</code>，一个包含两个整数的数组<code>i</code>，以及一个双精度浮点数类型的字段<code>v</code>。无论引用哪一个字段，它们都指向联合内存的同一个位置。</p>
+<h3>内存布局</h3>
+<p>联合中的所有字段共享同一块内存区域，联合的大小等于其最大字段的大小。例如，在一个x86-64 Linux系统中，以上定义的联合<code>U3</code>的内存布局如下：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>c</th>
+<th>i</th>
+<th>v</th>
+<th>总大小</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S3</td>
+<td>0</td>
+<td>4</td>
+<td>16</td>
+<td>24</td>
+</tr>
+<tr>
+<td>U3</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>8</td>
+</tr>
+</tbody>
+</table>
+<p>可以看到，联合<code>U3</code>的总大小为8字节，因为其中最大的字段是双精度浮点数<code>v</code>，占用8字节。引用联合类型指针<code>union U3 *p</code>时，<code>p-&gt;c</code>、<code>p-&gt;i[0]</code>和<code>p-&gt;v</code>都会引用数据结构的起始位置。</p>
+<h3>联合的应用</h3>
+<p>联合可以在多种上下文中使用，但也可能导致一些难以发现的错误，因为它绕过了C语言的类型系统。以下是一些使用联合的常见场景：</p>
+<h4>内存节省</h4>
+<p>在某些情况下，我们知道数据结构中的不同字段使用是互斥的，这时可以将这些字段声明为联合，而不是结构体，从而减少总的内存分配。例如，假设我们要实现一个二叉树数据结构，其中每个叶子节点有两个双精度数据值，每个内部节点有指向两个子节点的指针，但没有数据。如果我们用结构体来声明，每个节点需要32字节，有一半的字节在每种节点类型中是浪费的：</p>
+<pre><code class="language-c">struct node_s {
+    struct node_s *left;
+    struct node_s *right;
+    double data[2];
+};
+</code></pre>
+<p>但是如果我们用联合来声明，则每个节点只需要16字节：</p>
+<pre><code class="language-c">union node_u {
+    struct {
+        union node_u *left;
+        union node_u *right;
+    } internal;
+    double data[2];
+};
+</code></pre>
+<p>这种编码方式没有方法来确定一个节点是叶子节点还是内部节点。一个常见的方法是引入一个枚举类型来定义联合的不同选择，然后创建一个包含标签字段和联合的结构体：</p>
+<pre><code class="language-c">typedef enum { N_LEAF, N_INTERNAL } nodetype_t;
+struct node_t {
+    nodetype_t type;
+    union {
+        struct {
+            struct node_t *left;
+            struct node_t *right;
+        } internal;
+        double data[2];
+    } node;
+};
+</code></pre>
+<p>通过这种方式，我们可以使用<code>type</code>字段来区分节点类型。</p>
+<h3>联合的优势和劣势</h3>
+<h4>优势</h4>
+<ul>
+<li><strong>内存节省</strong>：联合通过共享内存来减少总的内存使用，这在资源有限的系统中尤为重要。</li>
+<li><strong>灵活性</strong>：联合允许一个内存块根据不同的上下文来解释，这在某些低级别编程中非常有用。</li>
+</ul>
+<h4>劣势</h4>
+<ul>
+<li><strong>潜在的错误</strong>：由于联合绕过了类型系统，如果使用不当，可能会导致难以发现的错误。例如，意外地使用错误的字段可能会导致数据被错误地解释。</li>
+<li><strong>调试困难</strong>：由于联合的内存布局和字段的重叠，调试联合相关的错误可能会比较困难。</li>
+</ul>
+<h3>实际应用中的示例</h3>
+<p>联合在实际应用中有广泛的使用，特别是在需要节省内存或需要灵活数据解释的场景中。以下是一些实际应用中的示例：</p>
+<ol>
+<li><strong>设备驱动</strong>：在设备驱动程序中，联合常用于表示设备寄存器的不同视图。例如，一个寄存器可以同时作为一个32位整数和四个8位字节来访问。</li>
+<li><strong>协议解析</strong>：在网络协议解析中，联合常用于表示协议头部的不同字段视图，从而简化协议处理代码。</li>
+<li><strong>数据转换</strong>：在数据转换或序列化过程中，联合可以用于在不同数据格式之间快速转换。</li>
+</ol>
+<h3>总结</h3>
+<p>本节详细讨论了联合的定义、内存布局和应用。联合允许单个对象根据不同类型进行引用，通过共享内存来减少总的内存使用。理解联合的基本原理和应用场景，有助于在编写代码时充分利用其优势，同时避免潜在的错误。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 01_3.9.2_联合
+
+"""
+Lecture: 03_程序的机器级表示/3.9_异质数据结构
+Content: 01_3.9.2_联合
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

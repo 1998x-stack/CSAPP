@@ -1,0 +1,108 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.6.2 访问条件码</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>01_3.6.2_访问条件码</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.6_控制
+Content: 01_3.6.2_访问条件码
+</code></pre>
+<h3>3.6.2 访问条件码</h3>
+<p>在机器级编程中，访问条件码是控制流操作的核心之一。条件码（Condition Codes）提供了关于最近一次算术或逻辑操作结果的关键信息，这些信息用于决定程序的执行路径。以下是对这一章节的详细分析。</p>
+<h4>条件码的概述</h4>
+<p>在 x86-64 架构中，条件码包括：</p>
+<ul>
+<li><strong>CF（Carry Flag）进位标志</strong>：用于检测无符号运算中的溢出。</li>
+<li><strong>ZF（Zero Flag）零标志</strong>：当运算结果为零时设置。</li>
+<li><strong>SF（Sign Flag）符号标志</strong>：当运算结果为负时设置。</li>
+<li><strong>OF（Overflow Flag）溢出标志</strong>：用于检测有符号运算中的溢出。</li>
+</ul>
+<p>这些条件码在执行算术和逻辑操作时会被设置或清除，并在后续的条件跳转或数据传输操作中被读取。</p>
+<h4>访问条件码的方法</h4>
+<p>访问条件码主要通过以下三种方式进行：</p>
+<ol>
+<li><strong>设置单字节的值为0或1</strong>：使用<code>set</code>指令，根据条件码的状态设置单字节寄存器或内存位置为0或1。</li>
+<li><strong>条件跳转</strong>：使用<code>j</code>指令，根据条件码的状态进行跳转。</li>
+<li><strong>条件传输数据</strong>：使用<code>cmov</code>指令，根据条件码的状态有条件地移动数据。</li>
+</ol>
+<p>这些方法使得程序能够根据特定条件执行不同的操作，从而实现复杂的控制流。</p>
+<h4>设置单字节的值为0或1</h4>
+<p><code>set</code>指令用于根据条件码的状态设置单字节寄存器或内存位置为0或1。常见的<code>set</code>指令及其效果包括：</p>
+<ul>
+<li><code>sete D</code> 或 <code>setz D</code>：当ZF为1时设置D为1（相等/零）。</li>
+<li><code>setne D</code> 或 <code>setnz D</code>：当ZF为0时设置D为1（不相等/非零）。</li>
+<li><code>sets D</code>：当SF为1时设置D为1（负）。</li>
+<li><code>setns D</code>：当SF为0时设置D为1（非负）。</li>
+</ul>
+<p>例如，以下汇编代码比较两个数并根据结果设置寄存器的值：</p>
+<pre><code class="language-assembly">cmpq %rsi, %rdi    ; 比较a和b
+setl %al           ; 如果a &lt; b，将%al设置为1
+movzbl %al, %eax   ; 将%al的值零扩展到%eax
+</code></pre>
+<h4>条件跳转</h4>
+<p>条件跳转指令根据条件码的状态决定程序是否跳转到指定的地址。常见的条件跳转指令包括：</p>
+<ul>
+<li><code>je</code> 或 <code>jz</code>：当ZF为1时跳转（相等/零）。</li>
+<li><code>jne</code> 或 <code>jnz</code>：当ZF为0时跳转（不相等/非零）。</li>
+<li><code>jg</code> 或 <code>jnle</code>：当SF与OF异或为0且ZF为0时跳转（大于，带符号）。</li>
+<li><code>jl</code> 或 <code>jnge</code>：当SF与OF异或为1时跳转（小于，带符号）。</li>
+</ul>
+<p>例如，以下汇编代码展示了如何根据比较结果进行条件跳转：</p>
+<pre><code class="language-assembly">cmpq %rsi, %rdi    ; 比较a和b
+je equal_label     ; 如果相等，跳转到equal_label
+</code></pre>
+<h4>条件传输数据</h4>
+<p>条件传输指令<code>cmov</code>根据条件码的状态有条件地将源操作数传输到目的寄存器。常见的条件传输指令包括：</p>
+<ul>
+<li><code>cmove</code> 或 <code>cmovz</code>：当ZF为1时传输（相等/零）。</li>
+<li><code>cmovne</code> 或 <code>cmovnz</code>：当ZF为0时传输（不相等/非零）。</li>
+<li><code>cmovg</code> 或 <code>cmovnle</code>：当SF与OF异或为0且ZF为0时传输（大于，带符号）。</li>
+<li><code>cmovl</code> 或 <code>cmovnge</code>：当SF与OF异或为1时传输（小于，带符号）。</li>
+</ul>
+<p>例如，以下汇编代码展示了如何根据条件码状态传输数据：</p>
+<pre><code class="language-assembly">cmpq %rsi, %rdi    ; 比较a和b
+cmovg %rsi, %rax   ; 如果a &gt; b，将%rsi的值传输到%rax
+</code></pre>
+<h3>实例分析</h3>
+<p>考虑以下C代码：</p>
+<pre><code class="language-c">int comp(data_t a, data_t b) {
+    return a &lt; b;
+}
+</code></pre>
+<p>其汇编代码如下：</p>
+<pre><code class="language-assembly">comp:
+    cmpq %rsi, %rdi    ; 比较a和b
+    setl %al           ; 如果a &lt; b，将%al设置为1
+    movzbl %al, %eax   ; 将%al的值零扩展到%eax
+    ret
+</code></pre>
+<p>在这个例子中，<code>cmpq</code>指令比较了两个操作数并设置条件码，<code>setl</code>指令根据条件码将结果存储到<code>%al</code>寄存器中，<code>movzbl</code>指令则将<code>%al</code>扩展为32位存储在<code>%eax</code>中。</p>
+<h3>总结</h3>
+<p>访问条件码是控制流操作的重要组成部分，通过设置单字节的值为0或1、条件跳转和条件传输数据，程序能够根据运算结果执行不同的操作。这种机制不仅提高了程序的灵活性，还在实现复杂控制流时提供了高效的方法。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 01_3.6.2_访问条件码
+
+"""
+Lecture: 03_程序的机器级表示/3.6_控制
+Content: 01_3.6.2_访问条件码
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

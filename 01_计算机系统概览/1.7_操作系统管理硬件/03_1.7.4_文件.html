@@ -1,0 +1,246 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>1.7.4 文件</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>03_1.7.4_文件</h1>
+<pre><code>Lecture: 01_计算机系统概览/1.7_操作系统管理硬件
+Content: 03_1.7.4_文件
+</code></pre>
+<h3>1.7.4 文件详解</h3>
+<h4>文件的基本概念</h4>
+<p>文件是操作系统中用于组织、存储和管理数据的基本单元。简单地说，文件是一个字节序列，可以是文本文件或二进制文件。每个I/O设备，包括磁盘、键盘、显示器，甚至网络，都被建模为文件。所有的输入和输出操作都是通过读取和写入文件来完成的。</p>
+<h4>文件的类型</h4>
+<ol>
+<li>
+<p><strong>普通文件</strong>：包含任意数据的文件。应用程序通常会区分文本文件（仅包含ASCII或Unicode字符）和二进制文件（包括所有其他类型的文件）。对内核来说，文本文件和二进制文件没有区别。</p>
+</li>
+<li>
+<p><strong>目录文件</strong>：包含链接数组的文件，每个链接将文件名映射到一个文件，这个文件可以是另一个目录。目录文件用于组织文件系统的结构。</p>
+</li>
+<li>
+<p><strong>字符设备文件</strong>：表示字符设备（如键盘和串行端口）的文件，支持字符流的逐字节I/O操作。</p>
+</li>
+<li>
+<p><strong>块设备文件</strong>：表示块设备（如硬盘和光驱）的文件，支持随机访问块数据。</p>
+</li>
+<li>
+<p><strong>命名管道（FIFO）</strong>：用于进程间通信的特殊文件，允许一个进程写入数据，另一个进程读取数据。</p>
+</li>
+<li>
+<p><strong>套接字文件</strong>：用于网络通信的文件，允许进程间通过网络进行数据交换。</p>
+</li>
+</ol>
+<h4>文件的组织结构</h4>
+<p>文件系统通过目录层次结构组织文件。每个文件都有一个唯一的路径名，可以是绝对路径或相对路径。根目录（/）是所有文件和目录的起点，所有其他文件和目录都是根目录的后代。</p>
+<ol>
+<li>
+<p><strong>绝对路径</strong>：从根目录开始的路径，例如，/home/user/file.txt 表示从根目录到file.txt文件的路径。</p>
+</li>
+<li>
+<p><strong>相对路径</strong>：从当前工作目录开始的路径，例如，如果当前工作目录是/home/user，那么file.txt的相对路径是./file.txt。</p>
+</li>
+</ol>
+<h4>文件的元数据</h4>
+<p>文件不仅包含数据，还包含描述文件属性的信息，即文件的元数据。常见的元数据包括：</p>
+<ol>
+<li><strong>文件类型</strong>：指示文件是普通文件、目录文件、字符设备文件、块设备文件、FIFO或套接字文件。</li>
+<li><strong>文件大小</strong>：以字节为单位的文件长度。</li>
+<li><strong>文件权限</strong>：指示文件的访问权限，包括读、写和执行权限。</li>
+<li><strong>所有者和组</strong>：文件的所有者用户ID和组ID。</li>
+<li><strong>时间戳</strong>：文件的创建时间、最后修改时间和最后访问时间。</li>
+</ol>
+<h4>文件的系统调用</h4>
+<p>文件的操作通过一组系统调用完成，主要包括：</p>
+<ol>
+<li><strong>打开文件（open）</strong>：将文件名转换为文件描述符。</li>
+<li><strong>读取文件（read）</strong>：从文件中读取数据。</li>
+<li><strong>写入文件（write）</strong>：向文件中写入数据。</li>
+<li><strong>关闭文件（close）</strong>：关闭文件描述符，释放资源。</li>
+</ol>
+<p>文件系统调用的设计使得应用程序可以使用统一的接口来处理各种类型的文件和I/O设备，从而简化了编程。</p>
+<h4>文件的抽象</h4>
+<p>操作系统将所有I/O设备都抽象为文件，为应用程序提供了一致的接口。这种抽象使得应用程序无需关心底层设备的具体实现，只需通过文件接口进行操作。例如，操作磁盘文件和操作网络套接字在编程接口上没有区别。</p>
+<p>这种文件抽象的强大之处在于它提供了统一的视图，使得应用程序可以在不同的系统上运行而无需修改代码。不同的系统可以有不同的底层实现，但只要它们提供相同的文件接口，应用程序就可以无缝地在这些系统上运行。</p>
+<h4>文件的管理</h4>
+<p>操作系统负责文件的创建、删除、读写和权限管理。文件系统通常使用索引节点（inode）来记录文件的元数据和数据块的位置。每个文件都有一个唯一的inode，inode包含文件的所有元数据和指向数据块的指针。</p>
+<h4>小结</h4>
+<p>文件是操作系统中用于组织和管理数据的基本单位，通过统一的接口，操作系统将各种I/O设备抽象为文件，为应用程序提供了一致的视图。这种设计不仅简化了编程，还提高了系统的灵活性和可移植性。理解文件系统的工作原理和实现细节，对于编写高效、可靠的应用程序至关重要。</p>
+<hr>
+<h3>文件的类型详解表</h3>
+<table>
+<thead>
+<tr>
+<th><strong>文件类型</strong></th>
+<th><strong>描述</strong></th>
+<th><strong>示例</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>普通文件</strong></td>
+<td>包含任意数据的文件，分为文本文件和二进制文件。</td>
+<td>文本文件：README.txt&lt;br&gt;二进制文件：program.exe</td>
+</tr>
+<tr>
+<td><strong>目录文件</strong></td>
+<td>包含文件名到文件的链接数组，用于组织文件系统的结构。</td>
+<td>目录：/home/user</td>
+</tr>
+<tr>
+<td><strong>字符设备文件</strong></td>
+<td>表示字符设备的文件，支持逐字节的I/O操作。</td>
+<td>设备文件：/dev/tty</td>
+</tr>
+<tr>
+<td><strong>块设备文件</strong></td>
+<td>表示块设备的文件，支持随机访问块数据。</td>
+<td>设备文件：/dev/sda</td>
+</tr>
+<tr>
+<td><strong>命名管道（FIFO）</strong></td>
+<td>用于进程间通信的特殊文件，允许一个进程写入数据，另一个进程读取数据。</td>
+<td>FIFO文件：/tmp/myfifo</td>
+</tr>
+<tr>
+<td><strong>套接字文件</strong></td>
+<td>用于网络通信的文件，允许进程间通过网络进行数据交换。</td>
+<td>套接字文件：/var/run/docker.sock</td>
+</tr>
+</tbody>
+</table>
+<h3>文件的组织结构详解表</h3>
+<table>
+<thead>
+<tr>
+<th><strong>组织结构</strong></th>
+<th><strong>描述</strong></th>
+<th><strong>示例</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>根目录</strong></td>
+<td>所有文件和目录的起点，表示文件系统的最高层次。</td>
+<td>根目录：/</td>
+</tr>
+<tr>
+<td><strong>绝对路径</strong></td>
+<td>从根目录开始的路径，表示文件或目录的唯一位置。</td>
+<td>绝对路径：/home/user/file.txt</td>
+</tr>
+<tr>
+<td><strong>相对路径</strong></td>
+<td>从当前工作目录开始的路径，表示相对于当前目录的位置。</td>
+<td>相对路径：./file.txt</td>
+</tr>
+<tr>
+<td><strong>目录层次结构</strong></td>
+<td>文件系统中的目录和文件按层次结构组织，目录包含文件和子目录。</td>
+<td>目录层次结构：&lt;br&gt; /home/user&lt;br&gt; ├── documents&lt;br&gt; └── pictures</td>
+</tr>
+</tbody>
+</table>
+<h3>文件的元数据详解表</h3>
+<table>
+<thead>
+<tr>
+<th><strong>元数据类型</strong></th>
+<th><strong>描述</strong></th>
+<th><strong>示例</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>文件类型</strong></td>
+<td>指示文件是普通文件、目录文件、字符设备文件、块设备文件、FIFO或套接字文件。</td>
+<td>文件类型：普通文件</td>
+</tr>
+<tr>
+<td><strong>文件大小</strong></td>
+<td>以字节为单位的文件长度。</td>
+<td>文件大小：1024字节</td>
+</tr>
+<tr>
+<td><strong>文件权限</strong></td>
+<td>指示文件的访问权限，包括读、写和执行权限。</td>
+<td>文件权限：rw-r--r--</td>
+</tr>
+<tr>
+<td><strong>所有者和组</strong></td>
+<td>文件的所有者用户ID和组ID。</td>
+<td>所有者：user&lt;br&gt;组：staff</td>
+</tr>
+<tr>
+<td><strong>时间戳</strong></td>
+<td>文件的创建时间、最后修改时间和最后访问时间。</td>
+<td>创建时间：2023-01-01 12:00:00&lt;br&gt;修改时间：2023-01-02 12:00:00</td>
+</tr>
+</tbody>
+</table>
+<h3>文件的系统调用详解表</h3>
+<table>
+<thead>
+<tr>
+<th><strong>系统调用</strong></th>
+<th><strong>描述</strong></th>
+<th><strong>示例</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>打开文件（open）</strong></td>
+<td>将文件名转换为文件描述符，用于后续的读写操作。</td>
+<td><code>int fd = open(&quot;file.txt&quot;, O_RDONLY);</code></td>
+</tr>
+<tr>
+<td><strong>读取文件（read）</strong></td>
+<td>从文件中读取数据。</td>
+<td><code>ssize_t bytesRead = read(fd, buffer, sizeof(buffer));</code></td>
+</tr>
+<tr>
+<td><strong>写入文件（write）</strong></td>
+<td>向文件中写入数据。</td>
+<td><code>ssize_t bytesWritten = write(fd, data, sizeof(data));</code></td>
+</tr>
+<tr>
+<td><strong>关闭文件（close）</strong></td>
+<td>关闭文件描述符，释放资源。</td>
+<td><code>int result = close(fd);</code></td>
+</tr>
+<tr>
+<td><strong>删除文件（unlink）</strong></td>
+<td>从文件系统中删除文件。</td>
+<td><code>int result = unlink(&quot;file.txt&quot;);</code></td>
+</tr>
+</tbody>
+</table>
+<h3>总结</h3>
+<p>通过以上详细的表格，我们深入了解了文件的类型、文件的组织结构、文件的元数据及其系统调用。文件系统通过这些基本概念和操作，实现了对数据的有效管理和访问，提供了统一的接口，使得各种I/O操作变得简单而高效。理解这些概念和细节，对于编写高效、可靠的应用程序至关重要。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 03_1.7.4_文件
+
+"""
+Lecture: 01_计算机系统概览/1.7_操作系统管理硬件
+Content: 03_1.7.4_文件
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

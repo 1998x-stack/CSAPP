@@ -1,0 +1,79 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>2.4.2 IEEE浮点表示</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>01_2.4.2_IEEE浮点表示</h1>
+<pre><code>Lecture: 02_程序结构和执行/2.4_浮点数
+Content: 01_2.4.2_IEEE浮点表示
+</code></pre>
+<h3>2.4.2 IEEE浮点表示</h3>
+<h4>IEEE 754标准的背景</h4>
+<p>在计算机科学领域，浮点数表示法用于处理非常大或非常小的数值。IEEE 754标准是目前广泛采用的浮点数表示标准，它由电气电子工程师学会（IEEE）于1985年制定，旨在统一和规范浮点数的表示和运算规则。这一标准的推广极大地提升了科学计算程序在不同计算机系统之间的可移植性。</p>
+<h4>IEEE 754浮点数表示格式</h4>
+<p>IEEE 754标准定义了两种主要的浮点数表示格式：单精度（32位）和双精度（64位）。这两种格式都由三部分组成：符号位、指数位和尾数位（又称有效数字部分）。</p>
+<ol>
+<li><strong>符号位（Sign bit）</strong>：决定了数值的正负。0表示正数，1表示负数。</li>
+<li><strong>指数位（Exponent field）</strong>：用于表示数值的尺度。指数位采用偏移量（bias）编码方式，单精度偏移量为127，双精度偏移量为1023。</li>
+<li><strong>尾数位（Fraction/Mantissa field）</strong>：表示数值的精确部分。IEEE 754采用隐含的首位1机制，即实际的有效数字部分总是1.xxx的形式。</li>
+</ol>
+<h4>数值计算方法</h4>
+<p>IEEE 754浮点数的数值表示如下：</p>
+<p>$$ V = (-1)^S \times M \times 2^E $$</p>
+<p>其中：</p>
+<ul>
+<li>$ S $ 为符号位</li>
+<li>$ M $ 为尾数（有效数字部分），单精度范围为1到2（包含1，不包含2），双精度同理。</li>
+<li>$ E $ 为指数，计算方法为：实际指数值 - 偏移量</li>
+</ul>
+<h4>特殊值</h4>
+<p>IEEE 754标准定义了一些特殊值，用于处理某些极端情况：</p>
+<ol>
+<li><strong>零</strong>：正零和负零有不同的表示，符号位不同，但在大多数运算中被视为相同。</li>
+<li><strong>无穷大（Infinity）</strong>：表示超出可表示范围的数值，正无穷大和负无穷大分别用符号位表示。</li>
+<li><strong>非数值（NaN, Not a Number）</strong>：用于表示未定义或不可表示的数值，例如0除以0或负数开平方根。</li>
+</ol>
+<h4>规范化和非规范化数</h4>
+<ol>
+<li><strong>规范化数（Normalized Numbers）</strong>：尾数部分以1.xxxx的形式表示，指数范围在-126到127之间（单精度），或-1022到1023之间（双精度）。</li>
+<li><strong>非规范化数（Denormalized Numbers）</strong>：用于表示非常小的数值，尾数部分以0.xxxx的形式表示，指数固定为最小值（单精度为-126，双精度为-1022）。</li>
+</ol>
+<h4>例子分析</h4>
+<p>举例来说，考虑单精度浮点数表示的整数12345：</p>
+<ol>
+<li><strong>二进制表示</strong>：12345的二进制形式为11000000111001。</li>
+<li><strong>规范化</strong>：将其规范化为1.1000000111001 × $2^{13}$。</li>
+<li><strong>构造尾数和指数</strong>：尾数部分为10000001110010000000000，指数部分为13 + 127 = 140，对应的二进制形式为10001100。</li>
+<li><strong>组合</strong>：最终浮点数表示为01000110010000001110010000000000。</li>
+</ol>
+<h4>四舍五入和舍入模式</h4>
+<p>由于浮点数的有限精度，许多数值无法精确表示，需要进行四舍五入。IEEE 754定义了几种舍入模式，包括最常用的“向偶数舍入”（Round to Nearest, ties to even）。</p>
+<h4>总结</h4>
+<p>IEEE 754浮点表示法为数值计算提供了一套标准且高效的工具。理解其工作原理有助于编写高效、可靠的科学计算程序，避免数值误差和不一致性问题。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 01_2.4.2_IEEE浮点表示
+
+"""
+Lecture: 02_程序结构和执行/2.4_浮点数
+Content: 01_2.4.2_IEEE浮点表示
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

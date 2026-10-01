@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.5.3 移位运算</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>02_3.5.3_移位运算</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.5_算术和逻辑运算
+Content: 02_3.5.3_移位运算
+</code></pre>
+<h3>3.5.3 移位运算</h3>
+<p>在计算机程序的机器级表示中，移位运算（Shift Operations）是非常重要的位操作，用于高效地进行数据处理。移位运算包括左移（Left Shift）和右移（Right Shift），右移又分为逻辑右移（Logical Right Shift）和算术右移（Arithmetic Right Shift）。以下是对这一章节的详细分析。</p>
+<h4>左移运算 (Left Shift)</h4>
+<p>左移运算将一个数的二进制表示向左移动若干位，在低位补0。这一操作相当于将该数乘以2的若干次方。指令格式如下：</p>
+<pre><code>sal k, D 或 shl k, D
+</code></pre>
+<p>其中，<code>k</code> 是移位位数，<code>D</code> 是目的操作数。<code>sal</code> 和 <code>shl</code> 在效果上是一样的，都是左移运算。例如，指令 <code>shl $3, %rax</code> 将 <code>%rax</code> 寄存器中的值左移3位，相当于乘以8。</p>
+<h4>逻辑右移 (Logical Right Shift)</h4>
+<p>逻辑右移将一个数的二进制表示向右移动若干位，在高位补0。这一操作相当于将该数除以2的若干次方，并向下取整。指令格式如下：</p>
+<pre><code>shr k, D
+</code></pre>
+<p>例如，指令 <code>shr $2, %rbx</code> 将 <code>%rbx</code> 寄存器中的值右移2位，相当于除以4，并且在高位补0。</p>
+<h4>算术右移 (Arithmetic Right Shift)</h4>
+<p>算术右移将一个数的二进制表示向右移动若干位，在高位补符号位（即最左边的一位）。这对于处理有符号数尤其重要，因为它保持了数的正负号。指令格式如下：</p>
+<pre><code>sar k, D
+</code></pre>
+<p>例如，指令 <code>sar $1, %rcx</code> 将 <code>%rcx</code> 寄存器中的值右移1位，并在高位补符号位。</p>
+<h4>示例分析</h4>
+<p>考虑以下示例：</p>
+<ul>
+<li>对于8位二进制数 <code>01100011</code>，左移4位的结果是 <code>00110000</code>，低位补0，高位超出的位被丢弃。</li>
+<li>对于8位二进制数 <code>10010101</code>，逻辑右移4位的结果是 <code>00001001</code>，高位补0。</li>
+<li>对于8位二进制数 <code>10010101</code>，算术右移4位的结果是 <code>11111001</code>，高位补符号位1。</li>
+</ul>
+<p>在这些运算中，我们可以看到不同的移位操作如何影响数值。左移使数值变大，而右移使数值变小，其中逻辑右移适用于无符号数，算术右移适用于有符号数。</p>
+<h4>实践应用</h4>
+<p>移位运算在程序中有广泛的应用，包括但不限于以下场景：</p>
+<ol>
+<li><strong>快速乘除法</strong>：移位运算可以用来快速进行乘法和除法。例如，将数值左移n位相当于乘以2的n次方，而右移n位相当于除以2的n次方。</li>
+<li><strong>位操作</strong>：在处理位级别的数据时，移位运算非常有用，例如在加密算法、校验码计算中。</li>
+<li><strong>优化性能</strong>：移位运算在某些情况下比乘法和除法运算更高效，能够显著提升程序性能。</li>
+</ol>
+<h4>代码示例</h4>
+<p>假设有如下C代码：</p>
+<pre><code class="language-c">long shift_example(long x, long n) {
+    x &lt;&lt;= 4;
+    x &gt;&gt;= n;
+    return x;
+}
+</code></pre>
+<p>对应的汇编代码如下：</p>
+<pre><code class="language-assembly">shift_example:
+    movq %rdi, %rax   # 将 x 的值移到 %rax
+    salq $4, %rax     # 左移4位
+    movl %esi, %ecx   # 将 n 的值移到 %ecx
+    sarq %cl, %rax    # 算术右移 n 位
+    ret
+</code></pre>
+<p>在这个示例中，<code>salq</code> 指令将 <code>x</code> 左移4位，<code>sarq</code> 指令根据 <code>n</code> 的值对 <code>x</code> 进行算术右移。这种移位操作的组合可以实现复杂的位操作，具有高度的灵活性和效率。</p>
+<h3>总结</h3>
+<p>移位运算是程序设计中基本且重要的操作，通过左移和右移（包括逻辑右移和算术右移），可以高效地进行数据处理。理解这些操作及其应用场景，有助于优化程序性能和实现复杂的算法。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 02_3.5.3_移位运算
+
+"""
+Lecture: 03_程序的机器级表示/3.5_算术和逻辑运算
+Content: 02_3.5.3_移位运算
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

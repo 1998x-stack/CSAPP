@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>1.8 系统通过网络与其他系统通信</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>1.8_系统通过网络与其他系统通信</h1>
+<pre><code>Lecture: 01_计算机系统概览/1.8_系统通过网络与其他系统通信
+Content: 1.8_系统通过网络与其他系统通信
+</code></pre>
+<h3>1.8 系统通过网络与其他系统通信详解</h3>
+<h4>网络通信的基本概念</h4>
+<p>在现代计算机系统中，网络通信是一项基本且重要的功能。系统通过网络将数据从一个计算机传输到另一个计算机，从而实现不同系统之间的交互和协作。网络可以被视为另一种I/O设备，数据通过网络适配器在系统之间传输。</p>
+<h4>网络通信的基本流程</h4>
+<ol>
+<li>
+<p><strong>数据传输</strong>：系统将一系列字节从主存复制到网络适配器，数据通过网络传输到另一台计算机。这与将数据从主存复制到本地磁盘驱动器类似。</p>
+</li>
+<li>
+<p><strong>数据接收</strong>：系统可以读取从其他计算机发送的数据，并将这些数据复制到其主存中。</p>
+</li>
+</ol>
+<h4>网络通信的应用</h4>
+<p>全球网络（如互联网）的出现，使得从一台机器复制信息到另一台机器成为计算机系统最重要的用途之一。例如，电子邮件、即时消息、万维网、FTP和telnet等应用都依赖于通过网络复制信息的能力。</p>
+<h4>网络是另一种I/O设备</h4>
+<p>在计算机系统中，网络适配器就像其他I/O设备一样，通过总线接口与系统总线相连。数据通过网络适配器在系统之间传输。图1.14展示了网络作为I/O设备的示意图。</p>
+<p><img src="#" alt="网络作为I/O设备的示意图"></p>
+<h4>使用telnet远程运行程序的示例</h4>
+<p>假设我们使用telnet应用程序在远程机器上运行一个程序。具体过程如下：</p>
+<ol>
+<li><strong>用户在键盘上输入“hello”</strong>：本地telnet客户端接收到输入。</li>
+<li><strong>客户端发送“hello”字符串到telnet服务器</strong>：通过网络发送数据。</li>
+<li><strong>服务器接收数据并传递给远程shell程序</strong>：远程shell程序运行“hello”程序。</li>
+<li><strong>telnet服务器发送程序输出到客户端</strong>：通过网络发送数据。</li>
+<li><strong>客户端在显示器上打印输出字符串</strong>：用户在本地终端看到输出结果。</li>
+</ol>
+<h4>客户端-服务器模型</h4>
+<p>网络应用程序通常基于客户端-服务器模型。服务器管理资源并为客户端提供服务，客户端向服务器发送请求并接收响应。一个典型的客户端-服务器事务包括以下步骤：</p>
+<ol>
+<li><strong>客户端发送请求</strong>：例如，Web浏览器请求一个网页。</li>
+<li><strong>服务器处理请求</strong>：例如，Web服务器读取请求的文件。</li>
+<li><strong>服务器发送响应</strong>：例如，Web服务器将文件发送回客户端。</li>
+<li><strong>客户端处理响应</strong>：例如，Web浏览器显示收到的网页。</li>
+</ol>
+<h4>网络硬件和软件的组织</h4>
+<p>网络的物理接口由安装在I/O总线扩展槽中的适配器提供。网络适配器通过I/O总线和内存总线将接收到的数据复制到主存中，通常通过DMA传输。数据也可以从主存复制到网络。</p>
+<h4>局域网（LAN）和以太网</h4>
+<p>局域网（LAN）通常覆盖一个建筑或校园。最流行的LAN技术是以太网。以太网段由一些电缆和一个小盒子（称为集线器）组成。每个以太网适配器都有一个全球唯一的48位地址，适配器之间通过帧传输数据。集线器将接收到的每个比特复制到每个端口上，从而每个主机都能看到每个比特。</p>
+<h4>总结</h4>
+<p>通过网络，计算机系统可以与其他系统进行通信，网络通信已经成为计算机系统不可或缺的一部分。无论是发送电子邮件、浏览网页，还是进行远程登录，网络都在发挥重要作用。理解网络通信的基本原理和实现细节，对于开发高效、可靠的网络应用程序至关重要。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 1.8_系统通过网络与其他系统通信
+
+"""
+Lecture: 01_计算机系统概览/1.8_系统通过网络与其他系统通信
+Content: 1.8_系统通过网络与其他系统通信
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

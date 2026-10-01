@@ -1,0 +1,70 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>2.3.2 二进制补码加法</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>01_2.3.2_二进制补码加法</h1>
+<pre><code>Lecture: 02_程序结构和执行/2.3_整数运算
+Content: 01_2.3.2_二进制补码加法
+</code></pre>
+<h3>2.3.2 二进制补码加法</h3>
+<h4>简介</h4>
+<p>二进制补码加法是计算机系统中处理有符号整数的基础操作。在这种加法中，我们需要处理溢出问题，即当结果超出可以表示的范围时如何处理。给定整数值 $x$ 和 $y$，假设它们的取值范围为 $-2^{w-1} \leq x, y \leq 2^{w-1} - 1$，它们的和的范围为 $-2^w \leq x + y \leq 2^w - 2$，可能需要 $w + 1$ 位来精确表示。因此，我们通过截断表示来避免数据大小的不断扩展，将结果截断为 $w$ 位。</p>
+<h4>二进制补码加法的定义</h4>
+<p>对于整数 $x$ 和 $y$，定义操作 $ +_t $ 为截断整数和使其长度为 $w$ 位，并将结果视为二进制补码数。具体如下：
+$$ x +_t y = \left{
+\begin{aligned}
+&amp; x + y - 2^w, \quad \text{如果} \ x + y \geq 2^{w-1} \ \text{(正溢出)} \
+&amp; x + y, \quad \text{如果} \ -2^{w-1} \leq x + y &lt; 2^{w-1} \ \text{(正常)} \
+&amp; x + y + 2^w, \quad \text{如果} \ x + y &lt; -2^{w-1} \ \text{(负溢出)}
+\end{aligned}
+\right. $$</p>
+<h4>例子</h4>
+<p>假设我们有两个4位二进制补码数 $x = -8$ 和 $y = 5$，它们的二进制表示分别为 $[1000]$ 和 $[0101]$。它们的和为 $-3$，二进制表示为 $[1101]$。由于这个和在范围 $-2^3$ 到 $2^3 - 1$ 内，所以结果为 $-3$。</p>
+<h4>溢出检测</h4>
+<p>在执行二进制补码加法时，溢出是一个重要的考虑因素。溢出发生在两个操作数的和超出了当前数据类型的表示范围。我们可以通过以下方式检测溢出：</p>
+<ul>
+<li><strong>正溢出</strong>：当且仅当 $x &gt; 0$ 且 $y &gt; 0$ 但 $s \leq 0$ 时，发生正溢出。</li>
+<li><strong>负溢出</strong>：当且仅当 $x &lt; 0$ 且 $y &lt; 0$ 但 $s \geq 0$ 时，发生负溢出。</li>
+</ul>
+<h4>模运算</h4>
+<p>二进制补码加法可以视为一种模运算，即计算结果是对 $2^w$ 取模的结果。例如，对于4位二进制补码数，和的计算结果对16取模。这样，当 $x + y &lt; 16$ 时，结果正常；当 $x + y \geq 16$ 时，结果为溢出部分减去16的值。</p>
+<h4>数学结构</h4>
+<p>二进制补码加法形成了一种数学结构，称为阿贝尔群（Abelian group）。这一结构具有交换性（commutative）和结合性（associative）；它有一个单位元素0，并且每个元素都有一个加法逆元。对于每个值 $x$，存在某个值 $-_t x$ 使得 $-_t x +_t x = 0$。</p>
+<h4>应用</h4>
+<ol>
+<li><strong>处理不同位宽的数据</strong>：在不同位宽的数据之间进行转换时，二进制补码加法是必需的。例如，从8位系统转换到16位系统。</li>
+<li><strong>算术运算的精度提升</strong>：在算术运算中，通过二进制补码加法可以避免溢出和精度损失。例如，在乘法运算前先进行扩展以提高精度。</li>
+<li><strong>兼容性处理</strong>：在处理不同数据格式时，二进制补码加法可以保证数据的兼容性和正确性。</li>
+</ol>
+<h4>二进制补码加法的原理</h4>
+<p>二进制补码加法的原理基于二进制补码表示的特性，即符号位决定了数值的正负。例如，对于一个4位的二进制补码数，其范围是 $-8$ 到 $7$，当进行加法操作时，可能会出现溢出，需要处理正溢出和负溢出的问题。</p>
+<h4>结论</h4>
+<p>二进制补码加法是C语言中的一个基本操作，但它涉及到进位和溢出的处理。理解二进制补码加法的工作原理和数学基础，可以帮助程序员编写更安全和高效的代码。在实际编程中，通过合理使用二进制补码加法，可以提高数据处理的精度和可靠性。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 01_2.3.2_二进制补码加法
+
+"""
+Lecture: 02_程序结构和执行/2.3_整数运算
+Content: 01_2.3.2_二进制补码加法
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

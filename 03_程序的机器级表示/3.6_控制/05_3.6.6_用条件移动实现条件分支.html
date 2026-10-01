@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.6.6 用条件移动实现条件分支</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>05_3.6.6_用条件移动实现条件分支</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.6_控制
+Content: 05_3.6.6_用条件移动实现条件分支
+</code></pre>
+<h3>3.6.6 用条件移动实现条件分支</h3>
+<p>在现代计算机架构中，条件分支的实现对于程序的性能有着重要影响。条件移动（Conditional Move，<code>cmov</code>）指令为条件分支提供了一种有效的替代方案，可以避免传统条件跳转所带来的分支预测失败惩罚。以下是对这一章节的详细分析。</p>
+<h4>条件移动指令的基本概念</h4>
+<p>条件移动指令通过计算所有可能的结果，并根据条件码状态选择结果，实现了条件分支的功能。常见的条件移动指令包括：</p>
+<ul>
+<li><code>cmove</code> 或 <code>cmovz</code>：当零标志 (ZF) 为 1 时移动（相等/零）。</li>
+<li><code>cmovne</code> 或 <code>cmovnz</code>：当零标志 (ZF) 为 0 时移动（不相等/非零）。</li>
+<li><code>cmovg</code> 或 <code>cmovnle</code>：当 SF 和 OF 异或为 0 且 ZF 为 0 时移动（大于，带符号）。</li>
+<li><code>cmovl</code> 或 <code>cmovnge</code>：当 SF 和 OF 异或为 1 时移动（小于，带符号）。</li>
+</ul>
+<p>这些指令根据条件码状态决定是否将源操作数的值复制到目的寄存器，从而实现条件数据传输，而不是条件控制转移。</p>
+<h4>实现条件分支</h4>
+<p>传统的条件分支实现通过条件跳转指令（如 <code>je</code>、<code>jne</code>）实现。例如，考虑以下C代码：</p>
+<pre><code class="language-c">if (x &lt; y) {
+    result = y - x;
+} else {
+    result = x - y;
+}
+</code></pre>
+<p>使用条件跳转的汇编代码如下：</p>
+<pre><code class="language-assembly">cmpq %rsi, %rdi     ; 比较x和y
+jge .L1             ; 如果x &gt;= y，跳转到.L1
+movq %rsi, %rax     ; result = y
+subq %rdi, %rax     ; result = y - x
+jmp .L2             ; 跳转到.L2结束
+.L1:
+movq %rdi, %rax     ; result = x
+subq %rsi, %rax     ; result = x - y
+.L2:
+</code></pre>
+<p>在这个实现中，使用了条件跳转指令 <code>jge</code> 来决定程序的执行路径。</p>
+<h4>使用条件移动指令优化</h4>
+<p>使用条件移动指令，可以避免条件跳转所带来的性能惩罚。以下是相同逻辑的优化实现：</p>
+<pre><code class="language-assembly">movq %rsi, %rax     ; result = y
+subq %rdi, %rax     ; result = y - x
+movq %rdi, %rdx     ; eval = x
+subq %rsi, %rdx     ; eval = x - y
+cmpq %rsi, %rdi     ; 比较x和y
+cmovge %rdx, %rax   ; 如果x &gt;= y，result = eval
+</code></pre>
+<p>在这个实现中，通过计算两种可能的结果 <code>y - x</code> 和 <code>x - y</code>，然后使用 <code>cmovge</code> 指令根据条件码状态选择最终结果，从而避免了条件跳转。</p>
+<h4>条件移动的优点</h4>
+<p>条件移动指令相比条件跳转有以下优点：</p>
+<ol>
+<li><strong>减少分支预测失败惩罚</strong>：条件移动指令避免了条件跳转，不会导致指令流水线的中断，从而减少了分支预测失败带来的性能损失。</li>
+<li><strong>提高执行效率</strong>：在一些情况下，条件移动指令可以提高程序的执行效率，特别是在分支条件难以预测时。</li>
+</ol>
+<p>例如，在处理大量随机数据时，条件跳转的预测准确率较低，使用条件移动指令可以显著提高性能。</p>
+<h4>示例分析</h4>
+<p>考虑以下C代码：</p>
+<pre><code class="language-c">long cmovdiff(long x, long y) {
+    long rval = y - x;
+    long eval = x - y;
+    if (x &gt;= y) {
+        rval = eval;
+    }
+    return rval;
+}
+</code></pre>
+<p>其汇编代码如下：</p>
+<pre><code class="language-assembly">cmovdiff:
+    movq %rsi, %rax     ; rval = y
+    subq %rdi, %rax     ; rval = y - x
+    movq %rdi, %rdx     ; eval = x
+    subq %rsi, %rdx     ; eval = x - y
+    cmpq %rsi, %rdi     ; 比较x和y
+    cmovge %rdx, %rax   ; 如果x &gt;= y，rval = eval
+    ret
+</code></pre>
+<p>在这个例子中，<code>cmovge</code> 指令根据比较结果条件性地将 <code>eval</code> 的值赋给 <code>rval</code>，从而实现了条件分支逻辑。</p>
+<h4>使用条件移动的限制</h4>
+<p>尽管条件移动指令有很多优点，但并非所有条件分支都适合用条件移动来实现。特别是当条件分支中的表达式可能产生错误或副作用时，使用条件移动可能导致不可预见的行为。</p>
+<h3>总结</h3>
+<p>通过条件移动指令实现条件分支，可以在某些情况下提高程序的性能，减少分支预测失败带来的惩罚。然而，在使用条件移动指令时，需要仔细考虑其适用场景，以避免可能的副作用。理解条件移动指令及其应用，对于编写高效的底层代码具有重要意义。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 05_3.6.6_用条件移动实现条件分支
+
+"""
+Lecture: 03_程序的机器级表示/3.6_控制
+Content: 05_3.6.6_用条件移动实现条件分支
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

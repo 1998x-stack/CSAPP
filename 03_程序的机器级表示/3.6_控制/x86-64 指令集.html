@@ -1,0 +1,316 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>x86-64 指令集</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <p>在计算机科学中，指令（Instructions）是计算机处理器执行的基本操作。x86-64 架构的指令集包括多种类型的指令，每种指令都有特定的功能和操作方式。以下是关于 x86-64 指令集的详细表格，涵盖了算术指令、逻辑指令、数据传输指令、控制指令、栈操作指令和位操作指令等。</p>
+<h3>x86-64 指令集详细表格</h3>
+<table>
+<thead>
+<tr>
+<th>指令类型</th>
+<th>指令</th>
+<th>操作数</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>算术指令</td>
+<td><code>add</code></td>
+<td>2</td>
+<td>将两个操作数相加，结果存储在目的操作数中</td>
+<td><code>add %rbx, %rax</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>sub</code></td>
+<td>2</td>
+<td>将源操作数从目的操作数中减去，结果存储在目的操作数中</td>
+<td><code>sub %rcx, %rdx</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>imul</code></td>
+<td>2/3</td>
+<td>乘法运算，支持有符号乘法</td>
+<td><code>imul %rsi, %rdi</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>div</code></td>
+<td>1</td>
+<td>无符号除法</td>
+<td><code>div %rcx</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>idiv</code></td>
+<td>1</td>
+<td>有符号除法</td>
+<td><code>idiv %rbx</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>inc</code></td>
+<td>1</td>
+<td>将操作数加1</td>
+<td><code>inc %rax</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>dec</code></td>
+<td>1</td>
+<td>将操作数减1</td>
+<td><code>dec %rdx</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>neg</code></td>
+<td>1</td>
+<td>取负操作</td>
+<td><code>neg %rbx</code></td>
+</tr>
+<tr>
+<td>逻辑指令</td>
+<td><code>and</code></td>
+<td>2</td>
+<td>按位与操作</td>
+<td><code>and %rsi, %rax</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>or</code></td>
+<td>2</td>
+<td>按位或操作</td>
+<td><code>or %rdx, %rcx</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>xor</code></td>
+<td>2</td>
+<td>按位异或操作</td>
+<td><code>xor %rbx, %rdi</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>not</code></td>
+<td>1</td>
+<td>按位取反操作</td>
+<td><code>not %rax</code></td>
+</tr>
+<tr>
+<td>数据传输指令</td>
+<td><code>mov</code></td>
+<td>2</td>
+<td>将源操作数的数据传输到目的操作数</td>
+<td><code>mov %rsi, %rdx</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>movzx</code></td>
+<td>2</td>
+<td>将源操作数的值零扩展并传输到目的操作数</td>
+<td><code>movzx %ax, %ebx</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>movsx</code></td>
+<td>2</td>
+<td>将源操作数的值符号扩展并传输到目的操作数</td>
+<td><code>movsx %al, %ebx</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>lea</code></td>
+<td>2</td>
+<td>加载有效地址</td>
+<td><code>lea 8(%rbx), %rax</code></td>
+</tr>
+<tr>
+<td>控制指令</td>
+<td><code>jmp</code></td>
+<td>1</td>
+<td>无条件跳转</td>
+<td><code>jmp .L1</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>je</code></td>
+<td>1</td>
+<td>如果等于（ZF=1），则跳转</td>
+<td><code>je .L2</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>jne</code></td>
+<td>1</td>
+<td>如果不等于（ZF=0），则跳转</td>
+<td><code>jne .L3</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>jg</code></td>
+<td>1</td>
+<td>如果大于（ZF=0 且 SF=OF），则跳转</td>
+<td><code>jg .L4</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>jl</code></td>
+<td>1</td>
+<td>如果小于（SF≠OF），则跳转</td>
+<td><code>jl .L5</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>jge</code></td>
+<td>1</td>
+<td>如果大于等于（SF=OF），则跳转</td>
+<td><code>jge .L6</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>jle</code></td>
+<td>1</td>
+<td>如果小于等于（ZF=1 或 SF≠OF），则跳转</td>
+<td><code>jle .L7</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>call</code></td>
+<td>1</td>
+<td>调用子程序</td>
+<td><code>call printf</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>ret</code></td>
+<td>0</td>
+<td>返回到调用点</td>
+<td><code>ret</code></td>
+</tr>
+<tr>
+<td>栈操作指令</td>
+<td><code>push</code></td>
+<td>1</td>
+<td>将操作数推入栈</td>
+<td><code>push %rax</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>pop</code></td>
+<td>1</td>
+<td>从栈中弹出操作数</td>
+<td><code>pop %rbx</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>pushf</code></td>
+<td>0</td>
+<td>将标志寄存器的值推入栈</td>
+<td><code>pushf</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>popf</code></td>
+<td>0</td>
+<td>从栈中弹出标志寄存器的值</td>
+<td><code>popf</code></td>
+</tr>
+<tr>
+<td>位操作指令</td>
+<td><code>shl</code></td>
+<td>2</td>
+<td>左移操作数，右边补0</td>
+<td><code>shl $2, %rax</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>shr</code></td>
+<td>2</td>
+<td>逻辑右移操作数，左边补0</td>
+<td><code>shr $1, %rbx</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>sar</code></td>
+<td>2</td>
+<td>算术右移操作数，左边补符号位</td>
+<td><code>sar $1, %rcx</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>rol</code></td>
+<td>2</td>
+<td>循环左移</td>
+<td><code>rol $1, %rdx</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>ror</code></td>
+<td>2</td>
+<td>循环右移</td>
+<td><code>ror $1, %rsi</code></td>
+</tr>
+<tr>
+<td>条件移动指令</td>
+<td><code>cmove</code></td>
+<td>2</td>
+<td>如果等于（ZF=1），则移动</td>
+<td><code>cmove %rbx, %rax</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>cmovne</code></td>
+<td>2</td>
+<td>如果不等于（ZF=0），则移动</td>
+<td><code>cmovne %rcx, %rdx</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>cmovg</code></td>
+<td>2</td>
+<td>如果大于（ZF=0 且 SF=OF），则移动</td>
+<td><code>cmovg %rdi, %rbx</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>cmovl</code></td>
+<td>2</td>
+<td>如果小于（SF≠OF），则移动</td>
+<td><code>cmovl %rsi, %rcx</code></td>
+</tr>
+</tbody>
+</table>
+<h3>说明</h3>
+<ul>
+<li><strong>算术指令</strong> 用于执行基本的数学操作，如加法、减法、乘法和除法。</li>
+<li><strong>逻辑指令</strong> 用于执行按位操作，如与、或、异或和非。</li>
+<li><strong>数据传输指令</strong> 用于在寄存器和内存之间传输数据。</li>
+<li><strong>控制指令</strong> 用于控制程序流程，包括条件跳转和子程序调用。</li>
+<li><strong>栈操作指令</strong> 用于管理栈数据结构，包括推入和弹出操作。</li>
+<li><strong>位操作指令</strong> 用于执行位移和旋转操作。</li>
+<li><strong>条件移动指令</strong> 根据条件码的状态有选择地移动数据。</li>
+</ul>
+
+    <h3>Python 文件</h3>
+    <pre><code>对应的 Python 文件不存在。</code></pre>
+  </div>
+</body>
+</html>
+  

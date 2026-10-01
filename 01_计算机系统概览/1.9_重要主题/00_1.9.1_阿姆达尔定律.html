@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>1.9.1 阿姆达尔定律</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>00_1.9.1_阿姆达尔定律</h1>
+<pre><code>Lecture: 01_计算机系统概览/1.9_重要主题
+Content: 00_1.9.1_阿姆达尔定律
+</code></pre>
+<h3>1.9.1 阿姆达尔定律详解</h3>
+<h4>阿姆达尔定律的基本概念</h4>
+<p>阿姆达尔定律（Amdahl's Law）由计算机科学先驱吉恩·阿姆达尔提出，旨在评估系统性能改进的有效性。其核心思想是，当我们加速系统的一部分时，对整体系统性能的影响取决于该部分的重要性以及其加速的程度。</p>
+<h4>阿姆达尔定律的公式</h4>
+<p>假设执行某个应用程序需要时间 $T_{old}$，其中某部分系统消耗了时间的比例为 $\alpha$，且我们将该部分的性能提高了 $k$ 倍。即该部分原本需要时间 $\alpha T_{old}$，现在需要的时间为 $\frac{\alpha T_{old}}{k}$。因此，整体执行时间 $T_{new}$ 可以表示为：</p>
+<p>$$ T_{new} = (1 - \alpha) T_{old} + \frac{\alpha T_{old}}{k} $$</p>
+<p>我们可以通过计算加速比 $S$ 来衡量性能改进的效果：</p>
+<p>$$ S = \frac{T_{old}}{T_{new}} = \frac{1}{(1 - \alpha) + \frac{\alpha}{k}} $$</p>
+<h4>阿姆达尔定律的应用实例</h4>
+<p>考虑一个系统，其中某部分系统最初消耗了60%的时间（$\alpha = 0.6$），现在将其性能提高3倍（$k = 3$）。根据阿姆达尔定律，我们的加速比为：</p>
+<p>$$ S = \frac{1}{0.4 + \frac{0.6}{3}} = 1.67 $$</p>
+<p>即使我们对系统的主要部分进行了显著改进，但整体加速比仍然远小于该部分的单独加速比。这是阿姆达尔定律的主要洞察——要显著加速整个系统，我们必须改进占据系统整体时间很大一部分的部分。</p>
+<h4>阿姆达尔定律的启示</h4>
+<ol>
+<li>
+<p><strong>局限性</strong>：阿姆达尔定律指出了性能改进的局限性。如果系统的某部分占用了很小的时间，即使将其性能极大提高，对整体系统的加速效果也非常有限。</p>
+</li>
+<li>
+<p><strong>目标优化</strong>：在进行系统优化时，应重点关注占用时间较长的部分。通过改进这些部分，可以获得显著的性能提升。</p>
+</li>
+<li>
+<p><strong>递减收益</strong>：随着系统某部分的性能逐步提升，继续改进该部分所带来的收益会逐渐减少。此时，应将注意力转向系统中的其他瓶颈。</p>
+</li>
+</ol>
+<h4>阿姆达尔定律的计算示例</h4>
+<p>假设我们有一个计算任务，其原始执行时间为 $T_{old} = 100$ 秒，其中50%的时间（$\alpha = 0.5$）用于计算，50%的时间用于数据传输。如果我们将计算部分加速10倍（$k = 10$），则新执行时间为：</p>
+<p>$$ T_{new} = (1 - 0.5) \times 100 + \frac{0.5 \times 100}{10} = 50 + 5 = 55 $$</p>
+<p>加速比为：</p>
+<p>$$ S = \frac{100}{55} = 1.82 $$</p>
+<p>尽管计算部分的性能提升了10倍，但整体加速比仅为1.82倍。</p>
+<h4>阿姆达尔定律的实际应用</h4>
+<ol>
+<li>
+<p><strong>多核处理器</strong>：在多核处理器的设计中，阿姆达尔定律用于评估增加更多核心对性能提升的影响。如果程序中只有一部分可以并行化，那么增加更多的核心对整体性能的提升是有限的。</p>
+</li>
+<li>
+<p><strong>软件优化</strong>：在软件优化中，开发者需要识别和优化程序中的热点代码（占用时间较长的部分），以获得最大的性能提升。</p>
+</li>
+<li>
+<p><strong>系统设计</strong>：阿姆达尔定律帮助系统设计者在性能和成本之间做出权衡。通过识别性能瓶颈，可以在有限的资源下实现最佳的性能改进。</p>
+</li>
+</ol>
+<h3>总结</h3>
+<p>阿姆达尔定律为我们提供了一个简单但深刻的洞察，帮助我们理解系统性能改进的局限性和潜力。通过量化性能改进的效果，阿姆达尔定律指导我们在系统优化过程中做出明智的决策，专注于最能提升整体性能的部分，从而在实际应用中实现更高效、更可靠的系统。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 00_1.9.1_阿姆达尔定律
+
+"""
+Lecture: 01_计算机系统概览/1.9_重要主题
+Content: 00_1.9.1_阿姆达尔定律
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

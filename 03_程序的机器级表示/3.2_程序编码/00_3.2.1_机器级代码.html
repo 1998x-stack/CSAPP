@@ -1,0 +1,82 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.2.1 机器级代码</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>00_3.2.1_机器级代码</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.2_程序编码
+Content: 00_3.2.1_机器级代码
+</code></pre>
+<h3>00_3.2.1_机器级代码</h3>
+<h4>介绍</h4>
+<p>机器级代码（Machine-Level Code）是程序执行的最底层表示。计算机系统通过执行一系列的字节序列来操作数据、管理内存、读写存储设备上的数据以及进行网络通信。机器级代码是由编译器通过一系列阶段生成的，这些阶段基于编程语言的规则、目标机器的指令集以及操作系统的约定。</p>
+<h4>机器级程序的抽象</h4>
+<p>计算机系统采用多种抽象形式，通过使用简化的抽象模型来隐藏实现的细节。在机器级编程中，两个重要的抽象是：</p>
+<ol>
+<li>
+<p><strong>指令集架构（Instruction Set Architecture, ISA）</strong>：定义了处理器状态、指令格式以及每条指令对状态的影响。多数ISA，包括x86-64，描述了程序的行为就像每条指令按序执行一样，每条指令在下一条开始之前完成。尽管处理器硬件实际上会并发执行多条指令，但它们使用了保障机制以确保整体行为与ISA定义的顺序操作一致。</p>
+</li>
+<li>
+<p><strong>虚拟地址（Virtual Address）</strong>：提供了一种内存模型，使得程序的内存地址表现为一个非常大的字节数组。实际的内存系统实现包括多种硬件内存和操作系统软件的组合。</p>
+</li>
+</ol>
+<h4>编译器的作用</h4>
+<p>编译器在整个编译序列中起到了关键作用，将用相对抽象的C语言表示的程序转换为处理器执行的基本指令。汇编代码表示非常接近于机器代码，其主要特点是以更可读的文本格式表示，而非机器代码的二进制格式。理解汇编代码及其与原始C代码的关系是理解计算机执行程序的关键步骤之一。</p>
+<h4>汇编代码的结构</h4>
+<p>x86-64机器代码与原始C代码有很大不同。机器代码中显现出的一些处理器状态通常对C程序员是隐藏的：</p>
+<ul>
+<li><strong>程序计数器（Program Counter, PC）</strong>：在x86-64中称为%rip，指示内存中下一条将要执行的指令的地址。</li>
+<li><strong>整数寄存器文件（Integer Register File）</strong>：包含16个命名位置，存储64位值。这些寄存器可以保存地址（对应于C指针）或整数数据。一些寄存器用于跟踪程序状态的关键部分，其他的用于保存临时数据，如过程的参数和局部变量以及函数返回值。</li>
+<li><strong>条件码寄存器（Condition Code Registers）</strong>：保存最近执行的算术或逻辑指令的状态信息，用于实现条件控制或数据流的变化，例如实现if和while语句。</li>
+<li><strong>向量寄存器（Vector Registers）</strong>：每个寄存器可以保存一个或多个整数或浮点值。</li>
+</ul>
+<p>C语言提供了一种模型，声明和分配不同数据类型的对象，而机器代码将内存视为一个大字节可寻址的数组。</p>
+<h4>指令编码和操作</h4>
+<p>单个机器指令仅执行非常基本的操作。例如，它可能将两个寄存器中的数字相加，在内存和寄存器之间传输数据，或有条件地分支到新指令地址。编译器必须生成这样的指令序列来实现程序构造，如算术表达式求值、循环或过程调用和返回。</p>
+<h4>实际示例</h4>
+<p>假设我们编写一个C代码文件<code>mstore.c</code>，包含以下函数定义：</p>
+<pre><code class="language-c">long mult2(long, long);
+void multstore(long x, long y, long *dest) {
+    long t = mult2(x, y);
+    *dest = t;
+}
+</code></pre>
+<p>为了查看C编译器生成的汇编代码，我们可以在命令行使用<code>-S</code>选项：</p>
+<pre><code class="language-sh">gcc -Og -S mstore.c
+</code></pre>
+<p>这将使gcc运行编译器，生成一个汇编文件<code>mstore.s</code>。这个汇编代码文件包含各种声明和指令，每个缩进的行对应一条机器指令。例如，<code>pushq %rbx</code>指令表示将寄存器%rbx的内容推送到程序栈上。</p>
+<h4>机器代码与编译器优化</h4>
+<p>生成实际的可执行代码需要在一组目标代码文件上运行链接器，其中一个文件必须包含main函数。例如：</p>
+<pre><code class="language-sh">gcc -Og -o prog main.c mstore.c
+</code></pre>
+<p>这将生成一个可执行程序<code>prog</code>，它不仅包含我们提供的过程的机器代码，还包含启动和终止程序的代码以及与操作系统交互的代码。</p>
+<p>编译器通过不同的优化级别（如<code>-O1</code>或<code>-O2</code>）生成的代码可能与源代码结构差异很大。在学习过程中，我们使用<code>-Og</code>优化选项以生成易于理解的代码结构。更高的优化级别通常能生成性能更佳的程序，但代码结构可能会更难理解。</p>
+<h4>总结</h4>
+<p>理解机器级代码及其与高级语言代码的关系是深入了解计算机系统工作原理的重要一步。通过学习和分析机器级代码，我们可以掌握编译器如何将高级语言转换为底层指令，从而优化和调试程序，提高编程技能。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 00_3.2.1_机器级代码
+
+"""
+Lecture: 03_程序的机器级表示/3.2_程序编码
+Content: 00_3.2.1_机器级代码
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

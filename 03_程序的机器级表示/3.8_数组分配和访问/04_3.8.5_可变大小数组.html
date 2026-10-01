@@ -1,0 +1,86 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.8.5 可变大小数组</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>04_3.8.5_可变大小数组</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.8_数组分配和访问
+Content: 04_3.8.5_可变大小数组
+</code></pre>
+<h2>3.8.5 可变大小数组</h2>
+<h3>章节概述</h3>
+<p>在《深入理解计算机系统》第3章“程序的机器级表示”中，第3.8.5节探讨了可变大小数组的基本原理。历史上，C语言仅支持多维数组，这些数组的大小（除第一维外）在编译时必须确定。然而，ISO C99引入了可变大小数组的功能，使得数组维度可以在数组分配时计算。本节内容主要涵盖了可变大小数组的定义、内存布局及其在x86-64架构下的实现和优化。</p>
+<h3>可变大小数组的定义</h3>
+<p>在C语言中，可变大小数组可以声明为局部变量或函数参数。例如：</p>
+<pre><code class="language-c">int A[expr1][expr2];
+</code></pre>
+<p>其中，<code>expr1</code>和<code>expr2</code>是在声明时计算的表达式。例如，我们可以编写一个函数来访问一个n×n数组的元素<code>A[i][j]</code>：</p>
+<pre><code class="language-c">int var_ele(long n, int A[n][n], long i, long j) {
+    return A[i][j];
+}
+</code></pre>
+<p>注意，这里参数<code>n</code>必须在参数<code>A[n][n]</code>之前声明，以便在遇到数组参数时计算数组维度。</p>
+<h3>内存布局</h3>
+<p>可变大小数组在内存中的布局与固定大小数组类似，也是按行优先（row-major order）排列的。不同之处在于数组的维度在运行时计算。例如，对于数组<code>A[n][n]</code>，元素<code>A[i][j]</code>的地址计算公式为：</p>
+<pre><code class="language-plaintext">&amp;A[i][j] = xA + L * (n * i + j)
+</code></pre>
+<p>其中，<code>xA</code>是数组<code>A</code>的起始地址，<code>L</code>是元素类型的大小（以字节为单位），<code>n</code>是数组的列数，<code>i</code>和<code>j</code>分别是行和列的索引。</p>
+<h3>元素访问的地址计算</h3>
+<p>以二维数组<code>T D[R][C]</code>为例，元素<code>D[i][j]</code>的地址计算公式为：</p>
+<pre><code class="language-plaintext">&amp;D[i][j] = xD + L * (C * i + j)
+</code></pre>
+<p>在x86-64架构下，访问可变大小数组的元素时，需要计算目标元素的偏移量，并使用数组起始地址和偏移量来访问内存。例如，对于函数<code>var_ele</code>，其汇编代码如下：</p>
+<pre><code class="language-assembly">1 var_ele:
+2     imulq %rdx, %rdi       # 计算 n * i
+3     leaq (%rsi,%rdi,4), %rax  # 计算 xA + 4 * (n * i)
+4     movl (%rax,%rcx,4), %eax  # 读取 M[xA + 4 * (n * i) + 4 * j]
+5     ret
+</code></pre>
+<p>这段代码通过乘法和加法计算地址<code>xA + 4 * (n * i + j)</code>，并使用该地址访问内存中的数据。</p>
+<h3>优化策略</h3>
+<p>可变大小数组的灵活性使其在某些场景下优于固定大小数组。然而，这种灵活性也带来了性能上的挑战，特别是地址计算中的乘法操作。在某些处理器中，乘法操作可能会带来显著的性能开销。因此，理解和优化可变大小数组的访问方式对提高程序性能至关重要。</p>
+<h4>示例：矩阵乘法的优化</h4>
+<p>以下是一个矩阵乘法的优化示例，展示了如何利用可变大小数组的灵活性进行优化：</p>
+<pre><code class="language-c">int var_prod_ele(long n, int A[n][n], int B[n][n], long i, long k) {
+    int *Arow = A[i];
+    int *Bptr = &amp;B[0][k];
+    int result = 0;
+    for (long j = 0; j &lt; n; j++) {
+        result += Arow[j] * *Bptr;
+        Bptr += n;
+    }
+    return result;
+}
+</code></pre>
+<p>通过使用指针遍历数组元素，避免了多次乘法操作，从而提高了性能。</p>
+<h3>应用场景</h3>
+<p>可变大小数组在需要动态分配内存的场景中非常有用，特别是当数组大小在编译时未知时。例如，在处理矩阵计算、图像处理和动态数据结构（如动态二维数组）时，可变大小数组提供了极大的灵活性和便利性。</p>
+<h3>总结</h3>
+<p>本节详细讨论了可变大小数组的定义、内存布局和访问方式。在x86-64架构下，可变大小数组的访问通过基址加索引和乘法的方式实现，支持灵活的内存地址计算。理解这些基本原理并应用合适的优化策略，有助于编写高效且灵活的数组操作代码。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 04_3.8.5_可变大小数组
+
+"""
+Lecture: 03_程序的机器级表示/3.8_数组分配和访问
+Content: 04_3.8.5_可变大小数组
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>2.3.5 二进制补码乘法</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>04_2.3.5_二进制补码乘法</h1>
+<pre><code>Lecture: 02_程序结构和执行/2.3_整数运算
+Content: 04_2.3.5_二进制补码乘法
+</code></pre>
+<h3>04_2.3.5_二进制补码乘法</h3>
+<h4>二进制补码乘法的背景知识</h4>
+<p>在计算机系统中，整数运算通常使用补码表示法。补码表示法有助于简化加减法运算，同时可以处理正负数。对于乘法运算，特别是二进制补码乘法，它涉及将两个二进制补码数相乘，并对结果进行适当的处理。</p>
+<h4>二进制补码乘法的核心原理</h4>
+<p>二进制补码乘法的核心是将两个补码表示的整数相乘。对于宽度为 $ w $ 的整数，补码乘法可以表示为：</p>
+<p>$$ x \cdot y = p $$</p>
+<p>其中， $ x $ 和 $ y $ 是两个宽度为 $ w $ 的补码整数， $ p $ 是宽度为 $ 2w $ 的乘积。</p>
+<p>然而，在实际操作中，乘积通常需要截断为原始的宽度 $ w $。这意味着我们只保留乘积的低 $ w $ 位，高位部分将被丢弃。这种截断操作会导致可能的溢出。</p>
+<h4>数学表示</h4>
+<p>我们可以用以下数学表示来描述补码乘法：</p>
+<p>$$ x \cdot y = \left( x \times y \right) \mod 2^w $$</p>
+<p>其中，乘积的截断结果就是 $ w $ 位补码表示的最终结果。</p>
+<h4>二进制补码乘法的步骤</h4>
+<ol>
+<li><strong>符号扩展：</strong> 将两个 $ w $ 位的补码数扩展为 $ 2w $ 位。这是为了在乘法运算中正确处理符号位。</li>
+<li><strong>普通二进制乘法：</strong> 执行标准的二进制乘法，得到一个 $ 2w $ 位的结果。</li>
+<li><strong>截断结果：</strong> 只保留结果的低 $ w $ 位，高位部分则被丢弃。</li>
+</ol>
+<h4>实际应用中的考虑</h4>
+<p>在计算机实际执行二进制补码乘法时，有几个关键点需要注意：</p>
+<ul>
+<li><strong>溢出问题：</strong> 当结果超出 $ w $ 位时，高位的溢出会被丢弃，这可能会导致错误的结果。</li>
+<li><strong>性能优化：</strong> 由于乘法运算通常比加法和移位操作要慢，现代编译器和处理器会尝试优化乘法运算，例如通过使用移位和加法来代替某些乘法运算。</li>
+</ul>
+<h4>具体实现</h4>
+<p>以下是一个二进制补码乘法的实现例子：</p>
+<ol>
+<li>将两个 $ w $ 位的整数 $ x $ 和 $ y $ 转换为 $ 2w $ 位。</li>
+<li>使用标准的二进制乘法算法计算 $ x $ 和 $ y $ 的乘积。</li>
+<li>结果 $ p $ 可能是 $ 2w $ 位，将其截断为 $ w $ 位，即只保留低 $ w $ 位。</li>
+</ol>
+<h4>示例</h4>
+<p>假设我们有两个 4 位的补码数 $ x = 1101 $ (即 -3) 和 $ y = 0110 $ (即 6)，我们需要计算它们的乘积。</p>
+<ol>
+<li>
+<p>扩展为 8 位：</p>
+<ul>
+<li>$ x = 11111101 $ (即 -3)</li>
+<li>$ y = 00000110 $ (即 6)</li>
+</ul>
+</li>
+<li>
+<p>计算乘积：</p>
+<ul>
+<li>$ x \cdot y = 11111101 \cdot 00000110 = 111100111010 $</li>
+</ul>
+</li>
+<li>
+<p>截断为 4 位：</p>
+<ul>
+<li>结果是 1010 (即 -6)</li>
+</ul>
+</li>
+</ol>
+<p>这样，我们就得到了补码乘法的结果。</p>
+<h3>总结</h3>
+<p>二进制补码乘法在计算机系统中是一个基础但非常重要的操作。理解其原理和实现方法，对于深入理解计算机的底层操作以及优化程序性能具有重要意义。</p>
+<p>通过上述详细分析，我们可以看到，虽然补码乘法看似简单，但其背后涉及的数学和计算机原理相当复杂，需要我们仔细理解和运用。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 04_2.3.5_二进制补码乘法
+
+"""
+Lecture: 02_程序结构和执行/2.3_整数运算
+Content: 04_2.3.5_二进制补码乘法
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

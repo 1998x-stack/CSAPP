@@ -1,0 +1,189 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.5.2 一元和二元运算</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>01_3.5.2_一元和二元运算</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.5_算术和逻辑运算
+Content: 01_3.5.2_一元和二元运算
+</code></pre>
+<h3>3.5.2 一元和二元运算</h3>
+<p>在计算机程序的机器级表示中，一元和二元运算是基本的算术和逻辑操作。它们在处理数据时发挥着关键作用，并且它们的操作数和运算结果直接影响寄存器或内存位置的状态。以下是对这一章节的详细分析。</p>
+<h4>一元运算</h4>
+<p>一元运算是指只需一个操作数的运算，这个操作数既是源操作数，也是目的操作数。这种运算可以作用于寄存器或内存位置。例如：</p>
+<ul>
+<li><code>incq (%rsp)</code>：将栈顶元素递增1。</li>
+</ul>
+<p>一元运算的常见类型及其作用如下：</p>
+<ol>
+<li><strong>递增 (inc)</strong>：对操作数加1。
+<ul>
+<li>例如：<code>incq %rax</code> 对 <code>%rax</code> 寄存器的值加1。</li>
+</ul>
+</li>
+<li><strong>递减 (dec)</strong>：对操作数减1。
+<ul>
+<li>例如：<code>decq %rbx</code> 对 <code>%rbx</code> 寄存器的值减1。</li>
+</ul>
+</li>
+<li><strong>取反 (neg)</strong>：对操作数取负。
+<ul>
+<li>例如：<code>negq %rcx</code> 对 <code>%rcx</code> 寄存器的值取负值。</li>
+</ul>
+</li>
+<li><strong>按位取反 (not)</strong>：对操作数的每一位进行取反。
+<ul>
+<li>例如：<code>notq %rdx</code> 对 <code>%rdx</code> 寄存器的每一位进行取反操作。</li>
+</ul>
+</li>
+</ol>
+<p>这些一元运算在汇编代码中使用频繁，能够高效地完成基本的数据操作。</p>
+<h4>二元运算</h4>
+<p>二元运算是指需要两个操作数的运算，其中一个操作数既是源操作数，也是目的操作数。这种运算的语法类似于C语言中的赋值运算符，例如 <code>x -= y</code>。但需要注意的是，在汇编中，源操作数在前，目的操作数在后，这对于非交换律操作可能会显得不直观。例如：</p>
+<ul>
+<li><code>subq %rax, %rdx</code>：将 <code>%rax</code> 的值从 <code>%rdx</code> 中减去（即 <code>%rdx = %rdx - %rax</code>）。</li>
+</ul>
+<p>常见的二元运算包括：</p>
+<ol>
+<li><strong>加法 (add)</strong>：对两个操作数进行加法运算。
+<ul>
+<li>例如：<code>addq %rax, %rbx</code> 对 <code>%rax</code> 和 <code>%rbx</code> 的值进行加法运算，结果存储在 <code>%rbx</code> 中。</li>
+</ul>
+</li>
+<li><strong>减法 (sub)</strong>：对两个操作数进行减法运算。
+<ul>
+<li>例如：<code>subq %rcx, %rdx</code> 对 <code>%rdx</code> 和 <code>%rcx</code> 的值进行减法运算，结果存储在 <code>%rdx</code> 中。</li>
+</ul>
+</li>
+<li><strong>乘法 (imul)</strong>：对两个操作数进行乘法运算。
+<ul>
+<li>例如：<code>imulq %rsi, %rdi</code> 对 <code>%rsi</code> 和 <code>%rdi</code> 的值进行乘法运算，结果存储在 <code>%rdi</code> 中。</li>
+</ul>
+</li>
+<li><strong>异或 (xor)</strong>：对两个操作数进行按位异或运算。
+<ul>
+<li>例如：<code>xorq %r8, %r9</code> 对 <code>%r8</code> 和 <code>%r9</code> 的值进行按位异或运算，结果存储在 <code>%r9</code> 中。</li>
+</ul>
+</li>
+<li><strong>或 (or)</strong>：对两个操作数进行按位或运算。
+<ul>
+<li>例如：<code>orq %r10, %r11</code> 对 <code>%r10</code> 和 <code>%r11</code> 的值进行按位或运算，结果存储在 <code>%r11</code> 中。</li>
+</ul>
+</li>
+<li><strong>与 (and)</strong>：对两个操作数进行按位与运算。
+<ul>
+<li>例如：<code>andq %r12, %r13</code> 对 <code>%r12</code> 和 <code>%r13</code> 的值进行按位与运算，结果存储在 <code>%r13</code> 中。</li>
+</ul>
+</li>
+</ol>
+<p>二元运算的第一个操作数可以是立即数、寄存器或内存位置，而第二个操作数可以是寄存器或内存位置。需要注意的是，两个操作数不能同时是内存位置。当第二个操作数是内存位置时，处理器必须先从内存中读取值，执行运算，然后将结果写回内存。</p>
+<h4>实践例题</h4>
+<p>假设在以下内存地址和寄存器中存储了如下值：</p>
+<table>
+<thead>
+<tr>
+<th>地址</th>
+<th>值</th>
+<th>寄存器</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x100</td>
+<td>0xFF</td>
+<td>%rax</td>
+<td>0x100</td>
+</tr>
+<tr>
+<td>0x108</td>
+<td>0xAB</td>
+<td>%rcx</td>
+<td>0x1</td>
+</tr>
+<tr>
+<td>0x110</td>
+<td>0x13</td>
+<td>%rdx</td>
+<td>0x3</td>
+</tr>
+<tr>
+<td>0x118</td>
+<td>0x11</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>以下指令的执行结果如下表所示：</p>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>目的地</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>addq %rcx,(%rax)</td>
+<td>0x100</td>
+<td>0x100 + 0x1= 0x101</td>
+</tr>
+<tr>
+<td>subq %rdx,8(%rax)</td>
+<td>0x108</td>
+<td>0xAB - 0x3 = 0xA8</td>
+</tr>
+<tr>
+<td>imulq $16,(%rax,%rdx,8)</td>
+<td>0x110</td>
+<td>0x13 * 16 = 0x130</td>
+</tr>
+<tr>
+<td>incq 16(%rax)</td>
+<td>0x118</td>
+<td>0x11 + 1 = 0x12</td>
+</tr>
+<tr>
+<td>decq %rcx</td>
+<td>%rcx</td>
+<td>0x1 - 1 = 0x0</td>
+</tr>
+<tr>
+<td>subq %rdx,%rax</td>
+<td>%rax</td>
+<td>0x100 - 0x3 = 0xFD</td>
+</tr>
+</tbody>
+</table>
+<p>这些示例展示了二元运算的实际效果和内存或寄存器状态的变化。</p>
+<h3>总结</h3>
+<p>一元和二元运算是机器级程序中最基础的操作，它们的高效实现对程序的性能至关重要。理解这些指令的操作方式和使用场景，有助于深入掌握计算机底层运算的原理和优化程序性能   。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 01_3.5.2_一元和二元运算
+
+"""
+Lecture: 03_程序的机器级表示/3.5_算术和逻辑运算
+Content: 01_3.5.2_一元和二元运算
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

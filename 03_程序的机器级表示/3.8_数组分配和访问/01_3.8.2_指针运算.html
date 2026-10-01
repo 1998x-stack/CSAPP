@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.8.2 指针运算</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>01_3.8.2_指针运算</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.8_数组分配和访问
+Content: 01_3.8.2_指针运算
+</code></pre>
+<h2>3.8.2 指针运算</h2>
+<h3>章节概述</h3>
+<p>在《深入理解计算机系统》第3章“程序的机器级表示”中，第3.8.2节讨论了指针运算的基本原理。在C语言中，指针运算是一种强大的工具，允许开发者进行高效的内存操作和数组处理。本节内容包括指针运算的定义、内存地址计算、指针与数组的关系，以及x86-64架构中指针运算的实现。</p>
+<h3>指针运算的基本原理</h3>
+<p>指针运算包括指针的生成、解引用和指针算术。C语言允许对指针进行算术运算，这些运算根据指针所引用的数据类型的大小进行缩放。</p>
+<h4>指针的生成和解引用</h4>
+<ul>
+<li>生成指针：使用<code>&amp;</code>操作符生成指向变量的指针。例如，<code>&amp;a</code>生成一个指向变量<code>a</code>的指针。</li>
+<li>解引用指针：使用<code>*</code>操作符解引用指针，获取或设置指针指向的内存位置的值。例如，<code>*p</code>获取指针<code>p</code>指向的值，<code>*p = 10</code>设置指针<code>p</code>指向的位置的值为10。</li>
+</ul>
+<h4>指针算术</h4>
+<p>指针算术是指对指针进行加减运算。例如，如果<code>p</code>是一个指向类型为<code>T</code>的数据的指针，其值为<code>xp</code>，则表达式<code>p+i</code>的值为<code>xp + L*i</code>，其中<code>L</code>是类型<code>T</code>的数据大小。这个运算可以用于遍历数组或内存块。</p>
+<h3>指针与数组的关系</h3>
+<p>数组和指针在C语言中有密切的关系。数组名在表达式中通常会被转换为指向其第一个元素的指针。例如，<code>A[i]</code>可以表示为<code>*(A+i)</code>，这计算了数组<code>A</code>中第<code>i</code>个元素的地址并访问该地址的值。</p>
+<h4>示例</h4>
+<p>假设有一个整数数组<code>E</code>和一个整数索引<code>i</code>，以下是一些常见的表达式及其对应的汇编代码：</p>
+<ul>
+<li><code>E</code>：表示数组的起始地址，类型为<code>int*</code>，汇编代码：<code>movl %rdx, %rax</code></li>
+<li><code>E[0]</code>：表示数组的第一个元素，类型为<code>int</code>，汇编代码：<code>movl (%rdx), %eax</code></li>
+<li><code>E[i]</code>：表示数组的第<code>i</code>个元素，类型为<code>int</code>，汇编代码：<code>movl (%rdx, %rcx, 4), %eax</code></li>
+<li><code>&amp;E[2]</code>：表示数组的第<code>2</code>个元素的地址，类型为<code>int*</code>，汇编代码：<code>leaq 8(%rdx), %rax</code></li>
+<li><code>E+i-1</code>：表示数组的第<code>i-1</code>个元素的地址，类型为<code>int*</code>，汇编代码：<code>leaq -4(%rdx, %rcx, 4), %rax</code></li>
+<li><code>*(E+i-3)</code>：表示数组的第<code>i-3</code>个元素的值，类型为<code>int</code>，汇编代码：<code>movl -12(%rdx, %rcx, 4), %eax</code></li>
+<li><code>&amp;E[i]-E</code>：表示数组的第<code>i</code>个元素与数组起始地址的差值，类型为<code>long</code>，汇编代码：<code>movq %rcx, %rax</code></li>
+</ul>
+<h3>内存地址计算</h3>
+<p>在x86-64架构中，指针运算通过基址加索引的方式实现。基址寄存器、索引寄存器和缩放因子结合用于计算内存地址。例如，指令<code>movl (%rdx,%rcx,4), %eax</code>计算地址<code>xE + 4*i</code>，读取该地址的内存内容，并将其存储到寄存器%eax中。缩放因子可以是1、2、4或8，覆盖了常见的基本数据类型的大小。</p>
+<h3>指针运算的应用</h3>
+<p>指针运算在数组遍历、内存分配和访问、字符串处理等方面有广泛的应用。例如，遍历数组可以通过指针算术实现：</p>
+<pre><code class="language-c">for (int *p = array; p &lt; array + N; p++) {
+    // 处理*p
+}
+</code></pre>
+<p>这个循环通过指针算术依次访问数组的每个元素，避免了数组下标运算的开销。</p>
+<h3>总结</h3>
+<p>指针运算是C语言中处理数组和内存的强大工具，通过理解指针的生成、解引用和算术运算，可以编写高效的内存访问代码。在x86-64架构下，指针运算通过基址加索引的方式实现，支持灵活的内存地址计算。掌握这些基本原理有助于编写高效且健壮的程序。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 01_3.8.2_指针运算
+
+"""
+Lecture: 03_程序的机器级表示/3.8_数组分配和访问
+Content: 01_3.8.2_指针运算
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

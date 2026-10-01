@@ -1,0 +1,181 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>2.1.4 表示字符串</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>03_2.1.4_表示字符串</h1>
+<pre><code>Lecture: 02_程序结构和执行/2.1_表示和操作信息
+Content: 03_2.1.4_表示字符串
+</code></pre>
+<h3>2.1.4 表示字符串详解</h3>
+<h4>字符串的基本概念</h4>
+<p>在C语言中，字符串被编码为以空字符（值为0）终止的字符数组。每个字符都用某种标准编码表示，最常见的是ASCII字符码。这样一来，无论字节顺序和字长约定如何，只要系统使用的是ASCII编码，文本数据就具备了平台独立性。</p>
+<h4>ASCII编码</h4>
+<p>ASCII（American Standard Code for Information Interchange，美国信息交换标准代码）是一种字符编码标准，用于表示英文字符及其控制字符。每个字符用一个字节（8位）表示，其中：</p>
+<ul>
+<li>大写字母‘A’到‘Z’对应的ASCII码为0x41到0x5A。</li>
+<li>小写字母‘a’到‘z’对应的ASCII码为0x61到0x7A。</li>
+<li>数字‘0’到‘9’对应的ASCII码为0x30到0x39。</li>
+<li>特殊符号如空格（0x20）、换行符（0x0A）等也有其对应的ASCII码。</li>
+</ul>
+<p>例如，字符串&quot;12345&quot;的ASCII表示为31 32 33 34 35 00，其中每个字符分别对应其ASCII码，末尾的00表示空字符，标志字符串的结束。</p>
+<h4>Unicode和UTF-8</h4>
+<p>虽然ASCII编码适用于英文文档，但对于包含特殊字符的其他语言如法语、希腊语、俄语和中文，ASCII就显得不足。因此，Unicode联盟制定了一种更全面、更广泛接受的文本编码标准——Unicode。当前的Unicode标准（版本7.0）支持超过100,000个字符，涵盖了各种语言，包括古埃及和巴比伦的语言。</p>
+<p>Unicode的基本编码称为“通用字符集”，使用32位表示字符。为了优化常用字符的存储空间，Unicode还支持其他编码方式，其中最常见的是UTF-8。UTF-8编码将每个字符编码为一个字节序列，使得标准ASCII字符使用与ASCII相同的单字节编码。这意味着所有的ASCII字节序列在UTF-8中具有相同的含义。</p>
+<h4>字符串的存储</h4>
+<p>字符串在内存中的存储方式是字符数组，以空字符结尾。通过数组下标可以访问字符串中的每个字符。以下是一个字符串的存储示例：</p>
+<pre><code class="language-c">char str[] = &quot;hello&quot;;
+</code></pre>
+<p>在内存中的表示为：</p>
+<table>
+<thead>
+<tr>
+<th>地址</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x00</td>
+<td>'h'</td>
+</tr>
+<tr>
+<td>0x01</td>
+<td>'e'</td>
+</tr>
+<tr>
+<td>0x02</td>
+<td>'l'</td>
+</tr>
+<tr>
+<td>0x03</td>
+<td>'l'</td>
+</tr>
+<tr>
+<td>0x04</td>
+<td>'o'</td>
+</tr>
+<tr>
+<td>0x05</td>
+<td>'\0'</td>
+</tr>
+</tbody>
+</table>
+<p>字符串可以通过指针进行操作。例如，指向字符串起始位置的指针可以用来遍历字符串：</p>
+<pre><code class="language-c">char *p = str;
+while (*p != '\0') {
+    printf(&quot;%c &quot;, *p);
+    p++;
+}
+</code></pre>
+<h4>字符串的操作</h4>
+<p>常见的字符串操作包括复制、连接、比较和查找。C标准库提供了一组函数用于这些操作，如<code>strcpy</code>、<code>strcat</code>、<code>strcmp</code>和<code>strstr</code>。</p>
+<ol>
+<li>
+<p><strong>复制字符串</strong>：使用<code>strcpy</code>函数将源字符串复制到目标字符串。</p>
+<pre><code class="language-c">char src[] = &quot;hello&quot;;
+char dest[10];
+strcpy(dest, src);  // dest = &quot;hello&quot;
+</code></pre>
+</li>
+<li>
+<p><strong>连接字符串</strong>：使用<code>strcat</code>函数将源字符串连接到目标字符串的末尾。</p>
+<pre><code class="language-c">char str1[20] = &quot;hello&quot;;
+char str2[] = &quot; world&quot;;
+strcat(str1, str2);  // str1 = &quot;hello world&quot;
+</code></pre>
+</li>
+<li>
+<p><strong>比较字符串</strong>：使用<code>strcmp</code>函数比较两个字符串，返回值表示比较结果。</p>
+<pre><code class="language-c">char str1[] = &quot;apple&quot;;
+char str2[] = &quot;banana&quot;;
+int result = strcmp(str1, str2);  // result &lt; 0，因为'apple'在字典序中小于'banana'
+</code></pre>
+</li>
+<li>
+<p><strong>查找子字符串</strong>：使用<code>strstr</code>函数查找子字符串在主字符串中的位置。</p>
+<pre><code class="language-c">char str[] = &quot;hello world&quot;;
+char *substr = strstr(str, &quot;world&quot;);  // substr指向&quot;world&quot;在str中的位置
+</code></pre>
+</li>
+</ol>
+<h4>字符串在系统编程中的应用</h4>
+<p>在系统编程中，字符串的表示和操作非常重要。例如：</p>
+<ul>
+<li><strong>文件路径</strong>：文件路径通常表示为字符串，用于访问和管理文件系统中的文件。</li>
+<li><strong>命令行参数</strong>：命令行参数通过字符串传递给程序，用于控制程序的行为。</li>
+<li><strong>配置文件</strong>：许多应用程序使用文本文件存储配置，字符串解析用于读取和应用配置。</li>
+</ul>
+<h4>总结</h4>
+<p>表示字符串是计算机系统中的一个基本且重要的概念。通过字符数组和标准编码（如ASCII和Unicode），字符串能够高效地存储和处理。了解字符串的存储结构和常见操作，有助于编写高效、可靠的程序。在实际应用中，合理使用字符串操作函数，可以简化编程过程，提高代码的可读性和维护性。</p>
+<hr>
+<h3>ASCII编码的局限性</h3>
+<p>虽然ASCII编码在计算机系统中广泛使用，但它也存在一些局限性，尤其在处理非英文字符和特殊符号时显得力不从心。以下是ASCII编码的主要局限性：</p>
+<ol>
+<li>
+<p><strong>字符集有限</strong>：</p>
+<ul>
+<li><strong>字符数量限制</strong>：ASCII编码仅使用7位表示字符，最多只能表示128个字符。这包括了基本的英文字母、数字、控制字符和一些常见的符号，但无法涵盖其他语言的字符。</li>
+<li><strong>无法表示多语言</strong>：ASCII仅支持英文字符，对于其他语言（如法语、德语、中文、日文等）的字符无法表示，导致多语言应用程序开发受限。</li>
+</ul>
+</li>
+<li>
+<p><strong>缺乏国际化支持</strong>：</p>
+<ul>
+<li><strong>非西方语言支持不足</strong>：ASCII编码无法处理西方语言以外的字符集，如希腊字母、阿拉伯字母、汉字等。这在全球化和国际化应用中是一个重大缺陷。</li>
+<li><strong>扩展字符编码</strong>：虽然存在扩展ASCII（使用8位表示字符，最多支持256个字符），但不同系统和应用对扩展ASCII的实现不一致，导致兼容性问题。</li>
+</ul>
+</li>
+<li>
+<p><strong>特殊字符和符号不足</strong>：</p>
+<ul>
+<li><strong>符号限制</strong>：ASCII编码无法包含所有可能的特殊符号和控制字符。例如，货币符号、数学符号和一些科学符号都不在标准ASCII字符集内。</li>
+<li><strong>图形字符</strong>：在早期计算机图形和用户界面设计中，ASCII的字符集不足以支持复杂的图形字符和符号。</li>
+</ul>
+</li>
+<li>
+<p><strong>冗余性和低效性</strong>：</p>
+<ul>
+<li><strong>空间浪费</strong>：ASCII编码每个字符使用一个字节（8位），但实际只使用了7位。虽然扩展ASCII可以利用第8位，但仍无法解决字符集有限的问题。</li>
+<li><strong>非紧凑性</strong>：在处理大量文本数据时，ASCII编码相对不够紧凑，尤其是与后来的编码标准（如UTF-8）相比。</li>
+</ul>
+</li>
+</ol>
+<h4>示例</h4>
+<p>以中文字符为例，ASCII编码无法直接表示任何中文字符。例如，“你好”在ASCII中无法表示，只能通过其他编码方案（如Unicode）来处理。在Unicode中，“你”对应的编码是0x4F60，“好”对应的编码是0x597D。</p>
+<h4>解决方案</h4>
+<p>由于ASCII编码的局限性，后来发展了更高级的字符编码方案，如ISO 8859-1（Latin-1）、UTF-8和UTF-16。这些编码标准能够支持更多字符集和符号，满足多语言和国际化的需求。</p>
+<ol>
+<li><strong>ISO 8859-1（Latin-1）</strong>：支持西欧语言的扩展字符集，使用8位编码，可以表示256个字符。</li>
+<li><strong>UTF-8</strong>：一种可变长度的Unicode编码，使用1到4个字节表示一个字符，兼容ASCII，同时支持所有Unicode字符。</li>
+<li><strong>UTF-16</strong>：使用2或4个字节表示一个字符，适用于需要高效处理大量非ASCII字符的应用。</li>
+</ol>
+<h3>总结</h3>
+<p>ASCII编码在早期计算机系统中发挥了重要作用，但其局限性也显而易见。随着全球化和国际化的需求增长，新的字符编码标准（如Unicode及其UTF-8和UTF-16编码）逐渐取代了ASCII，提供了更强大的字符表示能力和更好的兼容性。理解ASCII编码的局限性，有助于更好地选择和使用适合的字符编码方案来开发现代应用程序。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 03_2.1.4_表示字符串
+
+"""
+Lecture: 02_程序结构和执行/2.1_表示和操作信息
+Content: 03_2.1.4_表示字符串
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

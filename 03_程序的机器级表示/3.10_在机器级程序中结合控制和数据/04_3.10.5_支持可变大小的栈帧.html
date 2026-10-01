@@ -1,0 +1,114 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.10.5 支持可变大小的栈帧</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>04_3.10.5_支持可变大小的栈帧</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.10_在机器级程序中结合控制和数据
+Content: 04_3.10.5_支持可变大小的栈帧
+</code></pre>
+<h2>3.10.5 支持可变大小的栈帧</h2>
+<h3>章节概述</h3>
+<p>在《深入理解计算机系统》第3章“程序的机器级表示”中，第3.10.5节讨论了支持可变大小栈帧的基本原理。可变大小栈帧允许函数在运行时动态调整其栈空间的大小，以适应不同的需求。这在处理可变长度数组和动态内存分配时尤为重要。本节详细分析了可变大小栈帧的定义、实现机制及其在实际编程中的应用。</p>
+<h3>可变大小栈帧的定义</h3>
+<p>可变大小栈帧是指函数在调用过程中，栈帧的大小可以动态调整。这通常通过在函数内部使用<code>alloca</code>函数或变长数组（VLA）实现。<code>alloca</code>函数在栈上动态分配内存，并在函数返回时自动释放这些内存。</p>
+<h3>实现机制</h3>
+<p>在x86-64架构中，实现可变大小栈帧需要使用栈指针（%rsp）和帧指针（%rbp）来管理栈空间。以下是一个简单的示例，展示了如何在汇编代码中实现可变大小栈帧：</p>
+<pre><code class="language-c">void foo(int n) {
+    char buf[n];
+    // Function body
+}
+</code></pre>
+<p>上述C代码的汇编实现如下：</p>
+<pre><code class="language-assembly">foo:
+    pushq   %rbp            # 保存帧指针
+    movq    %rsp, %rbp      # 设置新帧指针
+    subq    %rdi, %rsp      # 分配n字节栈空间
+    ...
+    leave                  # 恢复栈指针和帧指针
+    ret                    # 返回调用者
+</code></pre>
+<p>在该示例中，函数<code>foo</code>根据传入参数<code>n</code>动态调整栈空间，通过<code>subq</code>指令减少栈指针<code>%rsp</code>的值，以分配所需的栈空间。</p>
+<h3>变长数组（VLA）</h3>
+<p>C99标准引入了变长数组（Variable Length Array, VLA），允许在栈上动态分配内存。例如：</p>
+<pre><code class="language-c">void foo(int n) {
+    int arr[n];
+    // Function body
+}
+</code></pre>
+<p>上述代码在函数<code>foo</code>中声明了一个长度为<code>n</code>的数组<code>arr</code>，其大小在运行时确定。这种方式简化了动态内存分配，不需要显式调用<code>malloc</code>和<code>free</code>。</p>
+<h3>示例分析</h3>
+<p>假设我们有一个简单的C函数<code>foo</code>，其功能是分配一个可变长度数组，并将其初始化为0：</p>
+<pre><code class="language-c">void foo(int n) {
+    int arr[n];
+    for (int i = 0; i &lt; n; i++) {
+        arr[i] = 0;
+    }
+}
+</code></pre>
+<p>该函数的汇编代码实现如下：</p>
+<pre><code class="language-assembly">foo:
+    pushq   %rbp            # 保存帧指针
+    movq    %rsp, %rbp      # 设置新帧指针
+    subq    %rdi, %rsp      # 分配n字节栈空间
+    movq    %rsp, %rsi      # 将栈指针存入%rsi，用于访问数组元素
+    movl    $0, %ecx        # 初始化循环计数器i
+.L2:
+    cmpl    %edi, %ecx      # 比较i和n
+    jge     .L3             # 如果i &gt;= n，跳转到.L3
+    movl    $0, (%rsi,%rcx,4) # 将arr[i]设置为0
+    incl    %ecx            # 递增循环计数器i
+    jmp     .L2             # 跳转到.L2继续循环
+.L3:
+    leave                  # 恢复栈指针和帧指针
+    ret                    # 返回调用者
+</code></pre>
+<p>在这个汇编实现中，函数<code>foo</code>首先保存当前帧指针，然后设置新的帧指针。通过<code>subq</code>指令减少栈指针的值，分配所需的栈空间。循环体通过<code>movl</code>和<code>incl</code>指令对数组元素进行初始化。</p>
+<h3>可变大小栈帧的应用</h3>
+<p>可变大小栈帧在实际编程中有广泛的应用，尤其在需要动态分配内存的场景中。例如：</p>
+<ol>
+<li><strong>处理可变长度数组</strong>：如前所述，VLA允许在栈上动态分配内存，简化了动态内存管理。</li>
+<li><strong>动态内存分配</strong>：通过<code>alloca</code>函数，可以在函数内部动态分配内存，并在函数返回时自动释放，从而避免了内存泄漏。</li>
+<li><strong>递归算法</strong>：在递归算法中，可变大小栈帧允许每次递归调用分配不同大小的栈空间，以适应不同的计算需求。</li>
+</ol>
+<h3>优势和劣势</h3>
+<h4>优势</h4>
+<ul>
+<li><strong>灵活性</strong>：允许在运行时动态调整栈空间，适应不同的内存需求。</li>
+<li><strong>简化内存管理</strong>：自动管理栈上的动态内存，无需显式释放。</li>
+</ul>
+<h4>劣势</h4>
+<ul>
+<li><strong>栈溢出风险</strong>：如果分配的栈空间过大，可能导致栈溢出。</li>
+<li><strong>可移植性问题</strong>：并非所有编译器和平台都支持VLA或<code>alloca</code>，可能会导致可移植性问题。</li>
+</ul>
+<h3>总结</h3>
+<p>可变大小栈帧通过在函数调用过程中动态调整栈空间，提供了灵活的内存管理机制。理解其基本原理和实现方法，有助于编写更加高效和灵活的代码。尽管存在一些潜在的风险和限制，但在需要动态内存分配的场景中，可变大小栈帧仍然是一个强大的工具。</p>
+<p>通过以上详细分析，希望能够帮助你深入理解《深入理解计算机系统》中的支持可变大小的栈帧章节。如果有进一步的问题或需要更详细的解释，请随时提问。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 04_3.10.5_支持可变大小的栈帧
+
+"""
+Lecture: 03_程序的机器级表示/3.10_在机器级程序中结合控制和数据
+Content: 04_3.10.5_支持可变大小的栈帧
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

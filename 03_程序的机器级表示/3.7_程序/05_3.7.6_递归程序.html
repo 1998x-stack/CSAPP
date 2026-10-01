@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>3.7.6 递归程序</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>05_3.7.6_递归程序</h1>
+<pre><code>Lecture: 03_程序的机器级表示/3.7_程序
+Content: 05_3.7.6_递归程序
+</code></pre>
+<h2>3.7.6 递归程序</h2>
+<h3>概述</h3>
+<p>递归程序在计算机科学中是一种非常重要的技术，特别是在算法和数据结构的实现中。递归是指函数调用自身来解决问题，它在解决许多问题时提供了简洁和自然的解决方案。深入理解递归程序的工作机制、实现细节以及其在x86-64架构下的执行过程，对于编写高效且正确的递归程序至关重要。</p>
+<h3>递归程序的基本结构</h3>
+<p>递归程序由两个主要部分组成：</p>
+<ol>
+<li>基本情况（base case）：这是递归终止的条件，防止无限递归。</li>
+<li>递归调用（recursive call）：函数在解决问题时调用自身，但规模比原问题小。</li>
+</ol>
+<h4>示例：阶乘函数</h4>
+<p>以计算阶乘的递归函数为例：</p>
+<pre><code class="language-c">long rfact(long n) {
+    if (n &lt;= 1)
+        return 1; // 基本情况
+    else
+        return n * rfact(n - 1); // 递归调用
+}
+</code></pre>
+<p>在这个函数中，当n小于等于1时，返回1，这是递归的终止条件。否则，函数调用自身计算(n-1)的阶乘，并将结果乘以n。</p>
+<h3>递归程序的实现细节</h3>
+<p>递归程序的实现依赖于堆栈和寄存器。每次递归调用都会在堆栈上创建一个新的栈帧，用于存储局部变量、返回地址以及其他需要保持的状态信息。</p>
+<h4>堆栈管理</h4>
+<p>堆栈是一种后进先出（LIFO）的数据结构，用于管理函数调用时的上下文信息。每次函数调用都会将返回地址和局部变量等信息压入堆栈，当函数返回时，这些信息会从堆栈中弹出。堆栈的这种特性使得它非常适合递归调用的实现。</p>
+<h4>寄存器使用</h4>
+<p>在x86-64架构下，寄存器用于存储函数参数和返回值。递归函数调用时，需要保存和恢复某些寄存器的值，以确保递归调用返回时寄存器中的数据一致。常用的寄存器包括%rbx、%rdi、%rsi等。</p>
+<h3>递归程序的执行过程</h3>
+<p>递归调用的执行过程包括以下几个步骤：</p>
+<ol>
+<li><strong>检查基例条件</strong>：如果满足基例条件，函数返回基例值。例如，在阶乘函数中，如果n &lt;= 1，函数返回1。</li>
+<li><strong>保存当前状态</strong>：将当前函数的局部变量和寄存器值保存到堆栈中。这一步确保递归调用返回时，能够正确恢复当前函数的执行环境。</li>
+<li><strong>递归调用</strong>：调用自身以解决更小规模的问题。对于阶乘函数，调用rfact(n - 1)。</li>
+<li><strong>恢复状态</strong>：从堆栈中恢复之前保存的状态，包括局部变量和寄存器值。</li>
+<li><strong>合并结果</strong>：使用递归调用的返回值计算当前层次的结果。例如，在阶乘函数中，将返回值与n相乘。</li>
+</ol>
+<h4>汇编代码示例</h4>
+<p>以递归阶乘函数为例，以下是其对应的x86-64汇编代码：</p>
+<pre><code class="language-assembly">1  rfact:
+2      pushq   %rbx             # 保存%rbx寄存器
+3      movq    %rdi, %rbx       # 将参数n存储在%rbx中
+4      movl    $1, %eax         # 设置返回值为1
+5      cmpq    $1, %rdi         # 比较n和1
+6      jle     .L35             # 如果n &lt;= 1，跳转到.L35
+7      leaq    -1(%rdi), %rdi   # 计算n - 1
+8      call    rfact            # 递归调用rfact(n - 1)
+9      imulq   %rbx, %rax       # 计算n * rfact(n - 1)
+10 .L35:
+11     popq    %rbx             # 恢复%rbx寄存器
+12     ret                      # 返回
+</code></pre>
+<h3>堆栈帧结构</h3>
+<p>在递归调用中，每次调用都会在堆栈上创建一个新的栈帧。栈帧包含以下内容：</p>
+<ol>
+<li>返回地址：调用函数的地址，函数返回时跳转到该地址。</li>
+<li>保存的寄存器：保存当前函数使用的寄存器值，确保函数返回时能够恢复。</li>
+<li>局部变量：函数中的局部变量，存储在栈帧中。</li>
+</ol>
+<h3>递归程序的优缺点</h3>
+<h4>优点</h4>
+<ul>
+<li><strong>代码简洁</strong>：递归程序通常比迭代程序更简洁，易于理解和维护。</li>
+<li><strong>自然映射</strong>：递归程序直接映射问题的定义，特别适合解决自相似性问题。</li>
+</ul>
+<h4>缺点</h4>
+<ul>
+<li><strong>栈空间消耗</strong>：每次递归调用都会占用栈空间，递归深度过大会导致栈溢出。</li>
+<li><strong>函数调用开销</strong>：每次递归调用都有额外的函数调用开销，包括参数传递、返回地址保存等。</li>
+</ul>
+<h3>优化递归程序</h3>
+<p>为了减少递归调用的开销，可以采用尾递归优化（Tail Recursion Optimization, TRO）。尾递归是指递归调用出现在函数的最后一条指令中，这样编译器可以优化为循环，避免多余的堆栈操作。</p>
+<h4>示例：尾递归阶乘函数</h4>
+<pre><code class="language-c">long rfact_tail(long n, long a) {
+    if (n &lt;= 1)
+        return a;
+    else
+        return rfact_tail(n - 1, n * a);
+}
+</code></pre>
+<p>在这个优化版本中，递归调用是函数的最后一条指令，编译器可以将其优化为循环，从而减少堆栈空间的使用和函数调用的开销。</p>
+<h3>总结</h3>
+<p>递归程序在计算机科学中具有重要地位，特别是在解决分治问题和自相似性问题时。理解递归程序的实现机制、堆栈管理以及寄存器使用，有助于编写高效且正确的递归代码。通过优化递归程序，可以进一步提高程序的性能和稳定性。</p>
+<p>递归程序的深入理解和优化对于计算机科学专业的学生和从业者来说都是一项重要的技能。希望通过以上详细的分析，能够帮助你更好地理解递归程序的实现和优化。如果有进一步的问题或需要更详细的解释，请随时提问。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 05_3.7.6_递归程序
+
+"""
+Lecture: 03_程序的机器级表示/3.7_程序
+Content: 05_3.7.6_递归程序
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

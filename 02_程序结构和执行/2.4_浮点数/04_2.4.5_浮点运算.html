@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>2.4.5 浮点运算</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>04_2.4.5_浮点运算</h1>
+<pre><code>Lecture: 02_程序结构和执行/2.4_浮点数
+Content: 04_2.4.5_浮点运算
+</code></pre>
+<h3>2.4.5 浮点运算</h3>
+<h4>浮点运算的基本规则</h4>
+<p>根据 IEEE 754 标准，浮点数运算的结果应当是对真实算术操作结果进行舍入后的值。浮点数运算包括加法、减法、乘法和除法。浮点数运算的一个显著特点是它们不仅需要进行精确的计算，还必须在某些情况下进行舍入，以确保结果能够适应有限的存储位数。</p>
+<h4>浮点加法和减法</h4>
+<h5>加法规则</h5>
+<ol>
+<li><strong>对齐尾数（Mantissa）：</strong> 首先，对两个操作数的尾数进行对齐。即将较小的指数调整到与较大指数相同，这样两个数的尾数就可以直接相加。</li>
+<li><strong>尾数相加：</strong> 将对齐后的尾数进行加法运算。</li>
+<li><strong>归一化结果：</strong> 如果结果的尾数超过了正常范围，则需要进行归一化处理，即调整指数和尾数使其符合规范。</li>
+</ol>
+<h5>示例</h5>
+<p>假设我们有两个浮点数 $a = 1.110 \times 2^3$ 和 $b = 1.101 \times 2^2$，首先需要对齐尾数：</p>
+<ul>
+<li>将 $b$ 的尾数右移一位：$b = 0.1101 \times 2^3$</li>
+<li>相加：$a + b = 1.110 + 0.1101 = 10.0001 \times 2^2$</li>
+<li>归一化：$10.0001 \times 2^2 = 1.00001 \times 2^4$</li>
+</ul>
+<h4>浮点乘法和除法</h4>
+<h5>乘法规则</h5>
+<ol>
+<li><strong>尾数相乘：</strong> 直接将两个操作数的尾数相乘。</li>
+<li><strong>指数相加：</strong> 将两个操作数的指数相加，结果作为新指数。</li>
+<li><strong>归一化结果：</strong> 如果结果的尾数不在规范范围内，则需要进行归一化处理。</li>
+</ol>
+<h5>示例</h5>
+<p>假设我们有两个浮点数 $a = 1.110 \times 2^3$ 和 $b = 1.101 \times 2^2$，则：</p>
+<ul>
+<li>尾数相乘：$1.110 \times 1.101 = 10.01110$</li>
+<li>指数相加：$3 + 2 = 5$</li>
+<li>归一化：$10.01110 \times 2^5 = 1.00111 \times 2^6$</li>
+</ul>
+<h4>舍入和溢出</h4>
+<p>浮点数运算中常见的问题包括舍入误差和溢出。由于浮点数的位数有限，某些运算结果可能超出表示范围或需要舍入。IEEE 754 标准定义了几种舍入模式，包括向零舍入、向下舍入、向上舍入和向偶数舍入。</p>
+<h5>舍入误差</h5>
+<p>在加法和乘法运算中，结果可能需要舍入以适应浮点数的表示范围。这种舍入操作可能会引入小的误差。在科学计算中，这些舍入误差可能会累积，影响最终结果的准确性。</p>
+<h5>溢出和下溢</h5>
+<ul>
+<li><strong>溢出（Overflow）：</strong> 运算结果超出了浮点数的表示范围，通常会被处理为无穷大（∞）。</li>
+<li><strong>下溢（Underflow）：</strong> 运算结果非常接近零，以至于无法用规范化浮点数表示，通常会被处理为非规范化数（Denormalized Number）。</li>
+</ul>
+<h4>特殊值处理</h4>
+<p>IEEE 754 标准还定义了一些特殊值及其运算规则：</p>
+<ul>
+<li><strong>无穷大（∞）：</strong> 用于表示超出可表示范围的数。</li>
+<li><strong>NaN（Not a Number）：</strong> 表示未定义或无法表示的数，如 $0/0$ 或 $\sqrt{-1}$。</li>
+<li><strong>零（+0 和 -0）：</strong> 正零和负零在大多数运算中视为相等，但在某些特殊情况下可以区分。</li>
+</ul>
+<h4>示例分析</h4>
+<p>让我们通过具体示例来深入理解这些运算规则。假设我们有以下两个浮点数：</p>
+<ol>
+<li>$a = 1.101 \times 2^3$</li>
+<li>$b = 1.011 \times 2^1$</li>
+</ol>
+<p>我们希望计算 $a + b$ 和 $a \times b$：</p>
+<h5>加法</h5>
+<ul>
+<li><strong>对齐尾数：</strong> $b = 0.1011 \times 2^3$</li>
+<li><strong>相加：</strong> $a + b = 1.101 + 0.1011 = 10.0101 \times 2^2$</li>
+<li><strong>归一化：</strong> $10.0101 \times 2^2 = 1.00101 \times 2^3$</li>
+</ul>
+<h5>乘法</h5>
+<ul>
+<li><strong>尾数相乘：</strong> $1.101 \times 1.011 = 10.000111$</li>
+<li><strong>指数相加：</strong> $3 + 1 = 4$</li>
+<li><strong>归一化：</strong> $10.000111 \times 2^4 = 1.0000111 \times 2^5$</li>
+</ul>
+<h4>结论</h4>
+<p>浮点运算是计算机科学中一个复杂但非常重要的领域。通过遵循 IEEE 754 标准，我们可以确保浮点数运算在各种硬件和软件实现中的一致性。然而，浮点运算中的舍入误差、溢出和特殊值处理等问题仍然需要仔细处理，以保证计算结果的准确性和可靠性。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 04_2.4.5_浮点运算
+
+"""
+Lecture: 02_程序结构和执行/2.4_浮点数
+Content: 04_2.4.5_浮点运算
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

@@ -1,0 +1,82 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>2.3.4 无符号乘法</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>03_2.3.4_无符号乘法</h1>
+<pre><code>Lecture: 02_程序结构和执行/2.3_整数运算
+Content: 03_2.3.4_无符号乘法
+</code></pre>
+<h3>2.3.4 无符号乘法</h3>
+<h4>概述</h4>
+<p>无符号乘法是计算机中常见的运算操作之一。对于无符号数（即仅考虑非负整数），乘法的实现与符号数的乘法有所不同。无符号数在计算机中通常以二进制形式表示，并且不包含符号位。</p>
+<h4>二进制无符号乘法原理</h4>
+<p>无符号数的二进制乘法可以通过模拟十进制乘法的过程来理解。具体来说，无符号数的二进制乘法过程包括以下几个步骤：</p>
+<ol>
+<li><strong>部分积生成</strong>：对乘数的每一位，如果该位为1，则生成一个部分积，该部分积是被乘数左移相应位数的结果。</li>
+<li><strong>部分积相加</strong>：将所有部分积相加得到最终的乘积。</li>
+</ol>
+<h4>具体步骤</h4>
+<p>假设我们有两个无符号数 $ A $ 和 $ B $，其二进制表示分别为 $ A = a_{n-1}a_{n-2}...a_1a_0 $ 和 $ B = b_{m-1}b_{m-2}...b_1b_0 $。其中，$ a_i $ 和 $ b_j $ 表示二进制数 $ A $ 和 $ B $ 的第 $ i $ 位和第 $ j $ 位。</p>
+<p>无符号乘法的步骤如下：</p>
+<ol>
+<li><strong>初始化乘积</strong>：设乘积 $ P $ 初始值为0。</li>
+<li><strong>部分积计算</strong>：对于 $ B $ 的每一位 $ b_j $：
+<ul>
+<li>如果 $ b_j = 1 $，则将 $ A $ 左移 $ j $ 位得到部分积 $ A \times 2^j $。</li>
+<li>将部分积加到乘积 $ P $ 中。</li>
+</ul>
+</li>
+<li><strong>最终乘积</strong>：在处理完 $ B $ 的所有位后，得到的 $ P $ 即为最终乘积。</li>
+</ol>
+<h4>示例</h4>
+<p>假设 $ A = 5 $（二进制表示为101），$ B = 3 $（二进制表示为11），则无符号乘法过程如下：</p>
+<ol>
+<li><strong>初始化乘积</strong>：$ P = 0 $。</li>
+<li><strong>部分积计算</strong>：
+<ul>
+<li>$ B $ 的第0位为1，部分积为 $ 101 \times 2^0 = 101 $，将其加到 $ P $ 上，$ P = 101 $。</li>
+<li>$ B $ 的第1位为1，部分积为 $ 101 \times 2^1 = 1010 $，将其加到 $ P $ 上，$ P = 1111 $。</li>
+</ul>
+</li>
+<li><strong>最终乘积</strong>：$ P = 1111 $，即二进制数15，对应十进制数15。</li>
+</ol>
+<h4>硬件实现</h4>
+<p>在计算机硬件中，无符号乘法通常通过专用的乘法器电路实现。这种电路使用移位和加法操作来完成上述乘法过程。典型的乘法器电路包括：</p>
+<ol>
+<li><strong>移位寄存器</strong>：用于保存被乘数和部分积。</li>
+<li><strong>加法器</strong>：用于累加部分积。</li>
+<li><strong>控制逻辑</strong>：控制移位和加法过程，确保按位处理乘数的每一位。</li>
+</ol>
+<h4>优化和复杂度</h4>
+<p>无符号乘法的时间复杂度主要取决于乘数的位数。最基本的实现方式是逐位处理乘数，每位需要一次移位和一次加法操作，因此时间复杂度为 $ O(n) $，其中 $ n $ 是乘数的位数。</p>
+<h4>小结</h4>
+<p>无符号乘法是计算机系统中基础且重要的运算操作，通过模拟十进制乘法的步骤来实现。其硬件实现依赖于移位寄存器和加法器的配合。了解无符号乘法的原理和实现方法，对于掌握计算机系统中的算术运算有着重要意义。</p>
+<hr>
+
+    <h3>Python 文件</h3>
+    <pre><code># 03_2.3.4_无符号乘法
+
+"""
+Lecture: 02_程序结构和执行/2.3_整数运算
+Content: 03_2.3.4_无符号乘法
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

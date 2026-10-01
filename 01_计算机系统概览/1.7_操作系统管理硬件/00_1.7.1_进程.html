@@ -1,0 +1,847 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>1.7.1 进程</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>00_1.7.1_进程</h1>
+<pre><code>Lecture: 01_计算机系统概览/1.7_操作系统管理硬件
+Content: 00_1.7.1_进程
+</code></pre>
+<h3>详细分析：1.7.1 进程</h3>
+<h4>1.7.1_进程</h4>
+<p>在计算机系统中，进程是操作系统管理资源和执行任务的基本单位。理解进程的概念、生命周期以及操作系统如何管理进程，对于深入掌握计算机系统的工作原理至关重要。</p>
+<h4>进程的基本概念</h4>
+<ol>
+<li>
+<p><strong>定义</strong>：</p>
+<ul>
+<li>进程是一个正在执行的程序实例，包括程序代码、当前活动、内存地址空间、程序计数器、寄存器、文件描述符等。</li>
+<li>进程是操作系统分配和管理资源的基本单位。</li>
+</ul>
+</li>
+<li>
+<p><strong>组成部分</strong>：</p>
+<ul>
+<li><strong>程序代码</strong>：存储在磁盘上的可执行文件。</li>
+<li><strong>数据段</strong>：包含静态数据和全局变量。</li>
+<li><strong>堆</strong>：动态分配内存的数据结构。</li>
+<li><strong>栈</strong>：存储函数调用、局部变量和返回地址。</li>
+<li><strong>寄存器</strong>：存储当前执行状态，包括程序计数器（PC）、堆栈指针（SP）等。</li>
+<li><strong>文件描述符</strong>：指向进程打开的文件。</li>
+</ul>
+</li>
+</ol>
+<h4>进程的生命周期</h4>
+<p>进程的生命周期可以分为以下几个阶段：</p>
+<ol>
+<li>
+<p><strong>创建（Creation）</strong>：</p>
+<ul>
+<li>操作系统创建一个新的进程实例，分配所需资源，并初始化进程控制块（PCB）。</li>
+<li>例子：调用<code>fork()</code>系统调用创建子进程。</li>
+</ul>
+</li>
+<li>
+<p><strong>就绪（Ready）</strong>：</p>
+<ul>
+<li>进程已创建并等待CPU分配，准备执行。</li>
+<li>进程在就绪队列中排队，等待调度程序分配CPU时间。</li>
+</ul>
+</li>
+<li>
+<p><strong>运行（Running）</strong>：</p>
+<ul>
+<li>进程获得CPU时间片，正在执行。</li>
+<li>进程执行过程中可能会发生中断、系统调用或时间片用完，导致状态变化。</li>
+</ul>
+</li>
+<li>
+<p><strong>等待（Blocked）</strong>：</p>
+<ul>
+<li>进程由于等待某些事件（如I/O操作完成）而暂停执行。</li>
+<li>等待事件发生后，进程状态转换为就绪。</li>
+</ul>
+</li>
+<li>
+<p><strong>终止（Termination）</strong>：</p>
+<ul>
+<li>进程完成执行或被强制终止，释放所有资源。</li>
+<li>进程终止后，操作系统回收其占用的资源，清除PCB。</li>
+</ul>
+</li>
+</ol>
+<h4>进程控制块（PCB）</h4>
+<p>进程控制块是操作系统用于管理进程的重要数据结构，包含进程的所有关键信息。</p>
+<ol>
+<li><strong>进程标识符（PID）</strong>：唯一标识进程的标识符。</li>
+<li><strong>进程状态</strong>：包括创建、就绪、运行、等待、终止等状态。</li>
+<li><strong>程序计数器（PC）</strong>：指向下一条将要执行的指令地址。</li>
+<li><strong>CPU寄存器</strong>：存储当前进程的寄存器状态。</li>
+<li><strong>内存管理信息</strong>：包括页表、段表、基址寄存器、界限寄存器等。</li>
+<li><strong>I/O状态信息</strong>：包括打开的文件列表、I/O设备状态等。</li>
+<li><strong>调度信息</strong>：包括优先级、调度队列指针等。</li>
+</ol>
+<h4>进程调度</h4>
+<p>进程调度是操作系统根据特定算法决定进程执行顺序的过程。常见的调度算法包括：</p>
+<ol>
+<li>
+<p><strong>先来先服务（FCFS）</strong>：</p>
+<ul>
+<li>进程按照到达顺序排队，先到先执行。</li>
+<li>简单易实现，但可能导致长时间等待（“短进程”饥饿）。</li>
+</ul>
+</li>
+<li>
+<p><strong>短作业优先（SJF）</strong>：</p>
+<ul>
+<li>优先执行预估执行时间最短的进程。</li>
+<li>可以最小化平均等待时间，但需要准确预测执行时间。</li>
+</ul>
+</li>
+<li>
+<p><strong>轮转调度（RR）</strong>：</p>
+<ul>
+<li>为每个进程分配固定时间片，时间片结束后进程进入就绪队列末尾。</li>
+<li>公平性好，但时间片选择需权衡切换开销和响应时间。</li>
+</ul>
+</li>
+<li>
+<p><strong>优先级调度（Priority Scheduling）</strong>：</p>
+<ul>
+<li>根据进程优先级调度，优先级高的进程先执行。</li>
+<li>可能导致“低优先级”进程饥饿，需要引入老化机制。</li>
+</ul>
+</li>
+<li>
+<p><strong>多级反馈队列（Multilevel Feedback Queue）</strong>：</p>
+<ul>
+<li>综合多种调度算法，动态调整进程优先级和队列。</li>
+<li>灵活性高，适应性强，但实现复杂。</li>
+</ul>
+</li>
+</ol>
+<h4>进程间通信（IPC）</h4>
+<p>进程间通信是进程在同一系统中交换数据和信息的机制，常见的IPC方式包括：</p>
+<ol>
+<li>
+<p><strong>管道（Pipe）</strong>：</p>
+<ul>
+<li>单向通信通道，用于父子进程间通信。</li>
+<li>缺点：只能在具有亲缘关系的进程间使用，通信方向单一。</li>
+</ul>
+</li>
+<li>
+<p><strong>消息队列（Message Queue）</strong>：</p>
+<ul>
+<li>系统维持的消息队列，进程通过发送和接收消息进行通信。</li>
+<li>优点：支持多对多通信，持久化消息。</li>
+</ul>
+</li>
+<li>
+<p><strong>共享内存（Shared Memory）</strong>：</p>
+<ul>
+<li>进程共享内存段，直接读写共享数据。</li>
+<li>优点：高速，高效；缺点：需要同步机制防止数据竞争。</li>
+</ul>
+</li>
+<li>
+<p><strong>信号量（Semaphore）</strong>：</p>
+<ul>
+<li>用于进程同步和互斥访问共享资源。</li>
+<li>信号量机制提供了锁的概念，防止资源争用。</li>
+</ul>
+</li>
+<li>
+<p><strong>套接字（Socket）</strong>：</p>
+<ul>
+<li>用于跨网络的进程通信，支持TCP/IP协议。</li>
+<li>广泛应用于分布式系统和网络应用。</li>
+</ul>
+</li>
+</ol>
+<h4>操作系统对进程的管理</h4>
+<p>操作系统通过以下机制管理进程：</p>
+<ol>
+<li>
+<p><strong>进程创建和终止</strong>：</p>
+<ul>
+<li>通过系统调用（如<code>fork</code>、<code>exec</code>、<code>exit</code>）创建和终止进程。</li>
+<li>维护进程表，记录所有进程的状态和信息。</li>
+</ul>
+</li>
+<li>
+<p><strong>进程调度和切换</strong>：</p>
+<ul>
+<li>使用调度算法决定进程的执行顺序。</li>
+<li>进程切换时保存和恢复进程上下文。</li>
+</ul>
+</li>
+<li>
+<p><strong>进程同步和通信</strong>：</p>
+<ul>
+<li>提供IPC机制，确保进程间数据交换的正确性和高效性。</li>
+<li>使用信号量、锁等同步机制防止资源争用。</li>
+</ul>
+</li>
+<li>
+<p><strong>资源分配和回收</strong>：</p>
+<ul>
+<li>动态分配内存、CPU时间、I/O设备等资源。</li>
+<li>进程终止后回收其占用的资源。</li>
+</ul>
+</li>
+</ol>
+<h4>进程的实例分析</h4>
+<p><strong>创建进程的例子</strong>：</p>
+<pre><code class="language-plaintext">父进程调用`fork`创建子进程，子进程复制父进程的地址空间和上下文，进入就绪状态。
+</code></pre>
+<p><strong>进程调度的例子</strong>：</p>
+<pre><code class="language-plaintext">操作系统使用轮转调度算法，每个进程获得一个时间片，时间片结束后进入就绪队列末尾。
+</code></pre>
+<p><strong>进程间通信的例子</strong>：</p>
+<pre><code class="language-plaintext">进程A和进程B通过共享内存通信，使用信号量进行同步，确保数据的一致性。
+</code></pre>
+<h4>进程的重要性</h4>
+<ol>
+<li>
+<p><strong>资源管理</strong>：</p>
+<ul>
+<li>进程是操作系统管理资源的基本单位，包括CPU时间、内存、I/O设备等。</li>
+<li>通过进程调度和资源分配，操作系统优化资源利用，提高系统效率。</li>
+</ul>
+</li>
+<li>
+<p><strong>并发执行</strong>：</p>
+<ul>
+<li>进程支持并发执行，提高系统吞吐量和响应速度。</li>
+<li>多个进程可以同时进行I/O操作、计算任务等，提高系统性能。</li>
+</ul>
+</li>
+<li>
+<p><strong>隔离和保护</strong>：</p>
+<ul>
+<li>进程提供了地址空间隔离，防止一个进程的错误影响其他进程。</li>
+<li>操作系统通过权限管理和进程隔离，确保系统的安全性和稳定性。</li>
+</ul>
+</li>
+<li>
+<p><strong>灵活性和扩展性</strong>：</p>
+<ul>
+<li>进程机制支持动态创建和终止，提高系统的灵活性和扩展性。</li>
+<li>操作系统可以根据负载动态调整进程数量，优化系统性能。</li>
+</ul>
+</li>
+</ol>
+<h4>结论</h4>
+<p>进程是操作系统管理资源和执行任务的基本单位。通过进程管理，操作系统实现了资源分配、并发执行、隔离保护和灵活扩展。理解进程的概念、生命周期、调度机制和进程间通信，对掌握操作系统的工作原理至关重要。通过详细分析进程的各个方面，我们可以更好地理解操作系统如何高效管理硬件资源，确保系统的稳定性和性能。</p>
+<hr>
+<h3>进程的生命周期详细表格</h3>
+<table>
+<thead>
+<tr>
+<th>生命周期阶段</th>
+<th>描述</th>
+<th>状态转换示例</th>
+<th>关键事件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>创建（Creation）</td>
+<td>操作系统创建一个新的进程实例，分配所需资源，并初始化进程控制块（PCB）。</td>
+<td>进程由无状态转换为创建状态。</td>
+<td>调用<code>fork()</code>或<code>exec()</code>系统调用。</td>
+</tr>
+<tr>
+<td>就绪（Ready）</td>
+<td>进程已创建并等待CPU分配，准备执行。</td>
+<td>进程由创建状态转换为就绪状态。</td>
+<td>进程初始化完成，进入就绪队列等待调度。</td>
+</tr>
+<tr>
+<td>运行（Running）</td>
+<td>进程获得CPU时间片，正在执行。</td>
+<td>进程由就绪状态转换为运行状态。</td>
+<td>操作系统调度进程执行，分配CPU时间片。</td>
+</tr>
+<tr>
+<td>等待（Blocked）</td>
+<td>进程由于等待某些事件（如I/O操作完成）而暂停执行。</td>
+<td>进程由运行状态转换为等待状态。</td>
+<td>进程发起I/O操作，等待I/O完成。</td>
+</tr>
+<tr>
+<td>终止（Termination）</td>
+<td>进程完成执行或被强制终止，释放所有资源。</td>
+<td>进程由运行状态转换为终止状态。</td>
+<td>进程调用<code>exit()</code>系统调用或被强制终止。</td>
+</tr>
+</tbody>
+</table>
+<h3>组成部分详细表格</h3>
+<table>
+<thead>
+<tr>
+<th>组成部分</th>
+<th>描述</th>
+<th>具体示例</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>程序代码</td>
+<td>存储在磁盘上的可执行文件。</td>
+<td>存储在磁盘上的可执行文件，例如<code>.exe</code>或<code>.out</code>文件。</td>
+<td>包含进程需要执行的指令。</td>
+</tr>
+<tr>
+<td>数据段</td>
+<td>包含静态数据和全局变量。</td>
+<td>存储静态数据和全局变量，例如全局变量<code>int x;</code>。</td>
+<td>保存进程在执行期间使用的静态数据和全局变量。</td>
+</tr>
+<tr>
+<td>堆（Heap）</td>
+<td>动态分配内存的数据结构。</td>
+<td>通过<code>malloc</code>或<code>new</code>分配的内存。</td>
+<td>为动态分配的内存提供存储空间。</td>
+</tr>
+<tr>
+<td>栈（Stack）</td>
+<td>存储函数调用、局部变量和返回地址。</td>
+<td>函数调用期间的局部变量和返回地址。</td>
+<td>管理函数调用过程中的数据。</td>
+</tr>
+<tr>
+<td>寄存器（Registers）</td>
+<td>存储当前执行状态，包括程序计数器（PC）、堆栈指针（SP）等。</td>
+<td>程序计数器（PC）、堆栈指针（SP）等。</td>
+<td>保存当前进程的执行状态。</td>
+</tr>
+<tr>
+<td>文件描述符</td>
+<td>指向进程打开的文件。</td>
+<td>打开的文件描述符，例如文件句柄。</td>
+<td>管理进程对文件的访问。</td>
+</tr>
+</tbody>
+</table>
+<h3>进程控制块（PCB）详细表格</h3>
+<table>
+<thead>
+<tr>
+<th>组成部分</th>
+<th>描述</th>
+<th>具体示例</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>进程标识符（PID）</td>
+<td>唯一标识进程的标识符。</td>
+<td>进程ID，例如<code>PID=1234</code>。</td>
+<td>唯一标识系统中的每个进程。</td>
+</tr>
+<tr>
+<td>进程状态</td>
+<td>包括创建、就绪、运行、等待、终止等状态。</td>
+<td>当前进程状态，例如<code>状态=运行中</code>。</td>
+<td>记录进程当前的执行状态。</td>
+</tr>
+<tr>
+<td>程序计数器（PC）</td>
+<td>指向下一条将要执行的指令地址。</td>
+<td>程序计数器地址，例如<code>PC=0x00400000</code>。</td>
+<td>跟踪进程的执行位置。</td>
+</tr>
+<tr>
+<td>CPU寄存器</td>
+<td>存储当前进程的寄存器状态。</td>
+<td>寄存器值，例如<code>EAX=0x1</code>。</td>
+<td>保存进程的寄存器上下文。</td>
+</tr>
+<tr>
+<td>内存管理信息</td>
+<td>包括页表、段表、基址寄存器、界限寄存器等。</td>
+<td>页表地址，例如<code>页表=0x00FF0000</code>。</td>
+<td>管理进程的内存分配和地址转换。</td>
+</tr>
+<tr>
+<td>I/O状态信息</td>
+<td>包括打开的文件列表、I/O设备状态等。</td>
+<td>打开的文件列表，例如<code>文件句柄=3</code>。</td>
+<td>跟踪进程的I/O状态。</td>
+</tr>
+<tr>
+<td>调度信息</td>
+<td>包括优先级、调度队列指针等。</td>
+<td>优先级值，例如<code>优先级=5</code>。</td>
+<td>记录进程的调度信息，决定进程的执行顺序。</td>
+</tr>
+</tbody>
+</table>
+<h3>进程调度详细表格</h3>
+<table>
+<thead>
+<tr>
+<th>调度算法</th>
+<th>描述</th>
+<th>优点</th>
+<th>缺点</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>先来先服务（FCFS）</td>
+<td>按到达顺序调度进程，先到先执行。</td>
+<td>实现简单，公平。</td>
+<td>可能导致长时间等待（“短进程”饥饿）。</td>
+<td>批处理系统，任务到达顺序固定。</td>
+</tr>
+<tr>
+<td>短作业优先（SJF）</td>
+<td>优先执行预估执行时间最短的进程。</td>
+<td>最小化平均等待时间。</td>
+<td>需要准确预测执行时间，可能导致长任务饥饿。</td>
+<td>适用于作业时间已知的批处理系统。</td>
+</tr>
+<tr>
+<td>轮转调度（RR）</td>
+<td>为每个进程分配固定时间片，时间片结束后进程进入就绪队列末尾。</td>
+<td>公平性好，响应时间快。</td>
+<td>时间片选择需权衡切换开销和响应时间，可能导致频繁切换。</td>
+<td>时间共享系统，需快速响应的交互系统。</td>
+</tr>
+<tr>
+<td>优先级调度</td>
+<td>根据进程优先级调度，优先级高的进程先执行。</td>
+<td>高优先级进程优先执行，响应时间快。</td>
+<td>可能导致低优先级进程饥饿，需要引入老化机制。</td>
+<td>需要区分任务重要性的系统。</td>
+</tr>
+<tr>
+<td>多级反馈队列</td>
+<td>综合多种调度算法，动态调整进程优先级和队列。</td>
+<td>灵活性高，适应性强。</td>
+<td>实现复杂，需维护多个队列和优先级。</td>
+<td>综合性系统，需适应多种任务类型。</td>
+</tr>
+</tbody>
+</table>
+<h3>进程间通信（IPC）详细表格</h3>
+<table>
+<thead>
+<tr>
+<th>IPC方式</th>
+<th>描述</th>
+<th>优点</th>
+<th>缺点</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>管道（Pipe）</td>
+<td>单向通信通道，用于父子进程间通信。</td>
+<td>实现简单，数据传输高效。</td>
+<td>只能在具有亲缘关系的进程间使用，通信方向单一。</td>
+<td>父子进程之间的数据传输。</td>
+</tr>
+<tr>
+<td>消息队列（Message Queue）</td>
+<td>系统维持的消息队列，进程通过发送和接收消息进行通信。</td>
+<td>支持多对多通信，持久化消息。</td>
+<td>消息长度有限，需管理消息队列。</td>
+<td>需要消息持久化和多对多通信的系统。</td>
+</tr>
+<tr>
+<td>共享内存（Shared Memory）</td>
+<td>进程共享内存段，直接读写共享数据。</td>
+<td>高速，高效。</td>
+<td>需要同步机制防止数据竞争。</td>
+<td>高速数据传输，需高效访问共享数据的系统。</td>
+</tr>
+<tr>
+<td>信号量（Semaphore）</td>
+<td>用于进程同步和互斥访问共享资源。</td>
+<td>简单有效的同步机制，防止资源争用。</td>
+<td>实现复杂，需管理信号量状态。</td>
+<td>需要同步访问共享资源的系统。</td>
+</tr>
+<tr>
+<td>套接字（Socket）</td>
+<td>用于跨网络的进程通信，支持TCP/IP协议。</td>
+<td>支持远程通信和分布式系统。</td>
+<td>实现复杂，需管理连接状态。</td>
+<td>网络应用，分布式系统和远程过程调用。</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3>详细示例：管道（Pipe）、消息队列（Message Queue）、共享内存（Shared Memory）、信号量（Semaphore）、套接字（Socket）</h3>
+<h4>1. 管道（Pipe）</h4>
+<p>管道是一种简单的进程间通信方式，通常用于父子进程之间的数据传输。管道是单向的，即数据只能从一端流向另一端。</p>
+<p><strong>示例</strong>：父进程向子进程发送消息</p>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;string.h&gt;
+
+int main() {
+    int fd[2];
+    pid_t pid;
+    char write_msg[] = &quot;Hello from parent&quot;;
+    char read_msg[100];
+
+    // 创建管道
+    if (pipe(fd) == -1) {
+        perror(&quot;pipe failed&quot;);
+        return 1;
+    }
+
+    // 创建子进程
+    pid = fork();
+    if (pid &lt; 0) {
+        perror(&quot;fork failed&quot;);
+        return 1;
+    }
+
+    if (pid &gt; 0) { // 父进程
+        close(fd[0]); // 关闭读端
+        write(fd[1], write_msg, strlen(write_msg) + 1);
+        close(fd[1]); // 关闭写端
+    } else { // 子进程
+        close(fd[1]); // 关闭写端
+        read(fd[0], read_msg, sizeof(read_msg));
+        printf(&quot;Child process received: %s\n&quot;, read_msg);
+        close(fd[0]); // 关闭读端
+    }
+
+    return 0;
+}
+</code></pre>
+<h4>2. 消息队列（Message Queue）</h4>
+<p>消息队列是一种进程间通信机制，允许进程通过发送和接收消息进行通信。消息队列支持多对多通信，并且消息可以持久化。</p>
+<p><strong>示例</strong>：一个进程向消息队列发送消息，另一个进程从消息队列接收消息</p>
+<p><strong>发送消息的进程</strong>：</p>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;sys/ipc.h&gt;
+#include &lt;sys/msg.h&gt;
+
+struct msg_buffer {
+    long msg_type;
+    char msg_text[100];
+};
+
+int main() {
+    key_t key;
+    int msgid;
+    struct msg_buffer message;
+
+    // 生成消息队列的键值
+    key = ftok(&quot;progfile&quot;, 65);
+
+    // 创建消息队列
+    msgid = msgget(key, 0666 | IPC_CREAT);
+    message.msg_type = 1;
+
+    printf(&quot;Write Message: &quot;);
+    fgets(message.msg_text, 100, stdin);
+
+    // 发送消息
+    msgsnd(msgid, &amp;message, sizeof(message), 0);
+
+    printf(&quot;Message sent: %s\n&quot;, message.msg_text);
+
+    return 0;
+}
+</code></pre>
+<p><strong>接收消息的进程</strong>：</p>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;sys/ipc.h&gt;
+#include &lt;sys/msg.h&gt;
+
+struct msg_buffer {
+    long msg_type;
+    char msg_text[100];
+};
+
+int main() {
+    key_t key;
+    int msgid;
+    struct msg_buffer message;
+
+    // 生成消息队列的键值
+    key = ftok(&quot;progfile&quot;, 65);
+
+    // 获取消息队列
+    msgid = msgget(key, 0666 | IPC_CREAT);
+
+    // 接收消息
+    msgrcv(msgid, &amp;message, sizeof(message), 1, 0);
+
+    printf(&quot;Data received: %s\n&quot;, message.msg_text);
+
+    // 删除消息队列
+    msgctl(msgid, IPC_RMID, NULL);
+
+    return 0;
+}
+</code></pre>
+<h4>3. 共享内存（Shared Memory）</h4>
+<p>共享内存允许多个进程共享一块内存区域，进程可以直接读写这块共享内存。为了防止数据竞争，需要使用同步机制（如信号量）。</p>
+<p><strong>示例</strong>：两个进程共享一个整数变量，并使用信号量进行同步</p>
+<p><strong>写进程</strong>：</p>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;sys/ipc.h&gt;
+#include &lt;sys/shm.h&gt;
+#include &lt;sys/sem.h&gt;
+
+union semun {
+    int val;
+    struct semid_ds *buf;
+    unsigned short *array;
+};
+
+int main() {
+    key_t key = ftok(&quot;shmfile&quot;, 65);
+    int shmid = shmget(key, sizeof(int), 0666 | IPC_CREAT);
+    int *shared_var = (int*) shmat(shmid, NULL, 0);
+
+    key_t sem_key = ftok(&quot;semfile&quot;, 75);
+    int semid = semget(sem_key, 1, 0666 | IPC_CREAT);
+    union semun sem_union;
+    sem_union.val = 1;
+    semctl(semid, 0, SETVAL, sem_union);
+
+    struct sembuf sem_lock = {0, -1, 0};
+    struct sembuf sem_unlock = {0, 1, 0};
+
+    for (int i = 0; i &lt; 10; i++) {
+        semop(semid, &amp;sem_lock, 1);
+        (*shared_var)++;
+        printf(&quot;Writing to shared memory: %d\n&quot;, *shared_var);
+        semop(semid, &amp;sem_unlock, 1);
+        sleep(1);
+    }
+
+    shmdt(shared_var);
+    shmctl(shmid, IPC_RMID, NULL);
+    semctl(semid, 0, IPC_RMID, sem_union);
+
+    return 0;
+}
+</code></pre>
+<p><strong>读进程</strong>：</p>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;sys/ipc.h&gt;
+#include &lt;sys/shm.h&gt;
+#include &lt;sys/sem.h&gt;
+
+union semun {
+    int val;
+    struct semid_ds *buf;
+    unsigned short *array;
+};
+
+int main() {
+    key_t key = ftok(&quot;shmfile&quot;, 65);
+    int shmid = shmget(key, sizeof(int), 0666 | IPC_CREAT);
+    int *shared_var = (int*) shmat(shmid, NULL, 0);
+
+    key_t sem_key = ftok(&quot;semfile&quot;, 75);
+    int semid = semget(sem_key, 1, 0666 | IPC_CREAT);
+
+    struct sembuf sem_lock = {0, -1, 0};
+    struct sembuf sem_unlock = {0, 1, 0};
+
+    for (int i = 0; i &lt; 10; i++) {
+        semop(semid, &amp;sem_lock, 1);
+        printf(&quot;Reading from shared memory: %d\n&quot;, *shared_var);
+        semop(semid, &amp;sem_unlock, 1);
+        sleep(1);
+    }
+
+    shmdt(shared_var);
+
+    return 0;
+}
+</code></pre>
+<h4>4. 信号量（Semaphore）</h4>
+<p>信号量是一种同步机制，用于控制对共享资源的访问，防止资源争用。信号量可以用于实现进程间的互斥和同步。</p>
+<p><strong>示例</strong>：使用信号量控制对共享变量的访问</p>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;pthread.h&gt;
+#include &lt;semaphore.h&gt;
+
+#define NUM_THREADS 10
+
+sem_t sem;
+int shared_var = 0;
+
+void* thread_function(void* arg) {
+    sem_wait(&amp;sem);
+    int tid = *((int*)arg);
+    printf(&quot;Thread %d entering critical section\n&quot;, tid);
+    shared_var++;
+    printf(&quot;Thread %d exiting critical section with shared_var = %d\n&quot;, tid, shared_var);
+    sem_post(&amp;sem);
+    return NULL;
+}
+
+int main() {
+    pthread_t threads[NUM_THREADS];
+    int thread_ids[NUM_THREADS];
+
+    sem_init(&amp;sem, 0, 1);
+
+    for (int i = 0; i &lt; NUM_THREADS; i++) {
+        thread_ids[i] = i;
+        pthread_create(&amp;threads[i], NULL, thread_function, &amp;thread_ids[i]);
+    }
+
+    for (int i = 0; i &lt; NUM_THREADS; i++) {
+        pthread_join(threads[i], NULL);
+    }
+
+    sem_destroy(&amp;sem);
+
+    return 0;
+}
+</code></pre>
+<h4>5. 套接字（Socket）</h4>
+<p>套接字用于跨网络的进程通信，支持TCP/IP协议。套接字可以用于本地和远程进程之间的通信。</p>
+<p><strong>示例</strong>：一个简单的客户端-服务器应用</p>
+<p><strong>服务器程序</strong>：</p>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;arpa/inet.h&gt;
+
+#define PORT 8080
+
+int main() {
+    int server_fd, new_socket;
+    struct sockaddr_in address;
+    int addrlen = sizeof(address);
+    char buffer[1024] = {0};
+    char *hello = &quot;Hello from server&quot;;
+
+    if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
+        perror(&quot;socket failed&quot;);
+        exit(EXIT_FAILURE);
+    }
+
+    address.sin_family = AF_INET;
+    address.sin_addr.s_addr = INADDR_ANY;
+    address.sin_port = htons(PORT);
+
+    if (bind(server_fd, (struct sockaddr *)&amp;address, sizeof(address)) &lt; 0) {
+        perror(&quot;bind failed&quot;);
+        exit(EXIT_FAILURE);
+    }
+
+    if (listen(server_fd, 3) &lt; 0) {
+        perror(&quot;listen failed&quot;);
+        exit(EXIT_FAILURE);
+    }
+
+    if ((new_socket = accept(server_fd, (struct sockaddr *)&amp;address, (socklen_t*)&amp;addrlen)) &lt; 0) {
+        perror(&quot;accept failed&quot;);
+        exit(EXIT_FAILURE);
+        }
+
+    read(new_socket, buffer, 1024);
+    printf(&quot;Message from client: %s\n&quot;, buffer);
+    send(new_socket, hello, strlen(hello), 0);
+    printf(&quot;Hello message sent\n&quot;);
+
+    close(new_socket);
+    close(server_fd);
+
+    return 0;
+}
+</code></pre>
+<p><strong>客户端程序</strong>：</p>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;arpa/inet.h&gt;
+
+#define PORT 8080
+
+int main() {
+    int sock = 0, valread;
+    struct sockaddr_in serv_addr;
+    char *hello = &quot;Hello from client&quot;;
+    char buffer[1024] = {0};
+
+    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) &lt; 0) {
+        printf(&quot;\n Socket creation error \n&quot;);
+        return -1;
+    }
+
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_port = htons(PORT);
+
+    if (inet_pton(AF_INET, &quot;127.0.0.1&quot;, &amp;serv_addr.sin_addr) &lt;= 0) {
+        printf(&quot;\nInvalid address/ Address not supported \n&quot;);
+        return -1;
+    }
+
+    if (connect(sock, (struct sockaddr *)&amp;serv_addr, sizeof(serv_addr)) &lt; 0) {
+        printf(&quot;\nConnection Failed \n&quot;);
+        return -1;
+    }
+
+    send(sock, hello, strlen(hello), 0);
+    printf(&quot;Hello message sent\n&quot;);
+    valread = read(sock, buffer, 1024);
+    printf(&quot;Message from server: %s\n&quot;, buffer);
+
+    close(sock);
+
+    return 0;
+}
+</code></pre>
+<h3>总结</h3>
+<p>通过以上示例，可以看到不同的进程间通信方式在实际应用中的具体实现：</p>
+<ul>
+<li><strong>管道（Pipe）</strong>：适用于父子进程间的单向通信，简单高效。</li>
+<li><strong>消息队列（Message Queue）</strong>：支持多对多通信和消息持久化，适用于需要消息持久化和复杂通信的场景。</li>
+<li><strong>共享内存（Shared Memory）</strong>：提供高效的数据共享，但需要同步机制防止数据竞争，适用于高速数据传输。</li>
+<li><strong>信号量（Semaphore）</strong>：用于实现进程间同步和互斥，适用于控制对共享资源的访问。</li>
+<li><strong>套接字（Socket）</strong>：支持本地和远程进程通信，适用于分布式系统和网络应用。</li>
+</ul>
+<p>理解这些通信方式的具体实现和适用场景，有助于选择合适的IPC机制来优化系统性能和可靠性。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 00_1.7.1_进程
+
+"""
+Lecture: 01_计算机系统概览/1.7_操作系统管理硬件
+Content: 00_1.7.1_进程
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  

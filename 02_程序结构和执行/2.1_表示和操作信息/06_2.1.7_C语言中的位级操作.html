@@ -1,0 +1,122 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <title>2.1.7 C语言中的位级操作</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
+  <link rel="stylesheet" href="../../markdown.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="../../markdown.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>06_2.1.7_C语言中的位级操作</h1>
+<pre><code>Lecture: 02_程序结构和执行/2.1_表示和操作信息
+Content: 06_2.1.7_C语言中的位级操作
+</code></pre>
+<h3>2.1.7 C语言中的位级操作</h3>
+<p>C语言支持多种位级布尔运算，这些运算在许多计算任务中都非常有用，尤其是在涉及低级硬件操作和优化代码性能时。位级操作符在C语言中的表示如下：</p>
+<ul>
+<li><strong>按位与（AND, &amp;）</strong>：对每个位执行与操作，结果是两个操作数相应位都为1时该位为1，否则为0。</li>
+<li><strong>按位或（OR, |）</strong>：对每个位执行或操作，结果是两个操作数中至少有一个位为1时该位为1，否则为0。</li>
+<li><strong>按位非（NOT, ~）</strong>：对每个位执行非操作，结果是将每个位取反。</li>
+<li><strong>按位异或（XOR, ^）</strong>：对每个位执行异或操作，结果是两个操作数相应位不同则该位为1，相同则为0。</li>
+</ul>
+<h4>示例</h4>
+<p>让我们通过几个具体的例子来理解这些操作。假设有两个8位的操作数a和b：</p>
+<ul>
+<li>a = 0x69 (二进制表示为 01101001)</li>
+<li>b = 0x55 (二进制表示为 01010101)</li>
+</ul>
+<p>它们的按位操作结果如下：</p>
+<ul>
+<li><strong>按位与</strong>：0x69 &amp; 0x55 = 0x41 (二进制表示为 01000001)</li>
+<li><strong>按位或</strong>：0x69 | 0x55 = 0x7D (二进制表示为 01111101)</li>
+<li><strong>按位非</strong>：~0x69 = 0x96 (二进制表示为 10010110)</li>
+<li><strong>按位异或</strong>：0x69 ^ 0x55 = 0x3C (二进制表示为 00111100)</li>
+</ul>
+<h4>位级操作的应用</h4>
+<ol>
+<li>
+<p><strong>掩码操作</strong>
+位级操作常用于掩码操作，即通过特定的位模式选择性地启用或禁用某些位。例如，掩码0xFF表示最低有效的8位：</p>
+<ul>
+<li>x &amp; 0xFF 只保留x的最低有效字节。</li>
+</ul>
+</li>
+<li>
+<p><strong>交换两个变量的值</strong>
+通过位级异或操作，可以在不使用临时变量的情况下交换两个整数的值：</p>
+<pre><code class="language-c">void inplace_swap(int *x, int *y) {
+    *y = *x ^ *y;
+    *x = *x ^ *y;
+    *y = *x ^ *y;
+}
+</code></pre>
+</li>
+<li>
+<p><strong>集合操作</strong>
+位向量可以表示集合，位级操作可以用于集合操作。例如，集合A和B可以用位向量表示，集合的并集、交集和差集可以通过按位或、按位与和按位与非实现：</p>
+<ul>
+<li>并集：a | b</li>
+<li>交集：a &amp; b</li>
+<li>差集：a &amp; ~b</li>
+</ul>
+</li>
+</ol>
+<h4>位移操作</h4>
+<p>C语言还提供了位移操作，用于将位模式向左或向右移动。左移操作x &lt;&lt; k将x的位模式向左移动k位，右移操作x &gt;&gt; k将x的位模式向右移动k位。位移操作可以用于高效的乘法和除法操作：</p>
+<ul>
+<li>左移：x &lt;&lt; k 等价于 x 乘以 2 的 k 次方</li>
+<li>右移：x &gt;&gt; k 等价于 x 除以 2 的 k 次方</li>
+</ul>
+<h4>实际应用示例</h4>
+<ol>
+<li>
+<p><strong>提取字节</strong>
+通过位移和掩码操作，可以提取整数中的特定位，例如提取最低有效字节：</p>
+<pre><code class="language-c">int extract_byte(int x, int i) {
+    return (x &gt;&gt; (i &lt;&lt; 3)) &amp; 0xFF;
+}
+</code></pre>
+</li>
+<li>
+<p><strong>检查奇偶位</strong>
+检查一个整数的奇数位是否为1：</p>
+<pre><code class="language-c">int any_odd_one(unsigned x) {
+    return !!(x &amp; 0xAAAAAAAA);
+}
+</code></pre>
+</li>
+<li>
+<p><strong>旋转位</strong>
+旋转一个无符号整数的位模式：</p>
+<pre><code class="language-c">unsigned rotate_left(unsigned x, int n) {
+    int w = sizeof(int) &lt;&lt; 3;
+    return (x &lt;&lt; n) | (x &gt;&gt; (w - n));
+}
+</code></pre>
+</li>
+</ol>
+<h4>结论</h4>
+<p>位级操作在C语言中提供了强大的工具，用于高效地处理低级别的数据操作。通过理解这些操作及其应用，可以编写更优化和高效的代码。</p>
+
+    <h3>Python 文件</h3>
+    <pre><code># 06_2.1.7_C语言中的位级操作
+
+"""
+Lecture: 02_程序结构和执行/2.1_表示和操作信息
+Content: 06_2.1.7_C语言中的位级操作
+"""
+
+</code></pre>
+  </div>
+</body>
+</html>
+  
