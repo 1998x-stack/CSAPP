@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "description": "Evidence-gated reviews: merely having files never implies a complete explanation or verified program.",
+  "notes_reviewed": [],
+  "code_reviewed": [],
+  "tests_verified": [
+    {
+      "id": "2.2.1",
+      "source": "02_程序结构和执行/2.2_整数表示/00_2.2.1_整数数据类型.cpp",
+      "evidence": "https://github.com/1998x-stack/CSAPP/pull/2",
+      "suite": "tests/test_m02_examples.py"
+    },
+    {
+      "id": "2.2.3",
+      "source": "02_程序结构和执行/2.2_整数表示/02_2.2.3_二进制补码编码.cpp",
+      "evidence": "https://github.com/1998x-stack/CSAPP/pull/2",
+      "suite": "tests/test_m02_examples.py"
+    },
+    {
+      "id": "2.2.4",
+      "source": "02_程序结构和执行/2.2_整数表示/03_2.2.4_有符号和无符号之间的转换.cpp",
+      "evidence": "https://github.com/1998x-stack/CSAPP/pull/2",
+      "suite": "tests/test_m02_examples.py"
+    },
+    {
+      "id": "2.3.1",
+      "source": "02_程序结构和执行/2.3_整数运算/00_2.3.1_无符号加法.cpp",
+      "evidence": "https://github.com/1998x-stack/CSAPP/pull/2",
+      "suite": "tests/test_m02_examples.py"
+    },
+    {
+      "id": "2.3.2",
+      "source": "02_程序结构和执行/2.3_整数运算/01_2.3.2_二进制补码加法.cpp",
+      "evidence": "https://github.com/1998x-stack/CSAPP/pull/2",
+      "suite": "tests/test_m02_examples.py"
+    },
+    {
+      "id": "2.3.3",
+      "source": "02_程序结构和执行/2.3_整数运算/02_2.3.3_二进制补码求反.cpp",
+      "evidence": "https://github.com/1998x-stack/CSAPP/pull/2",
+      "suite": "tests/test_m02_examples.py"
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+name: M05 full documentation navigation
+on:
+  push:
+    paths:
+      - 'curriculum/**'
+      - 'scripts/build_docs.py'
+      - 'tests/test_m05_docs.py'
+      - 'mkdocs.yml'
+      - '.github/workflows/m05-docs.yml'
+      - '[0-1][0-9]_*/**'
+  pull_request:
+    paths:
+      - 'curriculum/**'
+      - 'scripts/build_docs.py'
+      - 'tests/test_m05_docs.py'
+      - 'mkdocs.yml'
+      - '.github/workflows/m05-docs.yml'
+      - '[0-1][0-9]_*/**'
+jobs:
+  documentation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install MkDocs
+        run: python -m pip install 'mkdocs>=1.6,<2' 'mkdocs-material>=9.5,<10'
+      - name: Verify canonical 380-entry curriculum source
+        run: python scripts/build_curriculum.py --check
+      - name: Verify evidence-gated navigation and placeholders
+        run: python -m unittest discover -s tests -p 'test_m05_*.py' -v
+      - name: Verify M02 correctness evidence remains green
+        run: python -m unittest discover -s tests -p 'test_m02_*.py' -v
+      - name: Generate all 380 knowledge pages
+        run: python scripts/build_docs.py --generate
+      - name: Validate generated page source
+        run: python scripts/build_docs.py --verify-generated
+      - name: Build browsable static documentation
+        run: mkdocs build -f mkdocs.yml --strict
+      - name: Publish documentation preview artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: csapp-m05-site-preview
+          path: build/m05-site/
+          if-no-files-found: error
+      - name: Ensure no tracked source files changed
+        run: git diff --exit-code
