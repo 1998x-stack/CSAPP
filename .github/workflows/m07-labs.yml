@@ -1,0 +1,76 @@
+name: M07 processor performance cache
+on:
+  push:
+    paths:
+      - '04_处理器架构/m07_y86_subset/**'
+      - '05_优化程序性能/m07_loop_optimization/**'
+      - '06_内存层次结构/m07_cache_lru/**'
+      - 'examples/manifest.json'
+      - 'CMakeLists.txt'
+      - 'labs/m07_scope.json'
+      - 'tests/test_m07_labs.py'
+      - '.github/workflows/m07-labs.yml'
+  pull_request:
+    paths:
+      - '04_处理器架构/m07_y86_subset/**'
+      - '05_优化程序性能/m07_loop_optimization/**'
+      - '06_内存层次结构/m07_cache_lru/**'
+      - 'examples/manifest.json'
+      - 'CMakeLists.txt'
+      - 'labs/m07_scope.json'
+      - 'tests/test_m07_labs.py'
+      - '.github/workflows/m07-labs.yml'
+jobs:
+  integrated:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - cc: gcc
+            cxx: g++
+          - cc: clang
+            cxx: clang++
+    env:
+      CC: ${{ matrix.cc }}
+      CXX: ${{ matrix.cxx }}
+      UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate curated manifest (all previous experiments too)
+        run: python3 scripts/audit_sources.py --check
+      - name: Validate all 88 M07 numbers and earlier Python tests
+        run: python3 -m unittest discover -s tests -v
+      - name: Configure GCC/Clang CMake integration with UBSan
+        run: cmake -S . -B build/m07 -DCMAKE_BUILD_TYPE=Debug -DCSAPP_ENABLE_UBSAN=ON
+      - name: Build all curated chapter 1-6 examples
+        run: cmake --build build/m07 --parallel 2
+      - name: CTest M07, M06 and M02 including fixture trace
+        run: ctest --test-dir build/m07 --output-on-failure
+      - name: Inspect compiled chapter 1 ELF from M06
+        run: python3 scripts/m06_inspect.py
+      - name: Ensure no original notes were changed
+        run: git diff --exit-code
+  clang_asan:
+    runs-on: ubuntu-latest
+    env:
+      ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
+      UBSAN_OPTIONS: halt_on_error=1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Local-equivalent Clang AddressSanitizer and UBSan
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build/m07-asan
+          flags=(-std=c11 -O1 -g -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-sanitize-recover=all)
+          clang "${flags[@]}" 04_处理器架构/m07_y86_subset/y86_demo.c -o build/m07-asan/y86
+          clang "${flags[@]}" 05_优化程序性能/m07_loop_optimization/loop_demo.c -o build/m07-asan/loop
+          clang "${flags[@]}" 06_内存层次结构/m07_cache_lru/cache_demo.c -o build/m07-asan/cache
+          build/m07-asan/y86
+          build/m07-asan/loop
+          build/m07-asan/cache
+          build/m07-asan/cache --trace 06_内存层次结构/m07_cache_lru/trace_fixture.txt 1 1 2
