@@ -1,0 +1,85 @@
+name: M08 linking processes virtual memory
+on:
+  push:
+    paths:
+      - '07_链接/m08_static_link/**'
+      - '08_异常控制流/m08_process/**'
+      - '08_异常控制流/m08_signals/**'
+      - '09_虚拟内存/m08_mmap/**'
+      - '09_虚拟内存/m08_allocator/**'
+      - 'examples/manifest.json'
+      - 'labs/m08_scope.json'
+      - 'scripts/m08_inspect_linker.py'
+      - 'tests/test_m08_labs.py'
+      - '.github/workflows/m08-labs.yml'
+  pull_request:
+    paths:
+      - '07_链接/m08_static_link/**'
+      - '08_异常控制流/m08_process/**'
+      - '08_异常控制流/m08_signals/**'
+      - '09_虚拟内存/m08_mmap/**'
+      - '09_虚拟内存/m08_allocator/**'
+      - 'examples/manifest.json'
+      - 'labs/m08_scope.json'
+      - 'scripts/m08_inspect_linker.py'
+      - 'tests/test_m08_labs.py'
+      - '.github/workflows/m08-labs.yml'
+jobs:
+  integrated:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - cc: gcc
+            cxx: g++
+          - cc: clang
+            cxx: clang++
+    env:
+      CC: ${{ matrix.cc }}
+      CXX: ${{ matrix.cxx }}
+      UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check source manifest
+        run: python3 scripts/audit_sources.py --check
+      - name: Check all chapter 7-9 textbook entries and old regression tests
+        run: python3 -m unittest discover -s tests -v
+      - name: Configure full curated C11 C++17 ASM build with UBSan
+        run: cmake -S . -B build/m08 -DCMAKE_BUILD_TYPE=Debug -DCSAPP_ENABLE_UBSAN=ON
+      - name: Build all curated labs
+        run: cmake --build build/m08 --parallel 2
+      - name: Run CTest for all labs, including M08 five targets
+        run: ctest --test-dir build/m08 --output-on-failure
+      - name: Inspect M08 archive and ELF relocation details
+        run: python3 scripts/m08_inspect_linker.py
+      - name: Inspect M06 compilation stages
+        run: python3 scripts/m06_inspect.py
+      - name: Check no tracked source changes
+        run: git diff --exit-code
+  clang_asan:
+    runs-on: ubuntu-latest
+    env:
+      ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
+      UBSAN_OPTIONS: halt_on_error=1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile and run all five M08 labs with ASan and UBSan
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build/m08-asan
+          flags=(-std=c11 -O1 -g -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-sanitize-recover=all)
+          clang "${flags[@]}" 07_链接/m08_static_link/main.c 07_链接/m08_static_link/arith.c -o build/m08-asan/linker
+          clang "${flags[@]}" 08_异常控制流/m08_process/process_demo.c -o build/m08-asan/process
+          clang "${flags[@]}" 08_异常控制流/m08_signals/signal_demo.c -o build/m08-asan/signals
+          clang "${flags[@]}" 09_虚拟内存/m08_mmap/vm_demo.c -o build/m08-asan/mmap
+          clang "${flags[@]}" 09_虚拟内存/m08_allocator/arena_demo.c -o build/m08-asan/arena
+          build/m08-asan/linker
+          build/m08-asan/process
+          build/m08-asan/signals
+          build/m08-asan/mmap
+          build/m08-asan/arena
