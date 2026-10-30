@@ -57,10 +57,10 @@ void arithmetic_conversion_examples() {
     const std::uint32_t b = 2;
     print_binary("有符号 int32_t a", a);
     print_binary("无符号 uint32_t b", b);
-    std::cout << "a < b 的结果: " << (a < b) << '\n';
+    std::cout << "a < b 的结果: " << (static_cast<std::uint32_t>(a) < b) << '\n'; // implicit conversion made explicit
     const std::int32_t c = -1;
     const std::uint32_t d = 0;
-    std::cout << "c < d 的结果: " << (c < d) << '\n';
+    std::cout << "c < d 的结果: " << (static_cast<std::uint32_t>(c) < d) << '\n'; // equivalent to the mixed-type comparison
 }
 
 int main() {
