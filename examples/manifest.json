@@ -135,6 +135,80 @@
         "6.4.4",
         "6.4.7"
       ]
+    },
+    {
+      "id": "m08_ch07_link",
+      "sources": [
+        "07_链接/m08_static_link/main.c",
+        "07_链接/m08_static_link/arith.c"
+      ],
+      "expected": "M08 linker: PASS",
+      "knowledge_points": [
+        "7.2",
+        "7.3",
+        "7.4",
+        "7.5",
+        "7.6.2",
+        "7.6.3",
+        "7.7.1",
+        "7.8",
+        "7.14"
+      ]
+    },
+    {
+      "id": "m08_ch08_fork",
+      "sources": [
+        "08_异常控制流/m08_process/process_demo.c"
+      ],
+      "expected": "M08 fork wait: PASS",
+      "platform": "linux-x86_64",
+      "knowledge_points": [
+        "8.2.3",
+        "8.4.1",
+        "8.4.2",
+        "8.4.3"
+      ]
+    },
+    {
+      "id": "m08_ch08_signals",
+      "sources": [
+        "08_异常控制流/m08_signals/signal_demo.c"
+      ],
+      "expected": "M08 signals: PASS",
+      "platform": "linux-x86_64",
+      "knowledge_points": [
+        "8.5.1",
+        "8.5.2",
+        "8.5.3",
+        "8.5.4",
+        "8.5.5"
+      ]
+    },
+    {
+      "id": "m08_ch09_mmap",
+      "sources": [
+        "09_虚拟内存/m08_mmap/vm_demo.c"
+      ],
+      "expected": "M08 mmap COW: PASS",
+      "platform": "linux-x86_64",
+      "knowledge_points": [
+        "9.4",
+        "9.8.2",
+        "9.8.4"
+      ]
+    },
+    {
+      "id": "m08_ch09_arena",
+      "sources": [
+        "09_虚拟内存/m08_allocator/arena_demo.c"
+      ],
+      "expected": "M08 arena allocator: PASS",
+      "knowledge_points": [
+        "9.9.1",
+        "9.9.2",
+        "9.9.3",
+        "9.9.5"
+      ]
     }
   ]
 }
