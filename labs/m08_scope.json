@@ -1,0 +1,756 @@
+{
+  "schema_version": 1,
+  "reference": "CSAPP third edition Global Edition / M04 curriculum catalog PR #4",
+  "expected_by_chapter": {
+    "7": 23,
+    "8": 29,
+    "9": 55
+  },
+  "semantics": "Every numbered section is present. Lab relation only means concept is demonstrated; not full notes, exercise, or chapter completion.",
+  "topics": [
+    {
+      "id": "7.1",
+      "title_zh": "编译器驱动程序",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "7.2",
+      "title_zh": "静态链接",
+      "mapping": "topic_files",
+      "lab_ids": [
+        "m08_ch07_link"
+      ]
+    },
+    {
+      "id": "7.3",
+      "title_zh": "目标文件",
+      "mapping": "topic_files",
+      "lab_ids": [
+        "m08_ch07_link"
+      ]
+    },
+    {
+      "id": "7.4",
+      "title_zh": "可重定位目标文件",
+      "mapping": "topic_files",
+      "lab_ids": [
+        "m08_ch07_link"
+      ]
+    },
+    {
+      "id": "7.5",
+      "title_zh": "符号和符号表",
+      "mapping": "topic_files",
+      "lab_ids": [
+        "m08_ch07_link"
+      ]
+    },
+    {
+      "id": "7.6",
+      "title_zh": "符号解析",
+      "mapping": "section_directory",
+      "lab_ids": []
+    },
+    {
+      "id": "7.6.1",
+      "title_zh": "链接器如何解析重复的符号名称",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "7.6.2",
+      "title_zh": "使用静态库进行链接",
+      "mapping": "topic_files",
+      "lab_ids": [
+        "m08_ch07_link"
+      ]
+    },
+    {
+      "id": "7.6.3",
+      "title_zh": "链接器如何使用静态库解析引用",
+      "mapping": "topic_files",
+      "lab_ids": [
+        "m08_ch07_link"
+      ]
+    },
+    {
+      "id": "7.7",
+      "title_zh": "重定位",
+      "mapping": "section_directory",
+      "lab_ids": []
+    },
+    {
+      "id": "7.7.1",
+      "title_zh": "重定位条目",
+      "mapping": "topic_files",
+      "lab_ids": [
+        "m08_ch07_link"
+      ]
+    },
+    {
+      "id": "7.7.2",
+      "title_zh": "重定位符号引用",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "7.8",
+      "title_zh": "可执行目标文件",
+      "mapping": "topic_files",
+      "lab_ids": [
+        "m08_ch07_link"
+      ]
+    },
+    {
+      "id": "7.9",
+      "title_zh": "加载可执行目标文件",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "7.10",
+      "title_zh": "使用共享库进行动态链接",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "7.11",
+      "title_zh": "从应用程序加载和链接共享库",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "7.12",
+      "title_zh": "位置无关代码(PIC)",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "7.13",
+      "title_zh": "库插入",
+      "mapping": "section_directory",
+      "lab_ids": []
+    },
+    {
+      "id": "7.13.1",
+      "title_zh": "编译时插入",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "7.13.2",
+      "title_zh": "链接时插入",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "7.13.3",
+      "title_zh": "运行时插入",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "7.14",
+      "title_zh": "操作目标文件的工具",
+      "mapping": "topic_files",
+      "lab_ids": [
+        "m08_ch07_link"
+      ]
+    },
+    {
+      "id": "7.15",
+      "title_zh": "本章总结",
+      "mapping": "unmapped",
+      "lab_ids": []
+    },
+    {
+      "id": "8.1",
+      "title_zh": "异常",
+      "mapping": "section_directory",
+      "lab_ids": []
+    },
+    {
+      "id": "8.1.1",
+      "title_zh": "异常处理",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "8.1.2",
+      "title_zh": "异常类别",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "8.1.3",
+      "title_zh": "Linux/x86-64系统中的异常",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "8.2",
+      "title_zh": "进程",
+      "mapping": "section_directory",
+      "lab_ids": []
+    },
+    {
+      "id": "8.2.1",
+      "title_zh": "逻辑控制流",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "8.2.2",
+      "title_zh": "并发流",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "8.2.3",
+      "title_zh": "私有地址空间",
+      "mapping": "topic_files",
+      "lab_ids": [
+        "m08_ch08_fork"
+      ]
+    },
+    {
+      "id": "8.2.4",
+      "title_zh": "用户模式和内核模式",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "8.2.5",
+      "title_zh": "上下文切换",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "8.3",
+      "title_zh": "系统调用错误处理",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "8.4",
+      "title_zh": "进程控制",
+      "mapping": "section_directory",
+      "lab_ids": []
+    },
+    {
+      "id": "8.4.1",
+      "title_zh": "获取进程ID",
+      "mapping": "topic_files",
+      "lab_ids": [
+        "m08_ch08_fork"
+      ]
+    },
+    {
+      "id": "8.4.2",
+      "title_zh": "创建和终止进程",
+      "mapping": "topic_files",
+      "lab_ids": [
+        "m08_ch08_fork"
+      ]
+    },
+    {
+      "id": "8.4.3",
+      "title_zh": "收割子进程",
+      "mapping": "topic_files",
+      "lab_ids": [
+        "m08_ch08_fork"
+      ]
+    },
+    {
+      "id": "8.4.4",
+      "title_zh": "使进程休眠",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "8.4.5",
+      "title_zh": "加载和运行程序",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "8.4.6",
+      "title_zh": "使用fork和execve运行程序",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "8.5",
+      "title_zh": "信号",
+      "mapping": "section_directory",
+      "lab_ids": []
+    },
+    {
+      "id": "8.5.1",
+      "title_zh": "信号术语",
+      "mapping": "topic_files",
+      "lab_ids": [
+        "m08_ch08_signals"
+      ]
+    },
+    {
+      "id": "8.5.2",
+      "title_zh": "发送信号",
+      "mapping": "topic_files",
+      "lab_ids": [
+        "m08_ch08_signals"
+      ]
+    },
+    {
+      "id": "8.5.3",
+      "title_zh": "接收信号",
+      "mapping": "topic_files",
+      "lab_ids": [
+        "m08_ch08_signals"
+      ]
+    },
+    {
+      "id": "8.5.4",
+      "title_zh": "阻塞和解除阻塞信号",
+      "mapping": "topic_files",
+      "lab_ids": [
+        "m08_ch08_signals"
+      ]
+    },
+    {
+      "id": "8.5.5",
+      "title_zh": "编写信号处理程序",
+      "mapping": "topic_files",
+      "lab_ids": [
+        "m08_ch08_signals"
+      ]
+    },
+    {
+      "id": "8.5.6",
+      "title_zh": "同步流以避免恶劣的并发错误",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "8.5.7",
+      "title_zh": "显式等待信号",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "8.6",
+      "title_zh": "非本地跳转",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "8.7",
+      "title_zh": "操作进程的工具",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "8.8",
+      "title_zh": "本章总结",
+      "mapping": "unmapped",
+      "lab_ids": []
+    },
+    {
+      "id": "9.1",
+      "title_zh": "物理地址和虚拟地址",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.2",
+      "title_zh": "地址空间",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.3",
+      "title_zh": "虚拟内存作为缓存工具",
+      "mapping": "section_directory",
+      "lab_ids": []
+    },
+    {
+      "id": "9.3.1",
+      "title_zh": "DRAM缓存组织",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.3.2",
+      "title_zh": "页表",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.3.3",
+      "title_zh": "页命中",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.3.4",
+      "title_zh": "页错误",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.3.5",
+      "title_zh": "分配页",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.3.6",
+      "title_zh": "再次救援的局部性",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.4",
+      "title_zh": "虚拟内存作为内存管理工具",
+      "mapping": "topic_files",
+      "lab_ids": [
+        "m08_ch09_mmap"
+      ]
+    },
+    {
+      "id": "9.5",
+      "title_zh": "虚拟内存作为内存保护工具",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.6",
+      "title_zh": "地址转换",
+      "mapping": "section_directory",
+      "lab_ids": []
+    },
+    {
+      "id": "9.6.1",
+      "title_zh": "整合缓存和虚拟内存",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.6.2",
+      "title_zh": "使用TLB加速地址转换",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.6.3",
+      "title_zh": "多级页表",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.6.4",
+      "title_zh": "综合：端到端地址转换",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.7",
+      "title_zh": "案例研究：Intel Core i7 Linux 内存系统",
+      "mapping": "section_directory",
+      "lab_ids": []
+    },
+    {
+      "id": "9.7.1",
+      "title_zh": "Core i7地址转换",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.7.2",
+      "title_zh": "Linux虚拟内存系统",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.8",
+      "title_zh": "内存映射",
+      "mapping": "section_directory",
+      "lab_ids": []
+    },
+    {
+      "id": "9.8.1",
+      "title_zh": "重新审视共享对象",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.8.2",
+      "title_zh": "重新审视fork函数",
+      "mapping": "topic_files",
+      "lab_ids": [
+        "m08_ch09_mmap"
+      ]
+    },
+    {
+      "id": "9.8.3",
+      "title_zh": "重新审视execve函数",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.8.4",
+      "title_zh": "使用mmap函数进行用户级内存映射",
+      "mapping": "topic_files",
+      "lab_ids": [
+        "m08_ch09_mmap"
+      ]
+    },
+    {
+      "id": "9.9",
+      "title_zh": "动态内存分配",
+      "mapping": "section_directory",
+      "lab_ids": []
+    },
+    {
+      "id": "9.9.1",
+      "title_zh": "malloc和free函数",
+      "mapping": "topic_files",
+      "lab_ids": [
+        "m08_ch09_arena"
+      ]
+    },
+    {
+      "id": "9.9.2",
+      "title_zh": "为什么需要动态内存分配？",
+      "mapping": "topic_files",
+      "lab_ids": [
+        "m08_ch09_arena"
+      ]
+    },
+    {
+      "id": "9.9.3",
+      "title_zh": "分配器的要求和目标",
+      "mapping": "topic_files",
+      "lab_ids": [
+        "m08_ch09_arena"
+      ]
+    },
+    {
+      "id": "9.9.4",
+      "title_zh": "碎片化",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.9.5",
+      "title_zh": "实现问题",
+      "mapping": "topic_files",
+      "lab_ids": [
+        "m08_ch09_arena"
+      ]
+    },
+    {
+      "id": "9.9.6",
+      "title_zh": "隐式空闲链表",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.9.7",
+      "title_zh": "放置已分配的块",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.9.8",
+      "title_zh": "拆分空闲块",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.9.9",
+      "title_zh": "获取额外的堆内存",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.9.10",
+      "title_zh": "合并空闲块",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.9.11",
+      "title_zh": "使用边界标记进行合并",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.9.12",
+      "title_zh": "综合：实现一个简单的分配器",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.9.13",
+      "title_zh": "显式空闲链表",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.9.14",
+      "title_zh": "分离空闲链表",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.10",
+      "title_zh": "垃圾回收",
+      "mapping": "section_directory",
+      "lab_ids": []
+    },
+    {
+      "id": "9.10.1",
+      "title_zh": "垃圾回收器基础",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.10.2",
+      "title_zh": "标记-清除垃圾回收器",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.10.3",
+      "title_zh": "C程序的保守标记-清除",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.11",
+      "title_zh": "C程序中常见的内存相关错误",
+      "mapping": "section_directory",
+      "lab_ids": []
+    },
+    {
+      "id": "9.11.1",
+      "title_zh": "解引用错误指针",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.11.2",
+      "title_zh": "读取未初始化内存",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.11.3",
+      "title_zh": "允许栈缓冲区溢出",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.11.4",
+      "title_zh": "假定指针和它们指向的对象大小相同",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.11.5",
+      "title_zh": "越界错误",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.11.6",
+      "title_zh": "引用指针而不是它指向的对象",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.11.7",
+      "title_zh": "误解指针运算",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.11.8",
+      "title_zh": "引用不存在的变量",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.11.9",
+      "title_zh": "引用空闲堆块中的数据",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.11.10",
+      "title_zh": "引入内存泄漏",
+      "mapping": "topic_files",
+      "lab_ids": []
+    },
+    {
+      "id": "9.12",
+      "title_zh": "本章总结",
+      "mapping": "unmapped",
+      "lab_ids": []
+    }
+  ],
+  "labs": [
+    {
+      "target": "m08_ch07_link",
+      "knowledge_points": [
+        "7.2",
+        "7.3",
+        "7.4",
+        "7.5",
+        "7.6.2",
+        "7.6.3",
+        "7.7.1",
+        "7.8",
+        "7.14"
+      ]
+    },
+    {
+      "target": "m08_ch08_fork",
+      "knowledge_points": [
+        "8.2.3",
+        "8.4.1",
+        "8.4.2",
+        "8.4.3"
+      ]
+    },
+    {
+      "target": "m08_ch08_signals",
+      "knowledge_points": [
+        "8.5.1",
+        "8.5.2",
+        "8.5.3",
+        "8.5.4",
+        "8.5.5"
+      ]
+    },
+    {
+      "target": "m08_ch09_mmap",
+      "knowledge_points": [
+        "9.4",
+        "9.8.2",
+        "9.8.4"
+      ]
+    },
+    {
+      "target": "m08_ch09_arena",
+      "knowledge_points": [
+        "9.9.1",
+        "9.9.2",
+        "9.9.3",
+        "9.9.5"
+      ]
+    }
+  ]
+}
