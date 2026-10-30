@@ -2,3 +2,8 @@
 __pycache__/
 *.py[cod]
 .venv/
+build/
+CMakeFiles/
+CMakeCache.txt
+Testing/
+*.bak
