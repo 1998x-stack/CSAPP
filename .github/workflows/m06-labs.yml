@@ -1,0 +1,60 @@
+name: M06 chapter 1-3 systems labs
+on:
+  push:
+    paths:
+      - '01_计算机系统概览/m06_build_pipeline/**'
+      - '02_程序结构和执行/m06_*/**'
+      - '03_程序的机器级表示/m06_sysv_abi/**'
+      - 'examples/manifest.json'
+      - 'CMakeLists.txt'
+      - 'labs/m06_scope.json'
+      - 'scripts/m06_inspect.py'
+      - 'tests/test_m06_labs.py'
+      - '.github/workflows/m06-labs.yml'
+  pull_request:
+    paths:
+      - '01_计算机系统概览/m06_build_pipeline/**'
+      - '02_程序结构和执行/m06_*/**'
+      - '03_程序的机器级表示/m06_sysv_abi/**'
+      - 'examples/manifest.json'
+      - 'CMakeLists.txt'
+      - 'labs/m06_scope.json'
+      - 'scripts/m06_inspect.py'
+      - 'tests/test_m06_labs.py'
+      - '.github/workflows/m06-labs.yml'
+jobs:
+  gcc_clang:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - cc: gcc
+            cxx: g++
+          - cc: clang
+            cxx: clang++
+    env:
+      CC: ${{ matrix.cc }}
+      CXX: ${{ matrix.cxx }}
+      UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Audit curated source manifest
+        run: python3 scripts/audit_sources.py --check
+      - name: Verify complete chapter 1-3 scope (113 IDs)
+        run: python3 -m unittest discover -s tests -p 'test_m06_*.py' -v
+      - name: Configure C11 / C++17 / System V x86-64 assembly with UBSan
+        run: cmake -S . -B build/m06 -DCMAKE_BUILD_TYPE=Debug -DCSAPP_ENABLE_UBSAN=ON
+      - name: Build all curated examples
+        run: cmake --build build/m06 --parallel 2
+      - name: Run chapter 1-3 C/ASM examples and prior M02 tests
+        run: ctest --test-dir build/m06 --output-on-failure
+      - name: Inspect preprocessing, assembly, object and linked ELF
+        run: python3 scripts/m06_inspect.py
+      - name: Run all Python regression tests
+        run: python3 -m unittest discover -s tests -v
+      - name: Verify original notes are unchanged
+        run: git diff --exit-code
