@@ -1,0 +1,290 @@
+{
+  "schema_version": 1,
+  "source": {
+    "title": "Computer Systems: A Programmer’s Perspective",
+    "edition": "Third, Global Edition",
+    "isbn_13": "978-1-292-10176-7",
+    "reference": "Contents pp. 6–18 (numbered chapter and subsection entries)",
+    "note": "Book outline is a structural ID inventory, not a reproduction of textbook prose; supplementary unnumbered boxes and individual exercises are outside the contents granularity."
+  },
+  "chapter_count": 12,
+  "expected_numbered_entries": 378,
+  "chapters": [
+    {
+      "id": "1",
+      "title_zh": "计算机系统漫游",
+      "repository_root": "01_计算机系统概览",
+      "subsection_counts": [
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        4,
+        0,
+        3,
+        0
+      ],
+      "unnumbered_materials": [
+        "bibliographic_notes",
+        "practice_problem_solutions"
+      ]
+    },
+    {
+      "id": "2",
+      "title_zh": "信息的表示和处理",
+      "repository_root": "02_程序结构和执行",
+      "subsection_counts": [
+        9,
+        8,
+        8,
+        6,
+        0
+      ],
+      "unnumbered_materials": [
+        "bibliographic_notes",
+        "homework_problems",
+        "practice_problem_solutions"
+      ]
+    },
+    {
+      "id": "3",
+      "title_zh": "程序的机器级表示",
+      "repository_root": "03_程序的机器级表示",
+      "subsection_counts": [
+        0,
+        3,
+        0,
+        4,
+        5,
+        8,
+        6,
+        5,
+        3,
+        5,
+        7,
+        0
+      ],
+      "unnumbered_materials": [
+        "bibliographic_notes",
+        "homework_problems",
+        "practice_problem_solutions"
+      ]
+    },
+    {
+      "id": "4",
+      "title_zh": "处理器体系结构",
+      "repository_root": "04_处理器架构",
+      "subsection_counts": [
+        6,
+        5,
+        4,
+        4,
+        10,
+        1
+      ],
+      "unnumbered_materials": [
+        "bibliographic_notes",
+        "homework_problems",
+        "practice_problem_solutions"
+      ]
+    },
+    {
+      "id": "5",
+      "title_zh": "优化程序性能",
+      "repository_root": "05_优化程序性能",
+      "subsection_counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        0,
+        2,
+        0,
+        2,
+        2,
+        0,
+        2,
+        0
+      ],
+      "unnumbered_materials": [
+        "bibliographic_notes",
+        "homework_problems",
+        "practice_problem_solutions"
+      ]
+    },
+    {
+      "id": "6",
+      "title_zh": "存储器层次结构",
+      "repository_root": "06_内存层次结构",
+      "subsection_counts": [
+        4,
+        3,
+        2,
+        7,
+        0,
+        3,
+        0
+      ],
+      "unnumbered_materials": [
+        "bibliographic_notes",
+        "homework_problems",
+        "practice_problem_solutions"
+      ]
+    },
+    {
+      "id": "7",
+      "title_zh": "链接",
+      "repository_root": "07_链接",
+      "subsection_counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        0,
+        0
+      ],
+      "unnumbered_materials": [
+        "bibliographic_notes",
+        "homework_problems",
+        "practice_problem_solutions"
+      ]
+    },
+    {
+      "id": "8",
+      "title_zh": "异常控制流",
+      "repository_root": "08_异常控制流",
+      "subsection_counts": [
+        3,
+        5,
+        0,
+        6,
+        7,
+        0,
+        0,
+        0
+      ],
+      "unnumbered_materials": [
+        "bibliographic_notes",
+        "homework_problems",
+        "practice_problem_solutions"
+      ]
+    },
+    {
+      "id": "9",
+      "title_zh": "虚拟内存",
+      "repository_root": "09_虚拟内存",
+      "subsection_counts": [
+        0,
+        0,
+        6,
+        0,
+        0,
+        4,
+        2,
+        4,
+        14,
+        3,
+        10,
+        0
+      ],
+      "unnumbered_materials": [
+        "bibliographic_notes",
+        "homework_problems",
+        "practice_problem_solutions"
+      ]
+    },
+    {
+      "id": "10",
+      "title_zh": "系统级 I/O",
+      "repository_root": "10_系统级I_O",
+      "subsection_counts": [
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "unnumbered_materials": [
+        "bibliographic_notes",
+        "homework_problems",
+        "practice_problem_solutions"
+      ]
+    },
+    {
+      "id": "11",
+      "title_zh": "网络编程",
+      "repository_root": "11_网络编程",
+      "subsection_counts": [
+        0,
+        0,
+        3,
+        9,
+        4,
+        0,
+        0
+      ],
+      "unnumbered_materials": [
+        "bibliographic_notes",
+        "homework_problems",
+        "practice_problem_solutions"
+      ]
+    },
+    {
+      "id": "12",
+      "title_zh": "并发编程",
+      "repository_root": "12_并发编程",
+      "subsection_counts": [
+        2,
+        2,
+        8,
+        3,
+        5,
+        0,
+        5,
+        0
+      ],
+      "unnumbered_materials": [
+        "bibliographic_notes",
+        "homework_problems",
+        "practice_problem_solutions"
+      ]
+    }
+  ],
+  "appendix": {
+    "id": "A",
+    "title_zh": "错误处理",
+    "numbered_entries": [
+      "A.1",
+      "A.2"
+    ]
+  },
+  "back_matter": [
+    "references",
+    "index"
+  ],
+  "front_matter": [
+    "preface",
+    "about_the_authors"
+  ]
+}
