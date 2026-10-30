@@ -162,9 +162,17 @@ def build_catalog():
         if number in topics:
             entry.update({"status": "topic_files", **topics[number]})
         elif number in directories:
-            entry.update({"status": "section_directory", "directory": directories[number]})
+            dirname = Path(directories[number]).name
+            entry.update({
+                "status": "section_directory",
+                "directory": directories[number],
+                "title_zh": dirname.split("_", 1)[-1].replace("_", " "),
+            })
         else:
-            entry.update({"status": "unmapped"})
+            title = book.get("unmapped_titles_zh", {}).get(number)
+            if not title:
+                raise ValueError(f"Unmapped book entry must have an explicit title: {number}")
+            entry.update({"status": "unmapped", "title_zh": title})
         entries.append(entry)
 
     chapters = []
