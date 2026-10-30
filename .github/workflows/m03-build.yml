@@ -1,0 +1,45 @@
+name: M03 unified build and test
+
+on:
+  push:
+    paths:
+      - 'CMakeLists.txt'
+      - 'examples/**'
+      - 'tests/**'
+      - 'scripts/audit_sources.py'
+      - '.github/workflows/m03-build.yml'
+  pull_request:
+    paths:
+      - 'CMakeLists.txt'
+      - 'examples/**'
+      - 'tests/**'
+      - 'scripts/audit_sources.py'
+      - '.github/workflows/m03-build.yml'
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - cc: gcc
+            cxx: g++
+          - cc: clang
+            cxx: clang++
+    env:
+      CC: ${{ matrix.cc }}
+      CXX: ${{ matrix.cxx }}
+      UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate curated source manifest and classify templates
+        run: python3 scripts/audit_sources.py --check
+      - name: Configure C / C++ / ASM build with UBSan
+        run: cmake -S . -B build/m03 -DCMAKE_BUILD_TYPE=Debug -DCSAPP_ENABLE_UBSAN=ON
+      - name: Compile curated sources
+        run: cmake --build build/m03 --parallel 2
+      - name: Run CTest smoke and chapter checks
+        run: ctest --test-dir build/m03 --output-on-failure
+      - name: Run Python unit regressions from M01 / M02 / M03
+        run: python3 -m unittest discover -s tests -v
