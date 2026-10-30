@@ -6,76 +6,67 @@ Lecture: 02_程序结构和执行/2.2_整数表示
 Content: 03_2.2.4_有符号和无符号之间的转换
 
 */
+#include <bitset>
+#include <cstdint>
 #include <iostream>
 #include <limits>
-#include <bitset>
+#include <string>
+#include <type_traits>
 
-// 打印二进制表示
 template <typename T>
 void print_binary(const std::string& label, T value) {
-    std::cout << label << ": " << std::bitset<sizeof(T) * 8>(value) << " (" << static_cast<int64_t>(value) << ")" << std::endl;
+    static_assert(std::is_integral_v<T>, "Integer required");
+    using U = std::make_unsigned_t<T>;
+    std::cout << label << ": " << std::bitset<sizeof(T) * 8>(static_cast<U>(value))
+              << " (" << static_cast<std::int64_t>(value) << ")\n";
 }
 
-// 显示转换示例
 void explicit_conversion_examples() {
-    std::cout << "显式转换示例:" << std::endl;
-    
-    short v = -12345;
-    unsigned short uv = static_cast<unsigned short>(v);
-    print_binary("有符号 short v", v);
-    print_binary("转换为无符号 unsigned short uv", uv);
-    
-    unsigned int u = 4294967295u; // UMax
-    int tu = static_cast<int>(u);
-    print_binary("无符号 unsigned int u", u);
-    print_binary("转换为有符号 int tu", tu);
+    std::cout << "显式转换示例:\n";
+    const std::int16_t v = -12345;
+    const std::uint16_t uv = static_cast<std::uint16_t>(v); // defined modulo 2^16
+    print_binary("有符号 int16_t v", v);
+    print_binary("转换为无符号 uint16_t uv", uv);
+
+    // Conversion from an out-of-range uint32_t to int32_t is
+    // implementation-defined in C++17. Do not silently assume a result.
+    const std::uint32_t u = std::numeric_limits<std::uint32_t>::max();
+    const std::int64_t twos_complement = static_cast<std::int64_t>(u) - (std::int64_t{1} << 32);
+    print_binary("32位无符号最大值", u);
+    std::cout << "按32位补码解释的数学值: " << twos_complement << '\n';
 }
 
-// 隐式转换示例
 void implicit_conversion_examples() {
-    std::cout << "隐式转换示例:" << std::endl;
-    
-    unsigned int ux = 10;
-    int tx = ux; // 隐式转换为有符号整数
-    print_binary("无符号 unsigned int ux", ux);
-    print_binary("隐式转换为有符号 int tx", tx);
+    std::cout << "隐式转换示例:\n";
+    const std::uint32_t ux = 10;
+    const std::int32_t tx = static_cast<std::int32_t>(ux); // in range
+    print_binary("无符号 uint32_t ux", ux);
+    print_binary("转换为有符号 int32_t tx", tx);
 
-    int x = -1;
-    unsigned y = 1;
-    int sum = x + y; // -1 被隐式转换为无符号整数
-    print_binary("有符号 int x", x);
-    print_binary("无符号 unsigned y", y);
-    print_binary("x + y 的结果", sum);
+    const std::int32_t x = -1;
+    const std::uint32_t y = 1;
+    const std::uint32_t sum = x + y; // arithmetic is unsigned modulo 2^32
+    print_binary("有符号 int32_t x", x);
+    print_binary("无符号 uint32_t y", y);
+    print_binary("x + y 的无符号结果", sum);
 }
 
-// 算术操作中的转换示例
 void arithmetic_conversion_examples() {
-    std::cout << "算术操作中的转换示例:" << std::endl;
-    
-    int a = -1;
-    unsigned b = 2;
-    bool result = a < b; // -1 被隐式转换为无符号整数
-    print_binary("有符号 int a", a);
-    print_binary("无符号 unsigned b", b);
-    std::cout << "a < b 的结果: " << result << std::endl;
-
-    int c = -1;
-    unsigned d = 0;
-    result = c < d; // -1 被隐式转换为无符号整数
-    print_binary("有符号 int c", c);
-    print_binary("无符号 unsigned d", d);
-    std::cout << "c < d 的结果: " << result << std::endl;
+    std::cout << "算术操作中的转换示例:\n";
+    const std::int32_t a = -1;
+    const std::uint32_t b = 2;
+    print_binary("有符号 int32_t a", a);
+    print_binary("无符号 uint32_t b", b);
+    std::cout << "a < b 的结果: " << (a < b) << '\n';
+    const std::int32_t c = -1;
+    const std::uint32_t d = 0;
+    std::cout << "c < d 的结果: " << (c < d) << '\n';
 }
 
 int main() {
     explicit_conversion_examples();
-    std::cout << std::endl;
-
+    std::cout << '\n';
     implicit_conversion_examples();
-    std::cout << std::endl;
-
+    std::cout << '\n';
     arithmetic_conversion_examples();
-    std::cout << std::endl;
-
-    return 0;
 }
