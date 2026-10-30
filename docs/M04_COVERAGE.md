@@ -51,4 +51,4 @@
 
 默认运行 python3 scripts/build_curriculum.py 只打印统计。
 CI 运行 python3 scripts/build_curriculum.py --check 检查目录漂移。
-有意变更目录时执行 python3 scripts/build_curriculum.py --write，仅重新生成 catalog.json 与此报告.
+有意变更目录时执行 python3 scripts/build_curriculum.py --write，仅重新生成 catalog.json 与此报告。
