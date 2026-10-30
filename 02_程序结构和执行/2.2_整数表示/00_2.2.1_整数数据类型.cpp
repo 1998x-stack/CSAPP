@@ -6,67 +6,61 @@ Lecture: 02_程序结构和执行/2.2_整数表示
 Content: 00_2.2.1_整数数据类型
 
 */
+#include <cstdint>
 #include <iostream>
 #include <limits>
-#include <cstdint>
+#include <string>
+#include <type_traits>
 
-// 打印整数的详细信息
-template<typename T>
+// Use an integer output type so char / unsigned char do not print as characters.
+template <typename T>
 void print_integer_info(const std::string& type_name, T value) {
-    std::cout << "类型: " << type_name << std::endl;
-    std::cout << "值: " << value << std::endl;
-    std::cout << "最小值: " << std::numeric_limits<T>::min() << std::endl;
-    std::cout << "最大值: " << std::numeric_limits<T>::max() << std::endl;
-    std::cout << std::endl;
+    static_assert(std::is_integral_v<T>, "Expected an integer type");
+    using Display = std::conditional_t<std::is_signed_v<T>, std::int64_t, std::uint64_t>;
+    std::cout << "类型: " << type_name << '\n'
+              << "值: " << static_cast<Display>(value) << '\n'
+              << "最小值: " << static_cast<Display>(std::numeric_limits<T>::min()) << '\n'
+              << "最大值: " << static_cast<Display>(std::numeric_limits<T>::max()) << "\n\n";
 }
 
-// 处理整数溢出
+// C++ signed overflow is undefined behavior: calculate the mathematical result
+// in a wider type instead of evaluating int32_t(max)+1 or int32_t(min)-1.
 void handle_overflow() {
-    int32_t max_int32 = std::numeric_limits<int32_t>::max();
-    int32_t min_int32 = std::numeric_limits<int32_t>::min();
-
-    std::cout << "溢出示例:" << std::endl;
-    std::cout << "最大 int32_t: " << max_int32 << std::endl;
-    std::cout << "最大 int32_t + 1: " << max_int32 + 1 << std::endl; // 溢出
-    std::cout << "最小 int32_t: " << min_int32 << std::endl;
-    std::cout << "最小 int32_t - 1: " << min_int32 - 1 << std::endl; // 溢出
-    std::cout << std::endl;
+    const std::int32_t max_value = std::numeric_limits<std::int32_t>::max();
+    const std::int32_t min_value = std::numeric_limits<std::int32_t>::min();
+    const std::int64_t beyond_max = static_cast<std::int64_t>(max_value) + 1;
+    const std::int64_t below_min = static_cast<std::int64_t>(min_value) - 1;
+    std::cout << "溢出示例（在 int64_t 中安全计算）:\n"
+              << "int32_t 最大值: " << max_value << '\n'
+              << "int32_t 最大值 + 1 超出 int32_t 范围: " << beyond_max << '\n'
+              << "int32_t 最小值: " << min_value << '\n'
+              << "int32_t 最小值 - 1 超出 int32_t 范围: " << below_min << "\n\n";
 }
 
-// 数值扩展示例
 void numeric_extension() {
-    int8_t small_int = -128;
-    int32_t extended_int = small_int; // 符号扩展
-
-    uint8_t small_uint = 255;
-    uint32_t extended_uint = small_uint; // 零扩展
-
-    std::cout << "数值扩展示例:" << std::endl;
-    std::cout << "int8_t (符号扩展): " << static_cast<int32_t>(small_int) << " -> " << extended_int << std::endl;
-    std::cout << "uint8_t (零扩展): " << static_cast<uint32_t>(small_uint) << " -> " << extended_uint << std::endl;
-    std::cout << std::endl;
+    const std::int8_t small_int = -128;
+    const std::int32_t extended_int = small_int; // sign extension
+    const std::uint8_t small_uint = 255;
+    const std::uint32_t extended_uint = small_uint; // zero extension
+    std::cout << "数值扩展示例:\n"
+              << "int8_t (符号扩展): " << static_cast<int>(small_int) << " -> " << extended_int << '\n'
+              << "uint8_t (零扩展): " << static_cast<unsigned>(small_uint) << " -> " << extended_uint
+              << "\n\n";
 }
 
 int main() {
-    // 打印不同整数类型的信息
-    print_integer_info("signed char", static_cast<signed char>(-128));
-    print_integer_info("unsigned char", static_cast<unsigned char>(255));
-    print_integer_info("short", static_cast<short>(-32768));
-    print_integer_info("unsigned short", static_cast<unsigned short>(65535));
-    print_integer_info("int", static_cast<int>(-2147483648));
-    print_integer_info("unsigned int", static_cast<unsigned int>(4294967295));
-    print_integer_info("long", static_cast<long>(-2147483648));
-    print_integer_info("unsigned long", static_cast<unsigned long>(4294967295));
-    print_integer_info("int32_t", static_cast<int32_t>(-2147483648));
-    print_integer_info("uint32_t", static_cast<uint32_t>(4294967295));
-    print_integer_info("int64_t", static_cast<int64_t>(-9223372036854775807 - 1));
-    print_integer_info("uint64_t", static_cast<uint64_t>(18446744073709551615U));
-
-    // 演示整数溢出
+    print_integer_info("signed char", static_cast<signed char>(-1));
+    print_integer_info("unsigned char", std::numeric_limits<unsigned char>::max());
+    print_integer_info("short", std::numeric_limits<short>::min());
+    print_integer_info("unsigned short", std::numeric_limits<unsigned short>::max());
+    print_integer_info("int", std::numeric_limits<int>::min());
+    print_integer_info("unsigned int", std::numeric_limits<unsigned int>::max());
+    print_integer_info("long", std::numeric_limits<long>::min());
+    print_integer_info("unsigned long", std::numeric_limits<unsigned long>::max());
+    print_integer_info("int32_t", std::numeric_limits<std::int32_t>::min());
+    print_integer_info("uint32_t", std::numeric_limits<std::uint32_t>::max());
+    print_integer_info("int64_t", std::numeric_limits<std::int64_t>::min());
+    print_integer_info("uint64_t", std::numeric_limits<std::uint64_t>::max());
     handle_overflow();
-
-    // 演示数值扩展
     numeric_extension();
-
-    return 0;
 }

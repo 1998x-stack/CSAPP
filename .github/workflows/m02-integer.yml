@@ -1,0 +1,27 @@
+name: M02 integer correctness
+
+on:
+  push:
+    paths:
+      - '02_程序结构和执行/**'
+      - 'tests/test_m02_*.py'
+      - '.github/workflows/m02-integer.yml'
+  pull_request:
+    paths:
+      - '02_程序结构和执行/**'
+      - 'tests/test_m02_*.py'
+      - '.github/workflows/m02-integer.yml'
+
+jobs:
+  cpp-ubsan:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [g++, clang++]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile and run chapter 2 examples with UBSan
+        env:
+          CXX: ${{ matrix.compiler }}
+        run: python3 -m unittest discover -s tests -p 'test_m02_*.py' -v
