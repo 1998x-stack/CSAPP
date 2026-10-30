@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import ast
 from collections import Counter
+import hashlib
 import json
 from pathlib import Path
 import re
@@ -16,6 +17,7 @@ CATALOG = ROOT / "curriculum/catalog.json"
 REPORT = ROOT / "docs/M04_COVERAGE.md"
 EXTS = (".md", ".py", ".cpp", ".html")
 EXPECTED_PER_CHAPTER = (19, 36, 58, 36, 26, 26, 23, 29, 55, 14, 23, 33)
+EXPECTED_TOC_SHA256 = "3cf0d91beabc54cf70d07e45facb11c470a47aba07595292a38902c9f0f04b59"
 ID = re.compile(r"(?<!\d)((?:1[0-2]|[1-9])\.\d+(?:\.\d+)?)(?=_|$)")
 
 
@@ -54,6 +56,8 @@ def outline_ids(book):
         ids.extend(current)
     if len(ids) != 378 or len(set(ids)) != 378 or book.get("expected_numbered_entries") != 378:
         raise ValueError("Book outline must contain exactly 378 distinct numbered chapter entries")
+    if hashlib.sha256("\n".join(ids).encode("utf-8")).hexdigest() != EXPECTED_TOC_SHA256:
+        raise ValueError("Book TOC IDs differ from the verified third-edition table of contents")
     appendix = book.get("appendix", {})
     if appendix.get("id") != "A" or appendix.get("numbered_entries") != ["A.1", "A.2"]:
         raise ValueError("Appendix A.1 and A.2 must be present")
