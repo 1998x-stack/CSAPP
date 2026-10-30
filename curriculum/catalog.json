@@ -157,7 +157,8 @@
       "id": "1.4",
       "chapter_id": "1",
       "status": "section_directory",
-      "directory": "01_计算机系统概览/1.4_处理器读取并解释存储在内存中的指令"
+      "directory": "01_计算机系统概览/1.4_处理器读取并解释存储在内存中的指令",
+      "title_zh": "处理器读取并解释存储在内存中的指令"
     },
     {
       "id": "1.4.1",
@@ -215,7 +216,8 @@
       "id": "1.7",
       "chapter_id": "1",
       "status": "section_directory",
-      "directory": "01_计算机系统概览/1.7_操作系统管理硬件"
+      "directory": "01_计算机系统概览/1.7_操作系统管理硬件",
+      "title_zh": "操作系统管理硬件"
     },
     {
       "id": "1.7.1",
@@ -286,7 +288,8 @@
       "id": "1.9",
       "chapter_id": "1",
       "status": "section_directory",
-      "directory": "01_计算机系统概览/1.9_重要主题"
+      "directory": "01_计算机系统概览/1.9_重要主题",
+      "title_zh": "重要主题"
     },
     {
       "id": "1.9.1",
@@ -330,13 +333,15 @@
     {
       "id": "1.10",
       "chapter_id": "1",
-      "status": "unmapped"
+      "status": "unmapped",
+      "title_zh": "本章总结"
     },
     {
       "id": "2.1",
       "chapter_id": "2",
       "status": "section_directory",
-      "directory": "02_程序结构和执行/2.1_表示和操作信息"
+      "directory": "02_程序结构和执行/2.1_表示和操作信息",
+      "title_zh": "表示和操作信息"
     },
     {
       "id": "2.1.1",
@@ -459,7 +464,8 @@
       "id": "2.2",
       "chapter_id": "2",
       "status": "section_directory",
-      "directory": "02_程序结构和执行/2.2_整数表示"
+      "directory": "02_程序结构和执行/2.2_整数表示",
+      "title_zh": "整数表示"
     },
     {
       "id": "2.2.1",
@@ -569,7 +575,8 @@
       "id": "2.3",
       "chapter_id": "2",
       "status": "section_directory",
-      "directory": "02_程序结构和执行/2.3_整数运算"
+      "directory": "02_程序结构和执行/2.3_整数运算",
+      "title_zh": "整数运算"
     },
     {
       "id": "2.3.1",
@@ -679,7 +686,8 @@
       "id": "2.4",
       "chapter_id": "2",
       "status": "section_directory",
-      "directory": "02_程序结构和执行/2.4_浮点数"
+      "directory": "02_程序结构和执行/2.4_浮点数",
+      "title_zh": "浮点数"
     },
     {
       "id": "2.4.1",
@@ -762,7 +770,8 @@
     {
       "id": "2.5",
       "chapter_id": "2",
-      "status": "unmapped"
+      "status": "unmapped",
+      "title_zh": "本章总结"
     },
     {
       "id": "3.1",
@@ -781,7 +790,8 @@
       "id": "3.2",
       "chapter_id": "3",
       "status": "section_directory",
-      "directory": "03_程序的机器级表示/3.2_程序编码"
+      "directory": "03_程序的机器级表示/3.2_程序编码",
+      "title_zh": "程序编码"
     },
     {
       "id": "3.2.1",
@@ -839,7 +849,8 @@
       "id": "3.4",
       "chapter_id": "3",
       "status": "section_directory",
-      "directory": "03_程序的机器级表示/3.4_访问信息"
+      "directory": "03_程序的机器级表示/3.4_访问信息",
+      "title_zh": "访问信息"
     },
     {
       "id": "3.4.1",
@@ -897,7 +908,8 @@
       "id": "3.5",
       "chapter_id": "3",
       "status": "section_directory",
-      "directory": "03_程序的机器级表示/3.5_算术和逻辑运算"
+      "directory": "03_程序的机器级表示/3.5_算术和逻辑运算",
+      "title_zh": "算术和逻辑运算"
     },
     {
       "id": "3.5.1",
@@ -968,7 +980,8 @@
       "id": "3.6",
       "chapter_id": "3",
       "status": "section_directory",
-      "directory": "03_程序的机器级表示/3.6_控制"
+      "directory": "03_程序的机器级表示/3.6_控制",
+      "title_zh": "控制"
     },
     {
       "id": "3.6.1",
@@ -1078,7 +1091,8 @@
       "id": "3.7",
       "chapter_id": "3",
       "status": "section_directory",
-      "directory": "03_程序的机器级表示/3.7_程序"
+      "directory": "03_程序的机器级表示/3.7_程序",
+      "title_zh": "程序"
     },
     {
       "id": "3.7.1",
@@ -1162,7 +1176,8 @@
       "id": "3.8",
       "chapter_id": "3",
       "status": "section_directory",
-      "directory": "03_程序的机器级表示/3.8_数组分配和访问"
+      "directory": "03_程序的机器级表示/3.8_数组分配和访问",
+      "title_zh": "数组分配和访问"
     },
     {
       "id": "3.8.1",
@@ -1233,7 +1248,8 @@
       "id": "3.9",
       "chapter_id": "3",
       "status": "section_directory",
-      "directory": "03_程序的机器级表示/3.9_异质数据结构"
+      "directory": "03_程序的机器级表示/3.9_异质数据结构",
+      "title_zh": "异质数据结构"
     },
     {
       "id": "3.9.1",
@@ -1278,7 +1294,8 @@
       "id": "3.10",
       "chapter_id": "3",
       "status": "section_directory",
-      "directory": "03_程序的机器级表示/3.10_在机器级程序中结合控制和数据"
+      "directory": "03_程序的机器级表示/3.10_在机器级程序中结合控制和数据",
+      "title_zh": "在机器级程序中结合控制和数据"
     },
     {
       "id": "3.10.1",
@@ -1349,7 +1366,8 @@
       "id": "3.11",
       "chapter_id": "3",
       "status": "section_directory",
-      "directory": "03_程序的机器级表示/3.11_浮点代码"
+      "directory": "03_程序的机器级表示/3.11_浮点代码",
+      "title_zh": "浮点代码"
     },
     {
       "id": "3.11.1",
@@ -1445,13 +1463,15 @@
     {
       "id": "3.12",
       "chapter_id": "3",
-      "status": "unmapped"
+      "status": "unmapped",
+      "title_zh": "本章总结"
     },
     {
       "id": "4.1",
       "chapter_id": "4",
       "status": "section_directory",
-      "directory": "04_处理器架构/4.1_Y86_64指令集架构"
+      "directory": "04_处理器架构/4.1_Y86_64指令集架构",
+      "title_zh": "Y86 64指令集架构"
     },
     {
       "id": "4.1.1",
@@ -1535,7 +1555,8 @@
       "id": "4.2",
       "chapter_id": "4",
       "status": "section_directory",
-      "directory": "04_处理器架构/4.2_逻辑设计和硬件控制语言HCL"
+      "directory": "04_处理器架构/4.2_逻辑设计和硬件控制语言HCL",
+      "title_zh": "逻辑设计和硬件控制语言HCL"
     },
     {
       "id": "4.2.1",
@@ -1606,7 +1627,8 @@
       "id": "4.3",
       "chapter_id": "4",
       "status": "section_directory",
-      "directory": "04_处理器架构/4.3_顺序Y86_64实现"
+      "directory": "04_处理器架构/4.3_顺序Y86_64实现",
+      "title_zh": "顺序Y86 64实现"
     },
     {
       "id": "4.3.1",
@@ -1664,7 +1686,8 @@
       "id": "4.4",
       "chapter_id": "4",
       "status": "section_directory",
-      "directory": "04_处理器架构/4.4_流水线的一般原理"
+      "directory": "04_处理器架构/4.4_流水线的一般原理",
+      "title_zh": "流水线的一般原理"
     },
     {
       "id": "4.4.1",
@@ -1722,7 +1745,8 @@
       "id": "4.5",
       "chapter_id": "4",
       "status": "section_directory",
-      "directory": "04_处理器架构/4.5_流水线Y86_64实现"
+      "directory": "04_处理器架构/4.5_流水线Y86_64实现",
+      "title_zh": "流水线Y86 64实现"
     },
     {
       "id": "4.5.1",
@@ -1857,12 +1881,14 @@
     {
       "id": "4.6",
       "chapter_id": "4",
-      "status": "unmapped"
+      "status": "unmapped",
+      "title_zh": "本章总结"
     },
     {
       "id": "4.6.1",
       "chapter_id": "4",
-      "status": "unmapped"
+      "status": "unmapped",
+      "title_zh": "Y86-64 模拟器"
     },
     {
       "id": "5.1",
@@ -1946,7 +1972,8 @@
       "id": "5.7",
       "chapter_id": "5",
       "status": "section_directory",
-      "directory": "05_优化程序性能/5.7_理解现代处理器"
+      "directory": "05_优化程序性能/5.7_理解现代处理器",
+      "title_zh": "理解现代处理器"
     },
     {
       "id": "5.7.1",
@@ -2004,7 +2031,8 @@
       "id": "5.9",
       "chapter_id": "5",
       "status": "section_directory",
-      "directory": "05_优化程序性能/5.9_增强并行性"
+      "directory": "05_优化程序性能/5.9_增强并行性",
+      "title_zh": "增强并行性"
     },
     {
       "id": "5.9.1",
@@ -2049,7 +2077,8 @@
       "id": "5.11",
       "chapter_id": "5",
       "status": "section_directory",
-      "directory": "05_优化程序性能/5.11_一些限制因素"
+      "directory": "05_优化程序性能/5.11_一些限制因素",
+      "title_zh": "一些限制因素"
     },
     {
       "id": "5.11.1",
@@ -2081,7 +2110,8 @@
       "id": "5.12",
       "chapter_id": "5",
       "status": "section_directory",
-      "directory": "05_优化程序性能/5.12_理解内存性能"
+      "directory": "05_优化程序性能/5.12_理解内存性能",
+      "title_zh": "理解内存性能"
     },
     {
       "id": "5.12.1",
@@ -2126,7 +2156,8 @@
       "id": "5.14",
       "chapter_id": "5",
       "status": "section_directory",
-      "directory": "05_优化程序性能/5.14_识别和消除性能瓶颈"
+      "directory": "05_优化程序性能/5.14_识别和消除性能瓶颈",
+      "title_zh": "识别和消除性能瓶颈"
     },
     {
       "id": "5.14.1",
@@ -2157,13 +2188,15 @@
     {
       "id": "5.15",
       "chapter_id": "5",
-      "status": "unmapped"
+      "status": "unmapped",
+      "title_zh": "本章总结"
     },
     {
       "id": "6.1",
       "chapter_id": "6",
       "status": "section_directory",
-      "directory": "06_内存层次结构/6.1_存储技术"
+      "directory": "06_内存层次结构/6.1_存储技术",
+      "title_zh": "存储技术"
     },
     {
       "id": "6.1.1",
@@ -2221,7 +2254,8 @@
       "id": "6.2",
       "chapter_id": "6",
       "status": "section_directory",
-      "directory": "06_内存层次结构/6.2_局部性"
+      "directory": "06_内存层次结构/6.2_局部性",
+      "title_zh": "局部性"
     },
     {
       "id": "6.2.1",
@@ -2266,7 +2300,8 @@
       "id": "6.3",
       "chapter_id": "6",
       "status": "section_directory",
-      "directory": "06_内存层次结构/6.3_内存层次结构"
+      "directory": "06_内存层次结构/6.3_内存层次结构",
+      "title_zh": "内存层次结构"
     },
     {
       "id": "6.3.1",
@@ -2298,7 +2333,8 @@
       "id": "6.4",
       "chapter_id": "6",
       "status": "section_directory",
-      "directory": "06_内存层次结构/6.4_缓存存储器"
+      "directory": "06_内存层次结构/6.4_缓存存储器",
+      "title_zh": "缓存存储器"
     },
     {
       "id": "6.4.1",
@@ -2408,7 +2444,8 @@
       "id": "6.6",
       "chapter_id": "6",
       "status": "section_directory",
-      "directory": "06_内存层次结构/6.6_综合:缓存对程序性能的影响"
+      "directory": "06_内存层次结构/6.6_综合:缓存对程序性能的影响",
+      "title_zh": "综合:缓存对程序性能的影响"
     },
     {
       "id": "6.6.1",
@@ -2452,7 +2489,8 @@
     {
       "id": "6.7",
       "chapter_id": "6",
-      "status": "unmapped"
+      "status": "unmapped",
+      "title_zh": "本章总结"
     },
     {
       "id": "7.1",
@@ -2523,7 +2561,8 @@
       "id": "7.6",
       "chapter_id": "7",
       "status": "section_directory",
-      "directory": "07_链接/7.6_符号解析"
+      "directory": "07_链接/7.6_符号解析",
+      "title_zh": "符号解析"
     },
     {
       "id": "7.6.1",
@@ -2568,7 +2607,8 @@
       "id": "7.7",
       "chapter_id": "7",
       "status": "section_directory",
-      "directory": "07_链接/7.7_重定位"
+      "directory": "07_链接/7.7_重定位",
+      "title_zh": "重定位"
     },
     {
       "id": "7.7.1",
@@ -2665,7 +2705,8 @@
       "id": "7.13",
       "chapter_id": "7",
       "status": "section_directory",
-      "directory": "07_链接/7.13_库插入"
+      "directory": "07_链接/7.13_库插入",
+      "title_zh": "库插入"
     },
     {
       "id": "7.13.1",
@@ -2722,13 +2763,15 @@
     {
       "id": "7.15",
       "chapter_id": "7",
-      "status": "unmapped"
+      "status": "unmapped",
+      "title_zh": "本章总结"
     },
     {
       "id": "8.1",
       "chapter_id": "8",
       "status": "section_directory",
-      "directory": "08_异常控制流/8.1_异常"
+      "directory": "08_异常控制流/8.1_异常",
+      "title_zh": "异常"
     },
     {
       "id": "8.1.1",
@@ -2773,7 +2816,8 @@
       "id": "8.2",
       "chapter_id": "8",
       "status": "section_directory",
-      "directory": "08_异常控制流/8.2_进程"
+      "directory": "08_异常控制流/8.2_进程",
+      "title_zh": "进程"
     },
     {
       "id": "8.2.1",
@@ -2857,7 +2901,8 @@
       "id": "8.4",
       "chapter_id": "8",
       "status": "section_directory",
-      "directory": "08_异常控制流/8.4_进程控制"
+      "directory": "08_异常控制流/8.4_进程控制",
+      "title_zh": "进程控制"
     },
     {
       "id": "8.4.1",
@@ -2941,7 +2986,8 @@
       "id": "8.5",
       "chapter_id": "8",
       "status": "section_directory",
-      "directory": "08_异常控制流/8.5_信号"
+      "directory": "08_异常控制流/8.5_信号",
+      "title_zh": "信号"
     },
     {
       "id": "8.5.1",
@@ -3063,7 +3109,8 @@
     {
       "id": "8.8",
       "chapter_id": "8",
-      "status": "unmapped"
+      "status": "unmapped",
+      "title_zh": "本章总结"
     },
     {
       "id": "9.1",
@@ -3095,7 +3142,8 @@
       "id": "9.3",
       "chapter_id": "9",
       "status": "section_directory",
-      "directory": "09_虚拟内存/9.3_虚拟内存作为缓存工具"
+      "directory": "09_虚拟内存/9.3_虚拟内存作为缓存工具",
+      "title_zh": "虚拟内存作为缓存工具"
     },
     {
       "id": "9.3.1",
@@ -3205,7 +3253,8 @@
       "id": "9.6",
       "chapter_id": "9",
       "status": "section_directory",
-      "directory": "09_虚拟内存/9.6_地址转换"
+      "directory": "09_虚拟内存/9.6_地址转换",
+      "title_zh": "地址转换"
     },
     {
       "id": "9.6.1",
@@ -3263,7 +3312,8 @@
       "id": "9.7",
       "chapter_id": "9",
       "status": "section_directory",
-      "directory": "09_虚拟内存/9.7_案例研究：Intel_Core_i7_Linux_内存系统"
+      "directory": "09_虚拟内存/9.7_案例研究：Intel_Core_i7_Linux_内存系统",
+      "title_zh": "案例研究：Intel Core i7 Linux 内存系统"
     },
     {
       "id": "9.7.1",
@@ -3295,7 +3345,8 @@
       "id": "9.8",
       "chapter_id": "9",
       "status": "section_directory",
-      "directory": "09_虚拟内存/9.8_内存映射"
+      "directory": "09_虚拟内存/9.8_内存映射",
+      "title_zh": "内存映射"
     },
     {
       "id": "9.8.1",
@@ -3353,7 +3404,8 @@
       "id": "9.9",
       "chapter_id": "9",
       "status": "section_directory",
-      "directory": "09_虚拟内存/9.9_动态内存分配"
+      "directory": "09_虚拟内存/9.9_动态内存分配",
+      "title_zh": "动态内存分配"
     },
     {
       "id": "9.9.1",
@@ -3541,7 +3593,8 @@
       "id": "9.10",
       "chapter_id": "9",
       "status": "section_directory",
-      "directory": "09_虚拟内存/9.10_垃圾回收"
+      "directory": "09_虚拟内存/9.10_垃圾回收",
+      "title_zh": "垃圾回收"
     },
     {
       "id": "9.10.1",
@@ -3586,7 +3639,8 @@
       "id": "9.11",
       "chapter_id": "9",
       "status": "section_directory",
-      "directory": "09_虚拟内存/9.11_C程序中常见的内存相关错误"
+      "directory": "09_虚拟内存/9.11_C程序中常见的内存相关错误",
+      "title_zh": "C程序中常见的内存相关错误"
     },
     {
       "id": "9.11.1",
@@ -3721,7 +3775,8 @@
     {
       "id": "9.12",
       "chapter_id": "9",
-      "status": "unmapped"
+      "status": "unmapped",
+      "title_zh": "本章总结"
     },
     {
       "id": "10.1",
@@ -3779,7 +3834,8 @@
       "id": "10.5",
       "chapter_id": "10",
       "status": "section_directory",
-      "directory": "10_系统级I_O/10.5_使用Rio包进行稳健的读取和写入"
+      "directory": "10_系统级I_O/10.5_使用Rio包进行稳健的读取和写入",
+      "title_zh": "使用Rio包进行稳健的读取和写入"
     },
     {
       "id": "10.5.1",
@@ -3888,7 +3944,8 @@
     {
       "id": "10.12",
       "chapter_id": "10",
-      "status": "unmapped"
+      "status": "unmapped",
+      "title_zh": "本章总结"
     },
     {
       "id": "11.1",
@@ -3920,7 +3977,8 @@
       "id": "11.3",
       "chapter_id": "11",
       "status": "section_directory",
-      "directory": "11_网络编程/11.3_全球IP互联网"
+      "directory": "11_网络编程/11.3_全球IP互联网",
+      "title_zh": "全球IP互联网"
     },
     {
       "id": "11.3.1",
@@ -3965,7 +4023,8 @@
       "id": "11.4",
       "chapter_id": "11",
       "status": "section_directory",
-      "directory": "11_网络编程/11.4_套接字接口"
+      "directory": "11_网络编程/11.4_套接字接口",
+      "title_zh": "套接字接口"
     },
     {
       "id": "11.4.1",
@@ -4088,7 +4147,8 @@
       "id": "11.5",
       "chapter_id": "11",
       "status": "section_directory",
-      "directory": "11_网络编程/11.5_Web服务器"
+      "directory": "11_网络编程/11.5_Web服务器",
+      "title_zh": "Web服务器"
     },
     {
       "id": "11.5.1",
@@ -4158,13 +4218,15 @@
     {
       "id": "11.7",
       "chapter_id": "11",
-      "status": "unmapped"
+      "status": "unmapped",
+      "title_zh": "本章总结"
     },
     {
       "id": "12.1",
       "chapter_id": "12",
       "status": "section_directory",
-      "directory": "12_并发编程/12.1_使用进程进行并发编程"
+      "directory": "12_并发编程/12.1_使用进程进行并发编程",
+      "title_zh": "使用进程进行并发编程"
     },
     {
       "id": "12.1.1",
@@ -4196,7 +4258,8 @@
       "id": "12.2",
       "chapter_id": "12",
       "status": "section_directory",
-      "directory": "12_并发编程/12.2_使用I_O多路复用进行并发编程"
+      "directory": "12_并发编程/12.2_使用I_O多路复用进行并发编程",
+      "title_zh": "使用I O多路复用进行并发编程"
     },
     {
       "id": "12.2.1",
@@ -4228,7 +4291,8 @@
       "id": "12.3",
       "chapter_id": "12",
       "status": "section_directory",
-      "directory": "12_并发编程/12.3_使用线程进行并发编程"
+      "directory": "12_并发编程/12.3_使用线程进行并发编程",
+      "title_zh": "使用线程进行并发编程"
     },
     {
       "id": "12.3.1",
@@ -4338,7 +4402,8 @@
       "id": "12.4",
       "chapter_id": "12",
       "status": "section_directory",
-      "directory": "12_并发编程/12.4_线程程序中的共享变量"
+      "directory": "12_并发编程/12.4_线程程序中的共享变量",
+      "title_zh": "线程程序中的共享变量"
     },
     {
       "id": "12.4.1",
@@ -4383,7 +4448,8 @@
       "id": "12.5",
       "chapter_id": "12",
       "status": "section_directory",
-      "directory": "12_并发编程/12.5_使用信号量同步线程"
+      "directory": "12_并发编程/12.5_使用信号量同步线程",
+      "title_zh": "使用信号量同步线程"
     },
     {
       "id": "12.5.1",
@@ -4467,7 +4533,8 @@
       "id": "12.7",
       "chapter_id": "12",
       "status": "section_directory",
-      "directory": "12_并发编程/12.7_其他并发问题"
+      "directory": "12_并发编程/12.7_其他并发问题",
+      "title_zh": "其他并发问题"
     },
     {
       "id": "12.7.1",
@@ -4537,17 +4604,20 @@
     {
       "id": "12.8",
       "chapter_id": "12",
-      "status": "unmapped"
+      "status": "unmapped",
+      "title_zh": "本章总结"
     },
     {
       "id": "A.1",
       "chapter_id": "A",
-      "status": "unmapped"
+      "status": "unmapped",
+      "title_zh": "Unix 系统中的错误处理"
     },
     {
       "id": "A.2",
       "chapter_id": "A",
-      "status": "unmapped"
+      "status": "unmapped",
+      "title_zh": "错误处理包装函数"
     }
   ],
   "supplementary_files": [
