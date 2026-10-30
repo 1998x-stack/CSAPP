@@ -43,6 +43,57 @@
       "sources": [
         "02_程序结构和执行/2.3_整数运算/02_2.3.3_二进制补码求反.cpp"
       ]
+    },
+    {
+      "id": "m06_ch01_pipeline",
+      "sources": [
+        "01_计算机系统概览/m06_build_pipeline/driver.c",
+        "01_计算机系统概览/m06_build_pipeline/pipeline.c"
+      ],
+      "expected": "M06 pipeline: PASS",
+      "knowledge_points": [
+        "1.2",
+        "1.3"
+      ]
+    },
+    {
+      "id": "m06_ch02_bits",
+      "sources": [
+        "02_程序结构和执行/m06_bit_representation/bit_demo.c"
+      ],
+      "expected": "M06 bit representation: PASS",
+      "knowledge_points": [
+        "2.1.3",
+        "2.1.9",
+        "2.2.3",
+        "2.3.1"
+      ]
+    },
+    {
+      "id": "m06_ch02_float",
+      "sources": [
+        "02_程序结构和执行/m06_ieee754/float_demo.c"
+      ],
+      "expected": "M06 IEEE754: PASS",
+      "knowledge_points": [
+        "2.4.2",
+        "2.4.3"
+      ]
+    },
+    {
+      "id": "m06_ch03_abi",
+      "sources": [
+        "03_程序的机器级表示/m06_sysv_abi/abi_driver.c",
+        "03_程序的机器级表示/m06_sysv_abi/abi_x86_64.S"
+      ],
+      "expected": "M06 System V ABI: PASS",
+      "platform": "linux-x86_64",
+      "knowledge_points": [
+        "3.2.1",
+        "3.4.1",
+        "3.7.1",
+        "3.7.3"
+      ]
     }
   ]
 }
