@@ -119,3 +119,12 @@ if(CSAPP_ASM_SUPPORTED)
 else()
   message(STATUS "x86-64 Linux assembly smoke test skipped on ${CMAKE_SYSTEM_NAME}/${CMAKE_SYSTEM_PROCESSOR}")
 endif()
+
+# M07 deterministic cache trace is a second, independent behavioral check.
+if(BUILD_TESTING AND TARGET m07_ch06_cache)
+  add_test(NAME m07_cache_trace COMMAND m07_ch06_cache --trace
+    "${CMAKE_CURRENT_SOURCE_DIR}/06_内存层次结构/m07_cache_lru/trace_fixture.txt" 1 1 2)
+  set_tests_properties(m07_cache_trace PROPERTIES
+    PASS_REGULAR_EXPRESSION "hits:3 misses:4 evictions:2"
+    LABELS "example;chapter06;cache")
+endif()
