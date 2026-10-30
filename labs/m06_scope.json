@@ -1,0 +1,611 @@
+{
+  "schema_version": 1,
+  "source": "CSAPP 3e Global Edition TOC / M04 curriculum catalog (PR #4)",
+  "note": "Full 113-entry chapter 1–3 scope. Lab mappings represent coverage targets, not full chapter or exercise completion.",
+  "expected_by_chapter": {
+    "1": 19,
+    "2": 36,
+    "3": 58
+  },
+  "topics": [
+    {
+      "id": "1.1",
+      "title_zh": "信息是位+上下文",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "1.2",
+      "title_zh": "程序被其他程序翻译成不同的形式",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "1.3",
+      "title_zh": "了解编译系统的工作原理是有益的",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "1.4",
+      "title_zh": "处理器读取并解释存储在内存中的指令",
+      "mapping": "section_directory"
+    },
+    {
+      "id": "1.4.1",
+      "title_zh": "系统的硬件组织",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "1.4.2",
+      "title_zh": "运行 hello 程序",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "1.5",
+      "title_zh": "缓存很重要",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "1.6",
+      "title_zh": "存储设备形成一个层次结构",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "1.7",
+      "title_zh": "操作系统管理硬件",
+      "mapping": "section_directory"
+    },
+    {
+      "id": "1.7.1",
+      "title_zh": "进程",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "1.7.2",
+      "title_zh": "线程",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "1.7.3",
+      "title_zh": "虚拟内存",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "1.7.4",
+      "title_zh": "文件",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "1.8",
+      "title_zh": "系统通过网络与其他系统通信",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "1.9",
+      "title_zh": "重要主题",
+      "mapping": "section_directory"
+    },
+    {
+      "id": "1.9.1",
+      "title_zh": "阿姆达尔定律",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "1.9.2",
+      "title_zh": "并发和并行",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "1.9.3",
+      "title_zh": "计算机系统中抽象的重要性",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "1.10",
+      "title_zh": "本章总结",
+      "mapping": "unmapped"
+    },
+    {
+      "id": "2.1",
+      "title_zh": "表示和操作信息",
+      "mapping": "section_directory"
+    },
+    {
+      "id": "2.1.1",
+      "title_zh": "十六进制表示法",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.1.2",
+      "title_zh": "数据大小",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.1.3",
+      "title_zh": "地址和字节顺序",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.1.4",
+      "title_zh": "表示字符串",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.1.5",
+      "title_zh": "表示代码",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.1.6",
+      "title_zh": "布尔代数简介",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.1.7",
+      "title_zh": "C语言中的位级操作",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.1.8",
+      "title_zh": "C语言中的逻辑操作",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.1.9",
+      "title_zh": "C语言中的移位操作",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.2",
+      "title_zh": "整数表示",
+      "mapping": "section_directory"
+    },
+    {
+      "id": "2.2.1",
+      "title_zh": "整数数据类型",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.2.2",
+      "title_zh": "无符号编码",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.2.3",
+      "title_zh": "二进制补码编码",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.2.4",
+      "title_zh": "有符号和无符号之间的转换",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.2.5",
+      "title_zh": "C语言中的有符号与无符号",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.2.6",
+      "title_zh": "扩展数字的位表示",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.2.7",
+      "title_zh": "截断数字",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.2.8",
+      "title_zh": "有符号和无符号的建议",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.3",
+      "title_zh": "整数运算",
+      "mapping": "section_directory"
+    },
+    {
+      "id": "2.3.1",
+      "title_zh": "无符号加法",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.3.2",
+      "title_zh": "二进制补码加法",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.3.3",
+      "title_zh": "二进制补码求反",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.3.4",
+      "title_zh": "无符号乘法",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.3.5",
+      "title_zh": "二进制补码乘法",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.3.6",
+      "title_zh": "用常数乘法",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.3.7",
+      "title_zh": "除以2的幂",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.3.8",
+      "title_zh": "整数运算的最后思考",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.4",
+      "title_zh": "浮点数",
+      "mapping": "section_directory"
+    },
+    {
+      "id": "2.4.1",
+      "title_zh": "分数二进制数",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.4.2",
+      "title_zh": "IEEE浮点表示",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.4.3",
+      "title_zh": "数字示例",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.4.4",
+      "title_zh": "舍入",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.4.5",
+      "title_zh": "浮点运算",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.4.6",
+      "title_zh": "C语言中的浮点",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "2.5",
+      "title_zh": "本章总结",
+      "mapping": "unmapped"
+    },
+    {
+      "id": "3.1",
+      "title_zh": "历史视角",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.2",
+      "title_zh": "程序编码",
+      "mapping": "section_directory"
+    },
+    {
+      "id": "3.2.1",
+      "title_zh": "机器级代码",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.2.2",
+      "title_zh": "代码示例",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.2.3",
+      "title_zh": "格式化注意事项",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.3",
+      "title_zh": "数据格式",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.4",
+      "title_zh": "访问信息",
+      "mapping": "section_directory"
+    },
+    {
+      "id": "3.4.1",
+      "title_zh": "操作数说明符",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.4.2",
+      "title_zh": "数据移动指令",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.4.3",
+      "title_zh": "数据移动示例",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.4.4",
+      "title_zh": "推入和弹出栈数据",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.5",
+      "title_zh": "算术和逻辑运算",
+      "mapping": "section_directory"
+    },
+    {
+      "id": "3.5.1",
+      "title_zh": "加载有效地址",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.5.2",
+      "title_zh": "一元和二元运算",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.5.3",
+      "title_zh": "移位运算",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.5.4",
+      "title_zh": "讨论",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.5.5",
+      "title_zh": "特殊算术运算",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.6",
+      "title_zh": "控制",
+      "mapping": "section_directory"
+    },
+    {
+      "id": "3.6.1",
+      "title_zh": "条件码",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.6.2",
+      "title_zh": "访问条件码",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.6.3",
+      "title_zh": "跳转指令",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.6.4",
+      "title_zh": "跳转指令编码",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.6.5",
+      "title_zh": "用条件控制实现条件分支",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.6.6",
+      "title_zh": "用条件移动实现条件分支",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.6.7",
+      "title_zh": "循环",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.6.8",
+      "title_zh": "开关语句",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.7",
+      "title_zh": "程序",
+      "mapping": "section_directory"
+    },
+    {
+      "id": "3.7.1",
+      "title_zh": "运行时栈",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.7.2",
+      "title_zh": "控制转移",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.7.3",
+      "title_zh": "数据转移",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.7.4",
+      "title_zh": "栈上的局部存储",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.7.5",
+      "title_zh": "寄存器中的局部存储",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.7.6",
+      "title_zh": "递归程序",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.8",
+      "title_zh": "数组分配和访问",
+      "mapping": "section_directory"
+    },
+    {
+      "id": "3.8.1",
+      "title_zh": "基本原理",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.8.2",
+      "title_zh": "指针运算",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.8.3",
+      "title_zh": "嵌套数组",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.8.4",
+      "title_zh": "固定大小数组",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.8.5",
+      "title_zh": "可变大小数组",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.9",
+      "title_zh": "异质数据结构",
+      "mapping": "section_directory"
+    },
+    {
+      "id": "3.9.1",
+      "title_zh": "结构体",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.9.2",
+      "title_zh": "联合",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.9.3",
+      "title_zh": "数据对齐",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.10",
+      "title_zh": "在机器级程序中结合控制和数据",
+      "mapping": "section_directory"
+    },
+    {
+      "id": "3.10.1",
+      "title_zh": "理解指针",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.10.2",
+      "title_zh": "现实生活中的使用：使用 gdb 调试器",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.10.3",
+      "title_zh": "越界内存引用和缓冲区溢出",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.10.4",
+      "title_zh": "防止缓冲区溢出攻击",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.10.5",
+      "title_zh": "支持可变大小的栈帧",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.11",
+      "title_zh": "浮点代码",
+      "mapping": "section_directory"
+    },
+    {
+      "id": "3.11.1",
+      "title_zh": "浮点移动和转换操作",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.11.2",
+      "title_zh": "程序中的浮点代码",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.11.3",
+      "title_zh": "浮点算术运算",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.11.4",
+      "title_zh": "定义和使用浮点常量",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.11.5",
+      "title_zh": "在浮点代码中使用位操作",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.11.6",
+      "title_zh": "浮点比较运算",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.11.7",
+      "title_zh": "关于浮点代码的观察",
+      "mapping": "topic_files"
+    },
+    {
+      "id": "3.12",
+      "title_zh": "本章总结",
+      "mapping": "unmapped"
+    }
+  ],
+  "labs": [
+    {
+      "target": "m06_ch01_pipeline",
+      "knowledge_points": [
+        "1.2",
+        "1.3"
+      ]
+    },
+    {
+      "target": "m06_ch02_bits",
+      "knowledge_points": [
+        "2.1.3",
+        "2.1.9",
+        "2.2.3",
+        "2.3.1"
+      ]
+    },
+    {
+      "target": "m06_ch02_float",
+      "knowledge_points": [
+        "2.4.2",
+        "2.4.3"
+      ]
+    },
+    {
+      "target": "m06_ch03_abi",
+      "knowledge_points": [
+        "3.2.1",
+        "3.4.1",
+        "3.7.1",
+        "3.7.3"
+      ]
+    }
+  ]
+}
