@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "description": "Only implemented, reviewed examples are included. Empty course templates are not build targets.",
+  "examples": [
+    {
+      "id": "ch02_integer_types",
+      "source": "02_程序结构和执行/2.2_整数表示/00_2.2.1_整数数据类型.cpp",
+      "expected": "int32_t 最大值 + 1 超出 int32_t 范围: 2147483648"
+    },
+    {
+      "id": "ch02_twos_complement",
+      "source": "02_程序结构和执行/2.2_整数表示/02_2.2.3_二进制补码编码.cpp",
+      "expected": "最大值加1发生溢出: 是"
+    },
+    {
+      "id": "ch02_sign_conversions",
+      "source": "02_程序结构和执行/2.2_整数表示/03_2.2.4_有符号和无符号之间的转换.cpp",
+      "expected": "按32位补码解释的数学值: -1"
+    },
+    {
+      "id": "ch02_unsigned_add",
+      "source": "02_程序结构和执行/2.3_整数运算/00_2.3.1_无符号加法.cpp",
+      "expected": "8位加法溢出检测: 是"
+    },
+    {
+      "id": "ch02_signed_add",
+      "source": "02_程序结构和执行/2.3_整数运算/01_2.3.2_二进制补码加法.cpp",
+      "expected": "数学加法结果 \\(int64_t\\): 2500000000"
+    },
+    {
+      "id": "ch02_negate",
+      "source": "02_程序结构和执行/2.3_整数运算/02_2.3.3_二进制补码求反.cpp",
+      "expected": "最小负数求反溢出检测: 是"
+    }
+  ]
+}
