@@ -6,63 +6,52 @@ Lecture: 02_程序结构和执行/2.3_整数运算
 Content: 00_2.3.1_无符号加法
 
 */
+#include <bitset>
+#include <cstdint>
 #include <iostream>
 #include <limits>
-#include <bitset>
+#include <string>
+#include <type_traits>
 
-// 打印二进制表示
 template <typename T>
 void print_binary(const std::string& label, T value) {
-    std::cout << label << ": " << std::bitset<sizeof(T) * 8>(value) << " (" << static_cast<uint64_t>(value) << ")" << std::endl;
+    static_assert(std::is_integral_v<T> && std::is_unsigned_v<T>, "Unsigned integer required");
+    std::cout << label << ": " << std::bitset<sizeof(T) * 8>(value)
+              << " (" << static_cast<std::uint64_t>(value) << ")\n";
 }
 
-// 检测无符号加法溢出
-bool detect_overflow(unsigned int x, unsigned int y) {
-    unsigned int sum = x + y;
-    return sum < x || sum < y;
+// Check overflow against the type's own maximum, not a promoted unsigned int.
+// In particular, uint8_t(200) + uint8_t(100) exceeds uint8_t's range.
+template <typename T>
+bool detect_overflow(T x, T y) {
+    static_assert(std::is_integral_v<T> && std::is_unsigned_v<T>, "Unsigned integer required");
+    return x > static_cast<T>(std::numeric_limits<T>::max() - y);
 }
 
-// 示例1：基本的无符号加法操作
 void basic_unsigned_addition() {
-    unsigned int x = 3000000000;
-    unsigned int y = 1500000000;
-
-    unsigned int sum = x + y;
+    const std::uint32_t x = 3000000000U;
+    const std::uint32_t y = 1500000000U;
+    const std::uint32_t sum = x + y; // defined modulo 2^32
     print_binary("x", x);
     print_binary("y", y);
     print_binary("sum", sum);
-
-    if (detect_overflow(x, y)) {
-        std::cout << "加法溢出检测: 是" << std::endl;
-    } else {
-        std::cout << "加法溢出检测: 否" << std::endl;
-    }
+    std::cout << "32位加法溢出检测: " << (detect_overflow(x, y) ? "是" : "否") << '\n';
 }
 
-// 示例2：处理不同位宽的无符号加法
 void handle_different_bitwidth_addition() {
-    unsigned char a = 200; // 8位无符号整数
-    unsigned char b = 100; // 8位无符号整数
-
-    unsigned char sum = a + b;
+    const std::uint8_t a = 200;
+    const std::uint8_t b = 100;
+    const std::uint8_t sum = static_cast<std::uint8_t>(static_cast<unsigned>(a) + b);
     print_binary("a", a);
     print_binary("b", b);
     print_binary("sum", sum);
-
-    if (detect_overflow(a, b)) {
-        std::cout << "8位加法溢出检测: 是" << std::endl;
-    } else {
-        std::cout << "8位加法溢出检测: 否" << std::endl;
-    }
+    std::cout << "8位加法溢出检测: " << (detect_overflow(a, b) ? "是" : "否") << '\n';
 }
 
-// 示例3：无符号数的模运算
 void modulo_addition() {
-    unsigned int x = 15;
-    unsigned int y = 10;
-
-    unsigned int sum = x + y;
-    unsigned int mod_sum = sum % 16; // 模16的结果
+    const unsigned x = 15, y = 10;
+    const unsigned sum = x + y;
+    const unsigned mod_sum = sum % 16;
     print_binary("x", x);
     print_binary("y", y);
     print_binary("sum", sum);
@@ -70,17 +59,10 @@ void modulo_addition() {
 }
 
 int main() {
-    std::cout << "基本的无符号加法操作:" << std::endl;
+    std::cout << "基本的无符号加法操作:\n";
     basic_unsigned_addition();
-    std::cout << std::endl;
-
-    std::cout << "处理不同位宽的无符号加法:" << std::endl;
+    std::cout << "\n处理不同位宽的无符号加法:\n";
     handle_different_bitwidth_addition();
-    std::cout << std::endl;
-
-    std::cout << "无符号数的模运算:" << std::endl;
+    std::cout << "\n无符号数的模运算:\n";
     modulo_addition();
-    std::cout << std::endl;
-
-    return 0;
 }
