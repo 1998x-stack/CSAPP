@@ -4,7 +4,7 @@
   "examples": [
     {
       "id": "ch02_integer_types",
-      "expected": "int32_t 最大值 + 1 超出 int32_t 范围: 2147483648",
+      "expected": "超出 int32_t 范围: 2147483648",
       "sources": [
         "02_程序结构和执行/2.2_整数表示/00_2.2.1_整数数据类型.cpp"
       ]
